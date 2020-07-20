@@ -67,8 +67,6 @@ def celciusToKelvin(x):
     c = 273.15 # conversion constant
     return x + c
 
-
-
 def calculateCp(mmHgPres, tempC):
     # declare variables
     pAtm = mmHgToatm(mmHgPres)
@@ -97,7 +95,6 @@ def domgLToPercent(x, mmHgPres, tempC):
     percentDo = (100 * x) / cp
     return percentDo
 
-
 def farenheitToCelcius(x):
     if x == "":
         return ""
@@ -114,3 +111,9 @@ def celciusToFarenheit(x):
     c2 = 32
     return ((x * c1) + c2)
 
+def ppmTomgL(x):
+    if x == "":
+            return ""
+    x = float(x)
+    c = 0.998859 # conversion constant (1 mg/L = 1ppm * .998859)
+    return x * c

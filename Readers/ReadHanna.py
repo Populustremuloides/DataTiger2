@@ -43,6 +43,7 @@ class ReadHanna():
         self.pressureConversionATM = False
         self.pressureConversionKPA = False
         self.pressureConversionPSI = False
+        self.pressureConversionIdentity = False
 
         # Grab the first three letters of the file name
         self.filePath = path
@@ -229,21 +230,27 @@ class ReadHanna():
                     self.pressureConversionATM = False
                     self.pressureConversionKPA = False
                     self.pressureConversionPSI = False
+                    self.pressureConversionIdentity = True
+
                 elif "kpa" in header:
                     print("converting from kpa to mmHg")
                     self.pressureConversionATM = False
                     self.pressureConversionKPA = True
                     self.pressureConversionPSI = False
+                    self.pressureConversionIdentity = False
+
                 elif "atm" in header:
                     print("converting from ATM to mmHg")
                     self.pressureConversionATM = True
                     self.pressureConversionKPA = False
                     self.pressureConversionPSI = False
+                    self.pressureConversionIdentity = False
                 elif "psi" in header:
                     print("converting from PSI to mmHg")
                     self.pressureConversionATM = False
                     self.pressureConversionKPA = False
                     self.pressureConversionPSI = True
+                    self.pressureConversionIdentity = False
                 else:
                     raise hannaPressureUnitNotRecognized(header)
             elif "d.o." in header and "%" in header:
@@ -302,6 +309,8 @@ class ReadHanna():
                     self.pressure = kpaTommHg(self.pressure)
                 elif self.pressureConversionPSI:
                     self.pressure = psiTommHg(self.pressure)
+                elif self.pressureConversionIdentity:
+                    self.pressure = self.pressure
                 else:
 
                     raise UnrecognizablePressureUnit()

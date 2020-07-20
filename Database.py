@@ -519,8 +519,8 @@ class Database:
             message = "ERROR: " + path + " not uploaded because of the following errors:" + "\n" + e.message + self.easterEggs.pickRandomCondolence(self.sassCoefficient)
             return(message)
 
-        except:
-            print("SQL command not executed.")
+        # except:
+        #     print("SQL command not executed.")
 
     def detuple(self, list):
         if len(list) == 2:
