@@ -142,6 +142,8 @@ class ReadHobo():
             return identity
         if ("%" in header or "perc" in header) and "do" in header:
             return doPercentTomgL
+        if "ppm" in header:
+            return ppmTomgL
         return identity
 
     def getTempConversion(self, val):

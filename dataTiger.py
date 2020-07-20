@@ -1,3 +1,10 @@
+# FILE > SETTINGS > Project Interpreter > PyQt5 (Automatic GUI library)
+# > pandas = dataframe library
+# > numpy
+# > sklearn
+# > scipy
+# > matplotLib
+# > xlrd
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 from Database import *
