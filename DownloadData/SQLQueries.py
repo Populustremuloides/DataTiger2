@@ -146,7 +146,7 @@ def getSlopeInterceptDicts(cursor, siteID):
     return keyToIndex, siteToInfoDict
 
 def getLightHobo(cursor, siteid):
-    sqlquery = "SELECT *, MAX(batch_id) FROM (hobo_light_logs INNER JOIN hobo_batches USING(batch_id)) WHERE site_id = ? GROUP BY logging_date, logging_time;"
+    sqlquery = "SELECT *, MAX(batch_id) FROM (hobo_light_logs INNER JOIN hobo_light_batches USING(batch_id)) WHERE site_id = ? GROUP BY logging_date, logging_time;"
     sitetuple = (siteid,)
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
@@ -176,7 +176,7 @@ def getLightHobo(cursor, siteid):
     return dateToData
 
 def getConductivityHobo(cursor, siteid):
-    sqlquery = "SELECT *, MAX(batch_id) FROM (hobo_conductivity_logs INNER JOIN hobo_batches USING(batch_id)) WHERE site_id = ? GROUP BY logging_date, logging_time;"
+    sqlquery = "SELECT *, MAX(batch_id) FROM (hobo_conductivity_logs INNER JOIN hobo_conductivity_batches USING(batch_id)) WHERE site_id = ? GROUP BY logging_date, logging_time;"
     sitetuple = (siteid,)
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
@@ -206,7 +206,7 @@ def getConductivityHobo(cursor, siteid):
     return dateToData
 
 def getOxygenHobo(cursor, siteid):
-    sqlquery = "SELECT *, MAX(batch_id) FROM (hobo_oxygen_logs INNER JOIN hobo_batches USING(batch_id)) WHERE site_id = ? GROUP BY logging_date, logging_time;"
+    sqlquery = "SELECT *, MAX(batch_id) FROM (hobo_oxygen_logs INNER JOIN hobo_oxygen_batches USING(batch_id)) WHERE site_id = ? GROUP BY logging_date, logging_time;"
     sitetuple = (siteid,)
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()

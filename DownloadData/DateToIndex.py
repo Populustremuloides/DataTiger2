@@ -14,7 +14,7 @@ def getDaysInYear(year):
 
 def dateToIndex(year, month, day, startYear):
     # calculates the number of days since October 1, start year (2018)
-    # will not work propertly for any dates prior to that
+    # will not work properly for any dates prior to that
 
     # year, month, day = date.split("-")
     year = int(year)

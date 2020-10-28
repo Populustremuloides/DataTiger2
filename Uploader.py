@@ -48,8 +48,8 @@ class Uploader:
         return self.database.getProjectId()
 
     def uploadFile(self, cursor, filePath, fileOrigin, allowDuplicates):
-        self.allowDuplicates = allowDuplicates
-        try:
+            self.allowDuplicates = allowDuplicates
+        # try:
             if fileOrigin == "field_hanna":
 
                 self.hannaReader = ReadHanna(filePath)
@@ -209,11 +209,11 @@ class Uploader:
                 self.sitesUploader.uploadBatch()
                 self.sitesUploader.uploadReads()
 
-        except sqlite3.OperationalError: # FIXME: PUT THIS BACK
-            raise DatabaseLocked()
+        # except sqlite3.OperationalError: # FIXME: PUT THIS BACK
+        #     raise DatabaseLocked()
 
-        except Error as e:
-            print("ERROR in UPLOADER")
-            print(type(e))
-            raise e
+        # except Error as e:
+        #     print("ERROR in UPLOADER")
+        #     print(type(e))
+        #     raise e
 

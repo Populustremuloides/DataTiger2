@@ -143,7 +143,7 @@ class UploaderHanna:
 
         # go through every row
         for index, row in data.iterrows():
-            print(index)
+            # print(index)
             self.hannaReader.readDataSheetRow(data, index)
             if self.hannaReader.date != None:
                 try: # handle redundant rows

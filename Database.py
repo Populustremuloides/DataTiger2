@@ -418,10 +418,10 @@ class Database:
     def writeLoggerGapsReport(self, path, testDict, optionsDict):
         if path == "":
             return "no path selected. Logger gaps report not downloaded.\n"
-        try:
-            return downloadLoggerGapsReport(path, self.cursor, testDict, optionsDict)
-        except:
-            return "unable to download logger gaps report"
+        # try:
+        return downloadLoggerGapsReport(path, self.cursor, testDict, optionsDict)
+        # except:
+        #     return "unable to download logger gaps report"
 
     def writeMissingTestsReport(self, path):
         if path == "":

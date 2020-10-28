@@ -723,7 +723,7 @@ class ReadScanFP:
                 self.index212 = i
             elif "215" in column:
                 self.index215 = i
-            elif "2170" in column:
+            elif "217" in column:
                 self.index217 = i
             elif "220" in column:
                 self.index220 = i
@@ -1193,7 +1193,7 @@ class ReadScanFP:
         if self.index235 != None:
             self.value235 = row[self.index235]
         if self.index237 != None:
-            self.valu2237 = row[self.index237]
+            self.valu237 = row[self.index237]
         if self.index240 != None:
             self.value240 = row[self.index240]
         if self.index242 != None:

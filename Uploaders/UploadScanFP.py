@@ -91,7 +91,7 @@ class UploadScanFP:
                     nm250,nm252,nm255,nm257,nm260,nm262,nm265,nm267,nm270,nm272, \
                     nm275,nm277,nm280,nm282,nm285,nm287,nm290,nm292,nm295,nm297, \
                     nm300,nm302,nm305,nm307,nm310,nm312,nm315,nm317,nm320,nm322, \
-                    nm325,nm327,nm330,nm335,nm337,nm340,nm342,nm345,nm347,nm350, \
+                    nm325,nm327,nm330,nm332, nm335,nm337,nm340,nm342,nm345,nm347,nm350, \
                     nm352,nm355,nm357,nm360,nm362,nm365,nm367,nm370,nm372,nm375, \
                     nm377,nm380,nm382,nm385,nm387,nm390,nm392,nm395,nm397,nm400, \
                     nm402,nm405,nm407,nm410,nm412,nm415,nm417,nm420,nm422,nm425, \
@@ -108,7 +108,7 @@ class UploadScanFP:
                     nm682,nm685,nm687,nm690,nm692,nm695,nm697,nm700,nm702,nm705, \
                     nm707,nm710,nm712,nm715,nm717,nm720,nm722,nm725,nm727,nm730, \
                     nm732,nm735,nm737,nm740,nm742,nm745,nm747,nm750) \
-                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, \
+                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, \
                     ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, \
                     ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, \
                     ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, \
@@ -135,7 +135,7 @@ class UploadScanFP:
                 self.scanFPReader.value302,self.scanFPReader.value305,self.scanFPReader.value307,
                 self.scanFPReader.value310,self.scanFPReader.value312,self.scanFPReader.value315,
                 self.scanFPReader.value317,self.scanFPReader.value320,self.scanFPReader.value322,
-                self.scanFPReader.value325,self.scanFPReader.value327,self.scanFPReader.value330,
+                self.scanFPReader.value325,self.scanFPReader.value327,self.scanFPReader.value330, self.scanFPReader.value332,
                 self.scanFPReader.value335,self.scanFPReader.value337,self.scanFPReader.value340,
                 self.scanFPReader.value342,self.scanFPReader.value345,self.scanFPReader.value347,
                 self.scanFPReader.value350,self.scanFPReader.value352,self.scanFPReader.value355,
