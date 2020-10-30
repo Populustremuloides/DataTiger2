@@ -2,12 +2,16 @@ import math
 # FIXME: absolute vs specific conductivity - check with Ben
 
 def identity(x):
+    x = x.replace(" ","")
     return x
 
 def luxToLumens(x):
     # formula: c * lux * A^2 = lumens
+    x = x.replace(" ","")
+    x = x.replace(" ","")
     if x == "":
         return ""
+    x = x.replace(",","")
     x = float(x)
     c = 0.09290304 # conversion constant
     A = 1
@@ -16,8 +20,10 @@ def luxToLumens(x):
 
 def lumensToLux(x):
     # forumula: (10.76391 * x) / A^2
+    x = x.replace(" ","")
     if x == "":
         return ""
+    x = x.replace(",","")
     x = float(x)
     c = 10.76391 # conversion constant
     A = 1
@@ -25,6 +31,7 @@ def lumensToLux(x):
     return (c * x) / Asqr
 
 def kpaTommHg(x):
+    x = x.replace(" ","")
     # formulat: kpa / .1333223684 = mmHg
     if x == "":
         return ""
@@ -33,6 +40,7 @@ def kpaTommHg(x):
     return (x / c)
 
 def mmHgTokpa(x):
+    x = x.replace(" ","")
     if x == "":
         return ""
     x = float(x)
@@ -40,6 +48,7 @@ def mmHgTokpa(x):
     return (x * c)
 
 def mmHgToatm(x):
+    x = x.replace(" ","")
     if x == "":
         return ""
     x = float(x)
@@ -47,6 +56,7 @@ def mmHgToatm(x):
     return (x / c)
 
 def psiTommHg(x):
+    x = x.replace(" ","")
     if x == "":
         return ""
     x = float(x)
@@ -54,6 +64,7 @@ def psiTommHg(x):
     return x * c
 
 def mmHgTopsi(x):
+    x = x.replace(" ","")
     if x == "":
         return ""
     x = float(x)
@@ -61,6 +72,7 @@ def mmHgTopsi(x):
     return x / c
 
 def celciusToKelvin(x):
+    x = x.replace(" ","")
     if x == "":
         return ""
     x = float(x)
@@ -82,6 +94,7 @@ def calculateCp(mmHgPres, tempC):
     return cp
 
 def doPercentTomgL(x, mmHgPres, tempC):
+    x = x.replace(" ","")
     if x == "":
         return ""
     cp = calculateCp(mmHgPres, tempC)
@@ -89,6 +102,7 @@ def doPercentTomgL(x, mmHgPres, tempC):
     return domgL
 
 def domgLToPercent(x, mmHgPres, tempC):
+    x = x.replace(" ","")
     if x == "":
         return ""
     cp = calculateCp(mmHgPres, tempC)
@@ -96,6 +110,7 @@ def domgLToPercent(x, mmHgPres, tempC):
     return percentDo
 
 def farenheitToCelcius(x):
+    x = x.replace(" ","")
     if x == "":
         return ""
     x = float(x)
@@ -104,6 +119,7 @@ def farenheitToCelcius(x):
     return (x - c2) * c1
 
 def celciusToFarenheit(x):
+    x = x.replace(" ","")
     if x == "":
         return ""
     x = float(x)
@@ -112,6 +128,7 @@ def celciusToFarenheit(x):
     return ((x * c1) + c2)
 
 def ppmTomgL(x):
+    x = x.replace(" ","")
     if x == "":
             return ""
     x = float(x)

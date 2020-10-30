@@ -144,47 +144,89 @@ def makeSiteDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict):
     }
 
     if testsDict["fieldSheetInfo"]:
-        fieldSheetDict = getFieldSheetInfo(cursor, siteID, nbsNum, citSciNum)
-        fullDict = joinDict(fieldSheetDict, fullDict)
+        try:
+            fieldSheetDict = getFieldSheetInfo(cursor, siteID, nbsNum, citSciNum)
+            fullDict = joinDict(fieldSheetDict, fullDict)
+        except:
+            print("ERROR")
     if testsDict["hoboPressure"] or optionsDict["calculateDischarge"]:
-        pDict = getP(cursor, siteID)
-        fullDict = joinDict(pDict, fullDict)
+        try:
+            pDict = getP(cursor, siteID)
+            fullDict = joinDict(pDict, fullDict)
+        except:
+            print("ERROR")
     if testsDict["hoboLight"]:
-        lightDict = getLightHobo(cursor, siteID)
-        fullDict = joinDict(lightDict, fullDict)
+        try:
+            lightDict = getLightHobo(cursor, siteID)
+            fullDict = joinDict(lightDict, fullDict)
+        except:
+            print("error")
     if testsDict["hoboConductivity"]:
-        condDict = getConductivityHobo(cursor, siteID)
-        fullDict = joinDict(condDict, fullDict)
+        try:
+            condDict = getConductivityHobo(cursor, siteID)
+            fullDict = joinDict(condDict, fullDict)
+        except:
+            print("error")
     if testsDict["hoboOxygen"]:
-        oxygenDict = getOxygenHobo(cursor, siteID)
-        fullDict = joinDict(oxygenDict, fullDict)
+        try:
+            oxygenDict = getOxygenHobo(cursor, siteID)
+            fullDict = joinDict(oxygenDict, fullDict)
+        except:
+            print("error")
     if testsDict["measuredDischarge"]:
-        qDict = getQ(cursor, siteID)
-        fullDict = joinDict(qDict, fullDict)
+        try:
+            qDict = getQ(cursor, siteID)
+            fullDict = joinDict(qDict, fullDict)
+        except:
+            print("error")
     if testsDict["hanna"]:
-        hannaDict = getHanna(cursor, siteID)
-        fullDict = joinDict(hannaDict, fullDict)
+        try:
+            hannaDict = getHanna(cursor, siteID)
+            fullDict = joinDict(hannaDict, fullDict)
+        except:
+            print("error")
     if testsDict["eureka"]:
-        eurekaDict = getEureka(cursor, siteID)
-        fullDict = joinDict(eurekaDict, fullDict)
+        try:
+            eurekaDict = getEureka(cursor, siteID)
+            fullDict = joinDict(eurekaDict, fullDict)
+        except:
+            print("error")
     if testsDict["elementar"]:
-        elementarDict = getElementar(cursor, siteID, nbsNum, citSciNum)
-        fullDict = joinDict(elementarDict, fullDict)
+        try:
+            elementarDict = getElementar(cursor, siteID, nbsNum, citSciNum)
+            fullDict = joinDict(elementarDict, fullDict)
+        except:
+            print("error")
     if testsDict["scanCalculated"]:
-        scanParDict = getScanPar(cursor, siteID, nbsNum, citSciNum)
-        fullDict = joinDict(scanParDict, fullDict)
+        try:
+            scanParDict = getScanPar(cursor, siteID, nbsNum, citSciNum)
+            fullDict = joinDict(scanParDict, fullDict)
+        except:
+            print("error")
     if testsDict["scanRaw"]:
-        scanFPDict = getScanFp(cursor, siteID, nbsNum, citSciNum)
-        fullDict = joinDict(scanParDict, fullDict)
+        try:
+            scanFPDict = getScanFp(cursor, siteID, nbsNum, citSciNum)
+            fullDict = joinDict(scanParDict, fullDict)
+        except:
+            print("error")
     if testsDict["ic"]:
-        icCationDict = getICCation(cursor, siteID, nbsNum, citSciNum)
-        fullDict = joinDict(icCationDict, fullDict)
+        try:
+            icCationDict = getICCation(cursor, siteID, nbsNum, citSciNum)
+            fullDict = joinDict(icCationDict, fullDict)
+        except:
+            print("error")
     if testsDict["ic"]:
-        icAnionDict = getICAnion(cursor, siteID, nbsNum, citSciNum)
-        fullDict = joinDict(icAnionDict, fullDict)
+        try:
+            icAnionDict = getICAnion(cursor, siteID, nbsNum, citSciNum)
+            fullDict = joinDict(icAnionDict, fullDict)
+        except:
+            print("error")
     if testsDict["icp"]:
-        icpDict = getICP(cursor, siteID, nbsNum, citSciNum)
-        fullDict = joinDict(icpDict, fullDict)
+        try:
+            icpDict = getICP(cursor, siteID, nbsNum, citSciNum)
+            fullDict = joinDict(icpDict, fullDict)
+        except:
+            print("error")
         
     print(siteID + " complete")
     df = pd.DataFrame.from_dict(fullDict)

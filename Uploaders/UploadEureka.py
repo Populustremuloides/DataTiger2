@@ -71,7 +71,7 @@ class UploaderEureka:
 
     def uploadLogs(self):
         # parse the individual logs
-        with open(self.eurekaReader.getPath()) as csvFile:
+        with open(self.eurekaReader.getPath(), encoding="utf8") as csvFile:
             reader = csv.reader(csvFile, delimiter=",")
             for row in reader:
                 if re.match(r"^\d+/\d+/\d+", row[0]): # keep only those rows that start with a date

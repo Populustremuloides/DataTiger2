@@ -410,10 +410,10 @@ class Database:
     def writeTimeSeriesReport(self, path, testDict, optionsDict):
         if path == "":
             return "no path selected. time series report not downloaded.\n"
-        try:
-            return downloadTimeSeries(path, testDict, optionsDict, self.cursor)
-        except:
-            return "unable to download time series report"
+        #try:
+        return downloadTimeSeries(path, testDict, optionsDict, self.cursor)
+        #except:
+        #    return "unable to download time series report"
     
     def writeLoggerGapsReport(self, path, testDict, optionsDict):
         if path == "":
