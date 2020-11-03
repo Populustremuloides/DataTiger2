@@ -118,7 +118,15 @@ class ComputeQ:
                 averages = self.getAverages(corrected, remarks)
                 values = self.multiplyBySeconds(averages, remarks)
                 moment = self.getSum(values)
-                discharge = float(remarks.split("-")[-1]) / (moment / 1000)
+                if len(remarks.split("-")) == 2:
+                    print("grams: " + str(remarks.split("-")[-1]))
+                    discharge = float(remarks.split("-")[-1]) / (moment / 1000)
+                elif len(remarks.split(" ")) == 2:
+                    print("grams: " + str(remarks.split(" ")[-1]))
+                    discharge = float(remarks.split(" ")[-1]) / (moment / 1000)
+                else:
+                    print("grams: " + str(remarks[3:]))
+                    discharge = float(remarks[3:]) / (moment / 1000)
 
                 self.remarksToQList[remarks].append(discharge)
 

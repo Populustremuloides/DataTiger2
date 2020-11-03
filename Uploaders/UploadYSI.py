@@ -57,23 +57,39 @@ class UploadYSI:
         result = self.cursor.fetchall()[0][0]
         return result
 
+    def uploadBatchGuts(self, dataFile):
+        for i in range(30):
+            fluff = dataFile.readline()
+            fluff = fluff.split(",")
+            dateSeen = False
+            timeSeen = False
+            for item in fluff:
+                if "date" in item.lower():
+                    dateSeen = True
+                if "time" in item.lower():
+                    timeSeen = True
+            if dateSeen or timeSeen:
+                headers = fluff
+                self.ysiReader.readBatch(headers)
+                return
+
     def uploadBatch(self):
         # check for duplicates
         if self.duplicateBatch() and not self.uploader.allowDuplicates:
             raise DuplicateBatch(self.ysiReader.fileName)
         else:
             # get the headers
+            try:
+                with open(self.ysiReader.filePath, "r+", encoding='utf-16-le') as dataFile:
+                    self.uploadBatchGuts(dataFile)
+                    self.uploadBatchHelper()
+                    self.batchNumber = self.getBatchNumber()
+            except:
+                with open(self.ysiReader.filePath, "r+", encoding='ISO-8859-1') as dataFile:
+                    self.uploadBatchGuts(dataFile)
+                    self.uploadBatchHelper()
+                    self.batchNumber = self.getBatchNumber()
 
-            with open(self.ysiReader.filePath, "r+", encoding='utf-16-le') as dataFile:
-                for i in range(15):
-                    fluff = dataFile.readline()
-                headers = dataFile.readline()
-                headers = headers.replace("\n","")
-                headers = headers.split(",")
-            self.ysiReader.readBatch(headers)
-
-            self.uploadBatchHelper()
-            self.batchNumber = self.getBatchNumber()
 
     def duplicateQ(self, q):
         qList = self.qComputer.remarksToQList[q]
@@ -114,56 +130,69 @@ class UploadYSI:
 
         self.cursor.execute(sqlQ, qTuple)
 
+    def doTheWork(self, dataFile):
+        previousTime = None
+        for i in range(15):
+            fluff = dataFile.readline()
+            fluff = fluff.replace("\n", "")
+            fluff = fluff.split(",")
+            if "site" in fluff[0].lower():
+            # if i == 3:
+                site = fluff[1]
+            if "data id" in fluff[0].lower():
+            # if i == 4:
+                saltG = fluff[1]
+        print("salt grams: " + str(saltG))
+        print("site: " + str(site))
+
+        remark = site + "-" + saltG
+        headers = dataFile.readline()
+        index = 0
+        for line in dataFile:
+            line = line.replace("\n", "")
+            line = line.split(",")
+            result = self.ysiReader.readRow(list(line))
+
+            if result != self.ysiReader.noErrors:
+                self.problemRows.append(index + 2)
+            else:
+                # record the starting time + location:
+                if not remark in self.remarksToQList.keys():
+                    print("POPULATING Q-LIST")
+                    print(site)
+                    print(self.ysiReader.date)
+                    print(self.ysiReader.time)
+                    self.remarksToQList[remark] = [site, self.ysiReader.date, self.ysiReader.time]
+
+                # record the intervals
+                if previousTime != None:
+                    interval = int(self.ysiReader.time.split(":")[-1]) - int(previousTime.split(":")[-1])
+                    if interval < 0:
+                        interval = interval + 60
+
+                    if not remark in self.remarksToIntervals:
+                        self.remarksToIntervals[remark] = []
+                    self.remarksToIntervals[remark].append(interval)
+
+                previousTime = self.ysiReader.time
+
+                if not remark in self.remarksToEc.keys():
+                    self.remarksToEc[remark] = []
+
+                self.remarksToEc[remark].append(self.ysiReader.ec)
+            index = index + 1
 
     def parseReads(self):
         self.problemRows = []
 
-        previousTime = None
-        with open(self.ysiReader.filePath, "r+", encoding='utf-16-le') as dataFile:
-            for i in range(15):
-                fluff = dataFile.readline()
-                fluff = fluff.replace("\n","")
-                fluff = fluff.split(",")
-                if i == 3:
-                    site = fluff[1]
-                if i == 4:
-                    saltG = fluff[1]
-            remark = site + "-" + saltG
-            headers = dataFile.readline()
-            for line in dataFile:
-                line = line.replace("\n","")
-                line = line.split(",")
-                result = self.ysiReader.readRow(list(line))
-
-                if result != self.ysiReader.noErrors:
-                    self.problemRows.append(index + 2)
-                else:
-                    # record the starting time + location:
-                    if not remark in self.remarksToQList.keys():
-                        print("POPULATING Q-LIST")
-                        print(site)
-                        print(self.ysiReader.date)
-                        print(self.ysiReader.time)
-                        self.remarksToQList[remark] = [site, self.ysiReader.date, self.ysiReader.time]
-
-                    # record the intervals
-                    if previousTime != None:
-                        interval = int(self.ysiReader.time.split(":")[-1]) - int(previousTime.split(":")[-1])
-                        if interval < 0:
-                            interval = interval + 60
-
-                        if not remark in self.remarksToIntervals:
-                            self.remarksToIntervals[remark] = []
-                        self.remarksToIntervals[remark].append(interval)
-
-                    previousTime = self.ysiReader.time
-
-                    if not remark in self.remarksToEc.keys():
-                        self.remarksToEc[remark] = []
-
-                    self.remarksToEc[remark].append(self.ysiReader.ec)
-
-
+        try:
+            dataFile = open(self.ysiReader.filePath, "r+", encoding='utf-16-le')
+            self.doTheWork(dataFile)
+            dataFile.close()
+        except:
+            dataFile = open(self.ysiReader.filePath, "r+", encoding='ISO-8859-1')
+            self.doTheWork(dataFile)
+            dataFile.close()
     def uploadReads(self):
         self.problemQs = []
 

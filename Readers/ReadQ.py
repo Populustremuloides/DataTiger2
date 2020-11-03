@@ -59,7 +59,7 @@ class ReadQ:
         if self.ecIndex != None:
             self.ec = row[self.ecIndex]
         if self.remarksIndex != None:
-            self.remarks= row[self.remarksIndex]
+            self.remarks = row[self.remarksIndex]
 
     def replaceNan(self, value):
         if pd.isna(value):
@@ -92,7 +92,25 @@ class ReadQ:
                 return False
             return True
         except:
-            return False
+            try:
+                self.site, self.salt = self.remarks.split(" ")
+                if not self.salt.isnumeric():
+                    return False
+                if not self.site.isalpha():
+                    return False
+                return True
+            except:
+                try:
+                    self.site = self.remarks[:3]
+                    self.salt = self.remarks[3:]
+                    #self.site, self.salt = self.remarks.split(" ")
+                    if not self.salt.isnumeric():
+                        return False
+                    if not self.site.isalpha():
+                        return False
+                    return True
+                except:
+                    return False
 
     def readRow(self, row):
 

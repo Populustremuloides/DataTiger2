@@ -2,12 +2,13 @@ import math
 # FIXME: absolute vs specific conductivity - check with Ben
 
 def identity(x):
+    x = str(x)
     x = x.replace(" ","")
     return x
 
 def luxToLumens(x):
     # formula: c * lux * A^2 = lumens
-    x = x.replace(" ","")
+    x = str(x)
     x = x.replace(" ","")
     if x == "":
         return ""
@@ -20,6 +21,7 @@ def luxToLumens(x):
 
 def lumensToLux(x):
     # forumula: (10.76391 * x) / A^2
+    x = str(x)
     x = x.replace(" ","")
     if x == "":
         return ""
@@ -31,6 +33,7 @@ def lumensToLux(x):
     return (c * x) / Asqr
 
 def kpaTommHg(x):
+    x = str(x)
     x = x.replace(" ","")
     # formulat: kpa / .1333223684 = mmHg
     if x == "":
@@ -40,6 +43,7 @@ def kpaTommHg(x):
     return (x / c)
 
 def mmHgTokpa(x):
+    x = str(x)
     x = x.replace(" ","")
     if x == "":
         return ""
@@ -48,6 +52,7 @@ def mmHgTokpa(x):
     return (x * c)
 
 def mmHgToatm(x):
+    x = str(x)
     x = x.replace(" ","")
     if x == "":
         return ""
@@ -56,6 +61,7 @@ def mmHgToatm(x):
     return (x / c)
 
 def psiTommHg(x):
+    x = str(x)
     x = x.replace(" ","")
     if x == "":
         return ""
@@ -64,6 +70,7 @@ def psiTommHg(x):
     return x * c
 
 def mmHgTopsi(x):
+    x = str(x)
     x = x.replace(" ","")
     if x == "":
         return ""
@@ -72,6 +79,7 @@ def mmHgTopsi(x):
     return x / c
 
 def celciusToKelvin(x):
+    x = str(x)
     x = x.replace(" ","")
     if x == "":
         return ""
@@ -94,6 +102,7 @@ def calculateCp(mmHgPres, tempC):
     return cp
 
 def doPercentTomgL(x, mmHgPres, tempC):
+    x = str(x)
     x = x.replace(" ","")
     if x == "":
         return ""
@@ -102,6 +111,7 @@ def doPercentTomgL(x, mmHgPres, tempC):
     return domgL
 
 def domgLToPercent(x, mmHgPres, tempC):
+    x = str(x)
     x = x.replace(" ","")
     if x == "":
         return ""
@@ -110,6 +120,7 @@ def domgLToPercent(x, mmHgPres, tempC):
     return percentDo
 
 def farenheitToCelcius(x):
+    x = str(x)
     x = x.replace(" ","")
     if x == "":
         return ""
@@ -119,6 +130,7 @@ def farenheitToCelcius(x):
     return (x - c2) * c1
 
 def celciusToFarenheit(x):
+    x = str(x)
     x = x.replace(" ","")
     if x == "":
         return ""
@@ -128,6 +140,7 @@ def celciusToFarenheit(x):
     return ((x * c1) + c2)
 
 def ppmTomgL(x):
+    x = str(x)
     x = x.replace(" ","")
     if x == "":
             return ""

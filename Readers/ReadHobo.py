@@ -360,8 +360,15 @@ class ReadHobo():
 
     def readRow(self, row, i):
         # try:
-            self.logDate, self.logTime = self.getDateAndTime(row[self.dateIndex])
-            self.data = self.dataConversion(row[self.dataIndex])
+            if self.dateIndex != None:
+                self.logDate, self.logTime = self.getDateAndTime(row[self.dateIndex])
+            else:
+                self.logDate = ""
+                self.logTime = ""
+            if self.dataIndex != None:
+                self.data = self.dataConversion(row[self.dataIndex])
+            else:
+                self.data = ""
             if self.tempIndex != None:
                 self.temperature = self.tempConversion(row[self.tempIndex])
             else:
@@ -371,8 +378,8 @@ class ReadHobo():
                 self.logDate = None
             if self.logTime == "":
                 self.logTime = None
-            if self.data == "":
-                self.data = None
+            # if self.data == "":
+            #     self.data = None
             # if self.temperature == "": # sometimes the temperature isn't there. That's okay
             #     self.temperature = None
         # except:

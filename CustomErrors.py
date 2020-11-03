@@ -46,7 +46,7 @@ class EurekaFileIncorrectlyNamed(Error):
                        "file be named with the SITEDATE.xls format. Please rename the file and submit again.\n\n"
 class EurekaFileIncorrectlyFormated(Error):
     def __init__(self, path):
-        self.message = "ERROR: the eureka file, " + path + " was not correctly formated. There was a row with an inccorect number of commas.\n\n"
+        self.message = "ERROR: the eureka file, " + path + " was not correctly formated. There was a row with an incorect number of commas.\n\n"
 
 class RawHoboFileIngested(Error):
     def __init__(self, path):

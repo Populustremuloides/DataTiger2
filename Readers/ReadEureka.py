@@ -15,6 +15,18 @@ class ReadEureka():
         pathList = cleanPath.split("/")
         self.fileName = pathList[-1]
 
+        self.loggingDateIndex = None
+        self.loggingTimeIndex = None
+        self.tempIndex = None
+        self.phIndex = None
+        self.orpIndex = None
+        self.conductivityIndex = None
+        self.turbidityIndex = None
+        self.hdoPercSatIndex = None
+        self.hdoConcentrationIndex = None
+        self.phMVIndex = None
+        self.intBattVIndex = None
+
 
     def getPath(self):
         return self.filePath
@@ -61,6 +73,46 @@ class ReadEureka():
                         self.firstLoggingTime = row[1]
                 except:
                     raise EurekaInfoNotFound(self.filePath)
+        with open(self.filePath) as csvFile:  # try to extract it from the file
+            newReader = csv.reader(csvFile, delimiter=",")
+            headerLine = False
+            for line in newReader:
+                # line = line.split(",")
+                print(line)
+                print("foo")
+                for element in line:
+                    if "date" in element.lower() or "temp" in element.lower() or "time" in element.lower():
+                        headerLine = True
+
+                if headerLine:
+                    indx = 0
+                    for element in line:
+                        element = element.lower()
+                        if "date" in element:
+                            self.loggingDateIndex = indx
+                        if "time" in element:
+                            self.loggingTimeIndex = indx
+                        if "temp" in element:
+                            self.tempIndex = indx
+                        if "ph" in element and "units" in element:
+                            self.phIndex = indx
+                        if "orp" in element and "mv" in element:
+                            self.orpIndex = indx
+                        if "cond" in element:
+                            self.conductivityIndex = indx
+                        if "turb" in element:
+                            self.turbidityIndex = indx
+                        if "hdo" in element and "sat" in element:
+                            self.hdoPercSatIndex = indx
+                        if "hdo" in element and "mg" in element:
+                            self.hdoConcentrationIndex = indx
+                        if "ph" in element and "mv" in element:
+                            self.phMVIndex = indx
+                        if "batt" in element:
+                            self.intBattVIndex = indx
+                        indx = indx + 1
+
+                    break
 
         if not self.siteId.isalpha(): # otherwise raise an error
             raise EurekaFileIncorrectlyNamed(self.filePath)
@@ -79,19 +131,77 @@ class ReadEureka():
         self.siteId = self.siteId.upper()
 
     def readRow(self, rowList):
-        if (len(rowList) != 12) and (len(rowList) != 11):
-            raise EurekaFileIncorrectlyFormated(self.filePath)
+        # if (len(rowList) != 12) and (len(rowList) != 11):
+        #     raise EurekaFileIncorrectlyFormated(self.filePath)
 
-        self.loggingDate = re.sub("/", "-", rowList[0])
-        self.loggingTime = rowList[1]
-        self.temp = rowList[2]
-        self.phUnits = rowList[3]
-        self.orp = rowList[4]
-        self.spCond = rowList[5]
-        self.turbidity = rowList[6]
-        self.hdoPercSat = rowList[7]
-        self.hdoConcentration = rowList[8]
-        self.phMv = rowList[9]
-        self.intBattV = rowList[10]
+        if len(rowList) > self.loggingDateIndex:
+            self.loggingDate = re.sub("/", "-", rowList[self.loggingDateIndex])
+        else:
+            self.loggingDate = None
+
+        if len(rowList) > self.loggingTimeIndex:
+            self.loggingTime = rowList[self.loggingTimeIndex]
+        else:
+            self.loggingTime = None
+
+        if len(rowList) > self.tempIndex:
+            self.temp = rowList[self.tempIndex]
+        else:
+            self.temp = ""
+
+        if len(rowList) > self.phIndex:
+            self.phUnits = rowList[self.phIndex]
+        else:
+            self.phUnits = ""
+
+        if len(rowList) > self.orpIndex:
+            self.orp = rowList[self.orpIndex]
+        else:
+            self.orp = ""
+
+        if len(rowList) > self.conductivityIndex:
+            self.spCond = rowList[self.conductivityIndex]
+        else:
+            self.spCond = ""
+
+        if len(rowList) > self.turbidityIndex:
+            self.turbidity = rowList[self.turbidityIndex]
+        else:
+            self.turbidity = ""
+
+        if len(rowList) > self.hdoPercSatIndex:
+            self.hdoPercSat = rowList[self.hdoPercSatIndex]
+        else:
+            self.hdoPercSat = ""
+
+        if len(rowList) > self.hdoConcentrationIndex:
+            self.hdoConcentration = rowList[self.hdoConcentrationIndex]
+        else:
+            self.hdoConcentration = ""
+
+        if len(rowList) > self.phMVIndex:
+            self.phMv = rowList[self.phMVIndex]
+        else:
+            self.phMv = ""
+
+        if len(rowList) > self.intBattVIndex:
+            self.intBattV = rowList[self.intBattVIndex]
+        else:
+            self.intBattV = ""
+
         # the last element is blank
+        # print(self.loggingDate)
+        # print(self.loggingTime)
+        # print(self.temp)
+        # print(self.phUnits)
+        # print(self.orp)
+        # print(self.spCond)
+        # print(self.turbidity)
+        # print(self.hdoPercSat)
+        # print(self.hdoConcentration)
+        # print(self.phMv)
+        # print(self.intBattV)
+        #
+        # if (self.phUnits.isalpha()):
+        #     input("i rest my case") # somehow this never gets triggered
 

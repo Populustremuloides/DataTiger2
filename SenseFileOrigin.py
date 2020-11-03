@@ -52,7 +52,7 @@ class SenseFileOrigin():
         #     sheetNames = df.sheet_names
         #     if len(sheetNames) == 2:
         #         return "field_hanna"
-            if filePath.endswith(".xlsx") or filePath.endswith(".xls"):
+            if filePath.endswith(".xlsx") or filePath.endswith(".xls") or filePath.endswith(".XLS"):
                 exl = pd.ExcelFile(filePath)
                 sheetNames = exl.sheet_names
                 df = pd.read_excel(exl, sheetNames[0])
@@ -79,7 +79,7 @@ class SenseFileOrigin():
                 if "Chem #" in str(columns[0]):
                     return "masterScan"
 
-                if len(columns) >= 3:
+                if len(columns) > 3:
                     if "OVSM" in str(columns[3]):
                         return "no3"
                 i = 0

@@ -347,9 +347,9 @@ class ReadHanna():
             self.remarks = None
 
     def readDataSheetRow(self, df, rowIndex):
-            if not self.dataSheetHeadersCalled:
-                self.readDataSheetHeaders(list(df.columns.values))
-        # try:
+        if not self.dataSheetHeadersCalled:
+            self.readDataSheetHeaders(list(df.columns.values))
+        try:
 
             self.resetValues()
             row = list(df.loc[rowIndex]) #convert from series object to list
@@ -363,8 +363,8 @@ class ReadHanna():
                 self.cleanRowValues()
                 return [0]
 
-        # except errorProcessingHannaData as e:
-        #     print("error in ReadHanna")
-        #     return [1, e]
-
+        except errorProcessingHannaData as e:
+            print("error in ReadHanna")
+            return [1, e]
+#
 

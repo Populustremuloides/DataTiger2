@@ -35,10 +35,10 @@ class UploaderHanna:
                        self.hannaReader.temp, self.hannaReader.pH, self.hannaReader.orp,
                        self.hannaReader.ec, self.hannaReader.pressure, self.hannaReader.dissolvedOxygenPercent,
                        self.hannaReader.dissolvedOxygen, self.hannaReader.remarks, self.currentBatch)
-        # try:
-        self.cursor.execute(sqlInsert, insertTuple)
-        # except:
-        #     raise RowAlreadyUploadedError(self.hannaReader.fileName)
+        try:
+            self.cursor.execute(sqlInsert, insertTuple)
+        except:
+            raise RowAlreadyUploadedError(self.hannaReader.fileName)
 
     def uploadBatch(self):
         # determine the site id
