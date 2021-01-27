@@ -76,7 +76,10 @@ class ReadElementar():
 
         self.projectId = self.projectId.replace(" ","")
 
-
+        if type(columns) == type("string"):
+            columns = columns.split(",")
+        if len(columns) == 1: # hack because of one weird file
+            columns = columns[0].split(",")
         # FIXME: get the column indices of the columns we want to parse
         i = 0
         for column in columns:
@@ -212,6 +215,9 @@ class ReadElementar():
     def readRow(self, row):
         self.resetValues()
 
+        if len(row) == 1:
+            row = row[0].split(",")
+
         self.hole = row[self.holeIndex]
         self.sortChem = row[self.sortChemIndex]
         self.method = row[self.methodIndex]
@@ -236,7 +242,10 @@ class ReadElementar():
         # fix the date up a bit. . .
         # self.date, self.time = self.dateTime.split(" ")
         if len(self.date) > 3:
-            day, month, year = self.date.split(".")
+            if "/" in self.date:
+                day, month, year = self.date.split("/")
+            else:
+                day, month, year = self.date.split(".")
             self.date = str(year) + "-" + str(month) + "-" + str(day)
 
         self.replaceEmptyWithNull()

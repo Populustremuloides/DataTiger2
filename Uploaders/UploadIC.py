@@ -62,8 +62,10 @@ class UploadIC():
 
         # parse the file name and header information
         try:
-            self.icReader.readBatch(list(self.df.columns.values))  # supply the header
+            errorColumns = self.icReader.readBatch(list(self.df.columns.values))  # supply the header
+            self.errorColumns = errorColumns
         except Exception as e:
+            print("AN EXCEPTION!!")
             raise e
 
         # check for duplicates
@@ -98,6 +100,8 @@ class UploadIC():
         self.cursor.execute(sqlBatch, batchTuple)
         currentBatches = self.cursor.fetchall()
         self.currentBatch = currentBatches[-1][0]
+
+        #return errorColums
 
     def uploadCation(self):
 
@@ -197,3 +201,7 @@ class UploadIC():
 
         if problemOccured:
             raise ICDataError(self.icReader.fileName, problemRows)
+        if len(self.errorColumns) > 0:
+            message = "Warning: The following expected columns were missing from the headers of the IC sheet: " + str(self.errorColumns) + "\n\n"
+            raise Warnings(message, self.icReader.fileName)
+

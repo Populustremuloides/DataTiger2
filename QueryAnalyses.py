@@ -364,13 +364,9 @@ class QueryAnalyses:
                 else:
                     elementarBatch = "Missing"
                     self.missingElementars.append(sortChem)
-
-
                 sortChemBatches.append(elementarBatch)
-
             else:
                 sortChemBatches.append("Not Requested")
-
 
             # SCAN INDEX ***********************************************************************
             if tests[3] == 1:

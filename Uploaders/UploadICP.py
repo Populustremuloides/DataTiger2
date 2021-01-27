@@ -21,9 +21,9 @@ class UploadICP:
             value = str(self.df.iloc[i,0]).lower()
             if "date" in value:
                 self.batchDate = value
-            if "water id:" in value:
+            if "water id:" in value or "work" in value:
                 self.batchId = value
-            if ("customer" in value) and ("sample" in value):
+            if ("customer" in value) and ("sample" in value) or (("date" in value) and ("time" in value) and ("and" in value)):
                 cutoffIndex = i
         if cutoffIndex == None:
             raise ICPFormatChanged(self.icpReader.getFileName())

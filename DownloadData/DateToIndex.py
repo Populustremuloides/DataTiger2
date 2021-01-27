@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 startYear = 18
 dayToIndexRatio = 1 / (4 * 24)
+indexToDayRatio = 4 * 24
 
 def getDaysInYear(year):
     if year % 4 == 0:

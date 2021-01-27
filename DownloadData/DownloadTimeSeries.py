@@ -11,7 +11,7 @@ def getIndexList():
     now = str(datetime.now())
     date, time = now.split(" ")
     year, month, day = date.split("-")
-    year = year[:2]
+    year = year[2:]
     hour, minute, second = time.split(":")
     second = second[:2]
 
@@ -43,7 +43,8 @@ def joinDictSite(dict1, fullDict, siteID):
 
             for i in range(len(indices)):
                 index = indices[i]
-                listIndex = int(index / dayToIndexRatio) - int(startIndex / dayToIndexRatio)
+                #listIndex = int(index / dayToIndexRatio) - int(startIndex / dayToIndexRatio)
+                listIndex = round(index * dayToIndexRatio)
 
                 data = dataList[i]
 
@@ -77,7 +78,19 @@ def joinDict(dict1, fullDict):
 
             for i in range(len(indices)):
                 index = indices[i]
-                listIndex = int(index / dayToIndexRatio) - int(startIndex / dayToIndexRatio)
+                data = dataList[i]
+
+               # print(dtime[i])
+               # print(index)
+               # print(indexToDayRatio)
+               # print((indexToDayRatio * indices[-1]) - (indexToDayRatio * indices[0]))
+               # print(index / dayToIndexRatio)
+               # print(index * dayToIndexRatio)
+                #print(len(newData))
+
+                index = indices[i]
+                #listIndex = int(index / dayToIndexRatio) - int(startIndex / dayToIndexRatio)
+                listIndex = round(index * indexToDayRatio)
 
                 data = dataList[i]
                 dt = dtime[i]
@@ -142,91 +155,93 @@ def makeSiteDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict):
         "waterYear":waterYear,
         "datetime": dateList
     }
+    fullDf = pd.DataFrame.from_dict(fullDict)
+    fullDf.to_csv("lookatme.csv")
 
     if testsDict["fieldSheetInfo"]:
-        try:
+        # try:
             fieldSheetDict = getFieldSheetInfo(cursor, siteID, nbsNum, citSciNum)
             fullDict = joinDict(fieldSheetDict, fullDict)
-        except:
-            print("ERROR")
+        # except:
+        #     print("ERROR")
     if testsDict["hoboPressure"] or optionsDict["calculateDischarge"]:
-        try:
+        # try:
             pDict = getP(cursor, siteID)
             fullDict = joinDict(pDict, fullDict)
-        except:
-            print("ERROR")
+        # except:
+        #     print("ERROR")
     if testsDict["hoboLight"]:
-        try:
+        # try:
             lightDict = getLightHobo(cursor, siteID)
             fullDict = joinDict(lightDict, fullDict)
-        except:
-            print("error")
+        # except:
+        #     print("error")
     if testsDict["hoboConductivity"]:
-        try:
+        # try:
             condDict = getConductivityHobo(cursor, siteID)
             fullDict = joinDict(condDict, fullDict)
-        except:
-            print("error")
+        # except:
+        #     print("error")
     if testsDict["hoboOxygen"]:
-        try:
+        # try:
             oxygenDict = getOxygenHobo(cursor, siteID)
             fullDict = joinDict(oxygenDict, fullDict)
-        except:
-            print("error")
+        # except:
+        #     print("error")
     if testsDict["measuredDischarge"]:
-        try:
+        # try:
             qDict = getQ(cursor, siteID)
             fullDict = joinDict(qDict, fullDict)
-        except:
-            print("error")
+        # except:
+        #     print("error")
     if testsDict["hanna"]:
-        try:
+        # try:
             hannaDict = getHanna(cursor, siteID)
             fullDict = joinDict(hannaDict, fullDict)
-        except:
-            print("error")
+        # except:
+        #     print("error")
     if testsDict["eureka"]:
-        try:
+        # try:
             eurekaDict = getEureka(cursor, siteID)
             fullDict = joinDict(eurekaDict, fullDict)
-        except:
-            print("error")
+        # except:
+        #     print("error")
     if testsDict["elementar"]:
-        try:
+        # try:
             elementarDict = getElementar(cursor, siteID, nbsNum, citSciNum)
             fullDict = joinDict(elementarDict, fullDict)
-        except:
-            print("error")
+        # except:
+        #     print("error")
     if testsDict["scanCalculated"]:
-        try:
+        # try:
             scanParDict = getScanPar(cursor, siteID, nbsNum, citSciNum)
             fullDict = joinDict(scanParDict, fullDict)
-        except:
-            print("error")
+        # except:
+        #     print("error")
     if testsDict["scanRaw"]:
-        try:
+        # try:
             scanFPDict = getScanFp(cursor, siteID, nbsNum, citSciNum)
-            fullDict = joinDict(scanParDict, fullDict)
-        except:
-            print("error")
+            fullDict = joinDict(scanFPDict, fullDict)
+        # except:
+        #     print("error")
     if testsDict["ic"]:
-        try:
+        # try:
             icCationDict = getICCation(cursor, siteID, nbsNum, citSciNum)
             fullDict = joinDict(icCationDict, fullDict)
-        except:
-            print("error")
+        # except:
+        #     print("error")
     if testsDict["ic"]:
-        try:
+        # try:
             icAnionDict = getICAnion(cursor, siteID, nbsNum, citSciNum)
             fullDict = joinDict(icAnionDict, fullDict)
-        except:
-            print("error")
+        # except:
+        #     print("error")
     if testsDict["icp"]:
-        try:
+        # try:
             icpDict = getICP(cursor, siteID, nbsNum, citSciNum)
             fullDict = joinDict(icpDict, fullDict)
-        except:
-            print("error")
+        # except:
+        #     print("error")
         
     print(siteID + " complete")
     df = pd.DataFrame.from_dict(fullDict)

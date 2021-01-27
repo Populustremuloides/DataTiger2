@@ -206,7 +206,7 @@ class ReadSampleId:
                 self.siteIndex = i
             elif "time" in header and "q" not in header:
                 self.timeIndex = i
-            elif "sortchem" in header:
+            elif ("sortchem" in header) or ("sort" in header and "chem" in header):
                 self.sortChemIndex = i
             elif "temp" in header:
                 self.tempIndex = i
@@ -358,6 +358,23 @@ class ReadSampleId:
             self.date = self.fixDate(self.date)
         if self.siteIndex != None:
             self.site = row[self.siteIndex]
+            self.site = self.site.replace(" ","")
+            try:
+                if ("nbs" in self.site.lower()) and ("." in self.site.lower()):
+                    nbs, num = self.site.split(".")
+                    num = str(int(num))
+                    if len(num) == 1:
+                        num = "0" + num
+                    self.site = "NBS." + num
+                elif "nbs" in self.site.lower():
+                    self.site = self.site.lower()
+                    num = self.site.replace("nbs","")
+                    num = str(int(num))
+                    if len(num) == 1:
+                        num = "0" + num
+                    self.site = "NBS." + num
+            except:
+                self.site = None
         if self.timeIndex != None:
             self.time = row[self.timeIndex]
         if self.sortChemIndex != None:

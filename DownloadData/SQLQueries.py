@@ -331,7 +331,7 @@ def getEureka(cursor, siteid):
     return dateToData
 
 def getQ(cursor, siteid):
-    sqlquery = "SELECT *, MAX(q_batch_id) FROM q_reads JOIN q_batches USING (q_batch_id) where site_id = ? group by date_sampled, time_sampled order by (date_sampled);"
+    sqlquery = "SELECT *, MAX(q_batch_id) FROM q_reads INNER JOIN q_batches USING (q_batch_id) where site_id = ? group by date_sampled, time_sampled order by (date_sampled);"
     sitetuple = (siteid,)
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
@@ -359,9 +359,10 @@ def getQ(cursor, siteid):
 
 def getElementar(cursor, siteid, nbsNum, citSciNum):
 
-    elementarNonAverageView = "SELECT * FROM elementar_reads INNER JOIN (SELECT MAX(elementar_batch_id), * FROM elementar_batches GROUP BY file_name, date_run) USING (elementar_batch_id)"
-    elementarAverageView = "SELECT elementar_batch_id, hole, sort_chem, method, AVG(tic_area), AVG(tc_area), AVG(npoc_area), AVG(tnb_area), AVG(tic_mg_per_liter), AVG(tc_mg_per_liter), AVG(npoc_mg_per_liter), AVG(tnb_mg_per_liter), date_run, time_run, project_id, operator, file_name, file_path FROM (" + elementarNonAverageView + ") GROUP BY sort_chem, hole, elementar_batch_id"
-    sqlquery = "SELECT *, MAX(datetime_uploaded) FROM (" + elementarAverageView + ") JOIN sort_chems USING (sort_chem) WHERE site_id LIKE \"%NBS%" + nbsNum + "\" OR site_id LIKE \"%NBS%" + str(int(nbsNum)) + "\" OR site_id = ? OR site_id = ? GROUP BY sort_chem;"
+    elementar_non_average_view = "SELECT * FROM elementar_reads INNER JOIN (SELECT MAX(elementar_batch_id), * FROM elementar_batches GROUP BY file_name, date_run) USING (elementar_batch_id)"
+    #elementarAverageView = "SELECT elementar_batch_id, hole, sort_chem, method, AVG(tic_area), AVG(tc_area), AVG(npoc_area), AVG(tnb_area), AVG(tic_mg_per_liter), AVG(tc_mg_per_liter), AVG(npoc_mg_per_liter), AVG(tnb_mg_per_liter), date_run, time_run, project_id, operator, file_name, file_path FROM (" + elementarNonAverageView + ") GROUP BY sort_chem, hole, elementar_batch_id"
+    elementar_average_view = "SELECT *, MAX(elementar_batch_id) FROM (SELECT elementar_batch_id, hole, sort_chem, method, AVG(tic_area), AVG(tc_area), AVG(npoc_area), AVG(tnb_area), AVG(tic_mg_per_liter), AVG(tc_mg_per_liter), AVG(npoc_mg_per_liter), AVG(tnb_mg_per_liter), date_run, time_run, project_id, operator, file_name, file_path FROM(" + elementar_non_average_view  + ") GROUP BY sort_chem, elementar_batch_id) GROUP BY sort_chem ORDER BY sort_chem;"
+    sqlquery = "SELECT *, MAX(datetime_uploaded) FROM (" + elementar_average_view + ") JOIN sort_chems USING (sort_chem) WHERE site_id LIKE \"%NBS%" + nbsNum + "\" OR site_id LIKE \"%NBS%" + str(int(nbsNum)) + "\" OR site_id = ? OR site_id = ? GROUP BY sort_chem;"
     sitetuple = (siteid, citSciNum)
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
@@ -380,8 +381,8 @@ def getElementar(cursor, siteid, nbsNum, citSciNum):
             tc_mgl = item[9]
             npoc_mgl = item[10]
             tnb_mgl = item[11]
-            date = str(item[20])
-            time = str(item[21])
+            date = str(item[21])
+            time = str(item[22])
 
             datetime = getDatetime(date, time)
             year, month, day, hour, minute, second = splitDatetimeQ(datetime)
@@ -402,7 +403,9 @@ def getElementar(cursor, siteid, nbsNum, citSciNum):
 
 def getScanPar(cursor, siteid, nbsNum, citSciNum):
 
-    scanParIntermediate = "SELECT * FROM scan_par_reads INNER JOIN (SELECT * FROM scan_par_batches WHERE scan_par_batches.scan_par_batch_id = (SELECT MAX(scan_par_batch_id) FROM scan_datetimes_to_scan_par_batches GROUP BY datetime_run))"
+
+    #scanParIntermediate = "SELECT * FROM scan_par_reads INNER JOIN (SELECT * FROM scan_par_batches WHERE scan_par_batches.scan_par_batch_id = (SELECT MAX(scan_par_batch_id) FROM scan_datetimes_to_scan_par_batches GROUP BY datetime_run))"
+    scanParIntermediate = "SELECT *, MAX(scan_par_batch_id) FROM scan_par_reads INNER JOIN scan_par_batches USING (scan_par_batch_id) GROUP BY datetime_run;"
     scanParView = "SELECT * FROM (" + scanParIntermediate + ") INNER JOIN sort_chems_to_datetime_run USING (datetime_run)"
     sqlquery = "SELECT *, MAX(datetime_uploaded) FROM (" + scanParView + ") JOIN sort_chems USING (sort_chem) WHERE site_id LIKE \"%NBS%" + nbsNum + "\" OR site_id LIKE \"%NBS%" + str(int(nbsNum)) + "\" OR site_id = ? OR site_id = ? GROUP BY sort_chem;"
     sitetuple = (siteid, citSciNum)
@@ -444,7 +447,8 @@ def getScanPar(cursor, siteid, nbsNum, citSciNum):
 
 def getScanFp(cursor, siteid, nbsNum, citSciNum):
 
-    scanFPIntermediate = "SELECT * FROM scan_fp_reads INNER JOIN (SELECT * FROM scan_fp_batches WHERE scan_fp_batches.scan_fp_batch_id = (SELECT MAX(scan_fp_batch_id) FROM scan_datetimes_to_scan_fp_batches GROUP BY datetime_run))"
+    #scanFPIntermediate = "SELECT * FROM scan_fp_reads INNER JOIN (SELECT * FROM scan_fp_batches WHERE scan_fp_batches.scan_fp_batch_id = (SELECT MAX(scan_fp_batch_id) FROM scan_datetimes_to_scan_fp_batches GROUP BY datetime_run))"
+    scanFPIntermediate = "SELECT * FROM (SELECT *, MAX(scan_fp_batch_id) FROM scan_fp_reads INNER JOIN scan_fp_batches USING (scan_fp_batch_id) GROUP BY datetime_run) INNER JOIN sort_chems_to_datetime_run USING (datetime_run);"
     scanFPView = "SELECT * FROM (" + scanFPIntermediate + ") INNER JOIN sort_chems_to_datetime_run USING (datetime_run)"
     sqlquery = "SELECT *, MAX(datetime_uploaded) FROM (" + scanFPView + ") JOIN sort_chems USING (sort_chem) WHERE site_id LIKE \"%NBS%" + nbsNum + "\" OR site_id LIKE \"%NBS%" + str(int(nbsNum)) + "\" OR site_id = ? OR site_id = ? GROUP BY sort_chem;"
     sitetuple = (siteid, citSciNum)
@@ -475,8 +479,8 @@ def getScanFp(cursor, siteid, nbsNum, citSciNum):
     for item in result:
         try:
 
-            date = str(item[230])
-            time = str(item[231])
+            date = str(item[232])
+            time = str(item[233])
 
             datetime = getDatetime(date, time)
             year, month, day, hour, minute, second = splitDatetimeQ(datetime)
@@ -497,8 +501,8 @@ def getScanFp(cursor, siteid, nbsNum, citSciNum):
 
 
 def getICCation(cursor, siteid, nbsNum, citSciNum):
-
-    icCationView = "SELECT * FROM ic_cation_reads INNER JOIN(SELECT * FROM ic_batches WHERE ic_batches.ic_batch_id = (SELECT MAX(ic_batch_id) FROM sort_chems_to_ic_cation_batches GROUP BY sort_chem)) WHERE batch_id = ic_batch_id"
+    icCationView = "SELECT *, MAX(batch_id) FROM ic_cation_reads INNER JOIN ic_batches WHERE batch_id == ic_batch_id GROUP BY(sort_chem)"
+    #icCationView = "SELECT * FROM ic_cation_reads INNER JOIN(SELECT * FROM ic_batches WHERE ic_batches.ic_batch_id = (SELECT MAX(ic_batch_id) FROM sort_chems_to_ic_cation_batches GROUP BY sort_chem)) WHERE batch_id = ic_batch_id"
     sqlquery = "SELECT *, MAX(datetime_uploaded) FROM (" + icCationView + ") JOIN sort_chems USING (sort_chem) WHERE site_id LIKE \"%NBS%" + nbsNum + "\" OR site_id LIKE \"%NBS%" + str(int(nbsNum)) + "\" OR site_id = ? OR site_id = ? GROUP BY sort_chem;"
     sitetuple = (siteid, citSciNum)
     cursor.execute(sqlquery, sitetuple)
@@ -524,8 +528,8 @@ def getICCation(cursor, siteid, nbsNum, citSciNum):
             magnesium = item[6]
             calcium = item[7]
             strontium = item[8]
-            date = str(item[17])
-            time = str(item[18])
+            date = str(item[18])
+            time = str(item[19])
 
             datetime = getDatetime(date, time)
             year, month, day, hour, minute, second = splitDatetimeQ(datetime)
@@ -547,8 +551,8 @@ def getICCation(cursor, siteid, nbsNum, citSciNum):
     return dateToData
 
 def getICAnion(cursor, siteid, nbsNum, citSciNum):
-
-    icAnionView = "SELECT * FROM ic_anion_reads INNER JOIN(SELECT * FROM ic_batches WHERE ic_batches.ic_batch_id = (SELECT MAX(ic_batch_id) FROM sort_chems_to_ic_anion_batches GROUP BY sort_chem)) WHERE batch_id = ic_batch_id"
+    icAnionView = "SELECT *, MAX(batch_id) FROM ic_anion_reads INNER JOIN ic_batches WHERE batch_id == ic_batch_id GROUP BY(sort_chem)"
+    #icAnionView = "SELECT * FROM ic_anion_reads INNER JOIN(SELECT * FROM ic_batches WHERE ic_batches.ic_batch_id = (SELECT MAX(ic_batch_id) FROM sort_chems_to_ic_anion_batches GROUP BY sort_chem)) WHERE batch_id = ic_batch_id"
     sqlquery = "SELECT *, MAX(datetime_uploaded) FROM (" + icAnionView + ") JOIN sort_chems USING (sort_chem) WHERE site_id LIKE \"%NBS%" + nbsNum + "\" OR site_id LIKE \"%NBS%" + str(int(nbsNum)) + "\" OR site_id = ?  OR site_id = ? GROUP BY sort_chem;"
     sitetuple = (siteid,citSciNum)
     cursor.execute(sqlquery, sitetuple)
@@ -578,8 +582,8 @@ def getICAnion(cursor, siteid, nbsNum, citSciNum):
             nitrate = item[8]
             sulfate = item[9]
             phosphate = item[10]
-            date = str(item[19])
-            time = str(item[20])
+            date = str(item[20])
+            time = str(item[21])
 
             datetime = getDatetime(date, time)
             year, month, day, hour, minute, second = splitDatetimeQ(datetime)
@@ -602,8 +606,8 @@ def getICAnion(cursor, siteid, nbsNum, citSciNum):
     return dateToData
 
 def getICP(cursor, siteid, nbsNum, citSciNum):
-
-    icpView = "SELECT * FROM icp_reads INNER JOIN(SELECT * FROM icp_batches WHERE icp_batches.icp_batch_id = (SELECT MAX(icp_batch_id) FROM sort_chems_to_icp_batches GROUP BY sort_chem)) USING(icp_batch_id)"
+    icpView = "SELECT *, MAX(icp_batch_id) FROM icp_reads INNER JOIN icp_batches USING(icp_batch_id) GROUP BY(sort_chem);"
+    #icpView = "SELECT * FROM icp_reads INNER JOIN(SELECT * FROM icp_batches WHERE icp_batches.icp_batch_id = (SELECT MAX(icp_batch_id) FROM sort_chems_to_icp_batches GROUP BY sort_chem)) USING(icp_batch_id)"
     sqlquery = "SELECT *, MAX(datetime_uploaded) FROM (" + icpView + ") JOIN sort_chems USING (sort_chem) WHERE site_id LIKE \"%NBS%" + nbsNum + "\" OR site_id LIKE \"%NBS%" + str(int(nbsNum)) + "\" OR site_id = ? OR site_id = ? GROUP BY sort_chem;"
     sitetuple = (siteid,citSciNum)
     cursor.execute(sqlquery, sitetuple)

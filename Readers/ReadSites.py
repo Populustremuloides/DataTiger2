@@ -112,6 +112,7 @@ class ReadSites:
 
         if self.siteIndex != None:
             self.site = row[self.siteIndex]
+            #self.site = self.site.replace(" ","")
         if self.xIndex != None:
             self.x = row[self.xIndex]
         if self.yIndex != None:

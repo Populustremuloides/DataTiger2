@@ -87,6 +87,8 @@ class SenseFileOrigin():
                     value = str(df.iloc[i,1]).lower()
                     if "no" in value:
                         return "lachat"
+                    if "selected" in value and "peak" in value:
+                        return "ic"
                     i = i + 1
 
                 i = 0

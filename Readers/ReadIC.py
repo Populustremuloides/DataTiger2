@@ -213,9 +213,8 @@ class ReadIC():
                 missings.append("calcium")
             if self.strontiumIndex == None:
                 missings.append("strontium")
-        if len(missings) > 0:
-            message = "ERROR: The following expected columns were missing from the headers of the IC sheet: " + str(missings) + "\n\n"
-            raise Warnings(message, self.fileName)
+        return missings
+
 
     def fixDate(self, date):
         date = date.replace(" ", "") # remove any extra space
@@ -308,22 +307,40 @@ class ReadIC():
 
             if self.fluorideIndex != None:
                 self.fluoride = self.replaceNA(row[self.fluorideIndex])
+            else:
+                self.fluoride = ""
             if self.acetateIndex != None:
                 self.acetate = self.replaceNA(row[self.acetateIndex])
+            else:
+                self.acetate = ""
             if self.formateIndex != None:
                 self.formate = self.replaceNA(row[self.formateIndex])
+            else:
+                self.formate = ""
             if self.chlorideIndex != None:
                 self.chloride = self.replaceNA(row[self.chlorideIndex])
+            else:
+                self.chloride = ""
             if self.nitriteIndex != None:
                 self.nitrite = self.replaceNA(row[self.nitriteIndex])
+            else:
+                self.nitrite = ""
             if self.bromideIndex != None:
                 self.bromide = self.replaceNA(row[self.bromideIndex])
+            else:
+                self.bromide = ""
             if self.nitrateIndex != None:
                 self.nitrate = self.replaceNA(row[self.nitrateIndex])
+            else:
+                self.nitrate = ""
             if self.sulfateIndex != None:
                 self.sulfate = self.replaceNA(row[self.sulfateIndex])
+            else:
+                self.sulfate = ""
             if self.phosphateIndex != None:
                 self.phosphate = self.replaceNA(row[self.phosphateIndex])
+            else:
+                self.phosphate = ""
 
             self.rowContainsAnion = self.checkIfAnionsPresent()
         else:
@@ -334,18 +351,32 @@ class ReadIC():
 
             if self.lithiumIndex != None:
                 self.lithium = self.replaceNA(row[self.lithiumIndex])
+            else:
+                self.lithium = ""
             if self.sodiumIndex != None:
                 self.sodium = self.replaceNA(row[self.sodiumIndex])
+            else:
+                self.sodium = ""
             if self.ammoniumIndex != None:
                 self.ammonium = self.replaceNA(row[self.ammoniumIndex])
+            else:
+                self.ammonium = ""
             if self.potassiumIndex != None:
                 self.potassium = self.replaceNA(row[self.potassiumIndex])
+            else:
+                self.potassium = ""
             if self.magnesiumIndex != None:
                 self.magnesium = self.replaceNA(row[self.magnesiumIndex])
+            else:
+                self.magnesium = ""
             if self.calciumIndex != None:
                 self.calcium = self.replaceNA(row[self.calciumIndex])
+            else:
+                self.calcium = ""
             if self.strontiumIndex != None:
                 self.strontium = self.replaceNA(row[self.strontiumIndex])
+            else:
+                self.strontium = ""
 
             self.rowContainsCation = self.checkIfCationsPresent()
         else:

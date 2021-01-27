@@ -192,9 +192,9 @@ class Database:
             missingScanFP = self.querier.missingScanFps
             missingScanPar = self.querier.missingScanPars
             missingElementar = self.querier.missingElementars
-            missingICCation = self.querier.missingElementars
-            missingICAnion = self.querier.missingElementars
-            missingICP = self.querier.missingElementars
+            missingICCation = self.querier.missingIcCations
+            missingICAnion = self.querier.missingIcAnions
+            missingICP = self.querier.missingIcps
             missingAqualog = self.querier.missingAqualogs
             # missingDocs = self.querier.missingDocs
             # missingNo3s = self.querier.missingNo3s

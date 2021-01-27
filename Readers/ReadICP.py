@@ -116,9 +116,11 @@ class ReadICP:
         for index in columnsToSearch:
             column = columns[index].lower()
 
-            if column == "al":
+            if ("sort" in column and "chem" in column) or ("lab" in column and "#" in column) or ("sample" in column and "id" in column):
+                self.sortChemIndex = index
+            elif column == "al" and not "ppm" in column:
                 self.aluminumIndex = index
-            elif column == "as":
+            elif column == "as"  and not "ppm" in column:
                 self.arsenicIndex = index
             elif column == "b":
                 self.boronIndex = index
@@ -169,6 +171,7 @@ class ReadICP:
 
 
     def clearValues(self):
+        self.sortChem = None
         self.aluminum = None
         self.arsenic = None
         self.boron = None
@@ -199,8 +202,8 @@ class ReadICP:
     def readRow(self, row):
         self.clearValues()
 
-        self.sortChem = row[0]
-
+        if self.sortChemIndex != None:
+            self.sortChem = row[self.sortChemIndex]
         if self.aluminumIndex != None:
             self.aluminum = row[self.aluminumIndex]
         if self.arsenicIndex != None:
