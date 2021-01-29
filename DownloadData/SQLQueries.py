@@ -267,18 +267,19 @@ def getHanna(cursor, siteid):
         datetime = date + " " + time
 
         year, month, day, hour, minute, second = splitDatetimeQ(datetime)
-        index = datetimeToIndex(year, month, day, hour, minute, second)
-        index = round(index / dayToIndexRatio) * dayToIndexRatio
+        if int(year) >= 18: # ignore all the 2014 results
+            index = datetimeToIndex(year, month, day, hour, minute, second)
+            index = round(index / dayToIndexRatio) * dayToIndexRatio
 
-        dateToData["datetime"].append(datetime)
-        dateToData["index"].append(index)
-        dateToData["temperature_hanna"].append(temperature)
-        dateToData["pH_hanna"].append(pH)
-        dateToData["orpMV_hanna"].append(orpMV)
-        dateToData["electricalConductivity_hanna"].append(electricalConductivity)
-        dateToData["barometricPressure_hanna"].append(barometricPressure)
-        dateToData["dissolvedOxygenPercent_hanna"].append(dissolvedOxygenPercent)
-        dateToData["dissolvedOxygen_mgL_hanna"].append(dissolvedOxygen_mgL)
+            dateToData["datetime"].append(datetime)
+            dateToData["index"].append(index)
+            dateToData["temperature_hanna"].append(temperature)
+            dateToData["pH_hanna"].append(pH)
+            dateToData["orpMV_hanna"].append(orpMV)
+            dateToData["electricalConductivity_hanna"].append(electricalConductivity)
+            dateToData["barometricPressure_hanna"].append(barometricPressure)
+            dateToData["dissolvedOxygenPercent_hanna"].append(dissolvedOxygenPercent)
+            dateToData["dissolvedOxygen_mgL_hanna"].append(dissolvedOxygen_mgL)
 
     return dateToData
 
@@ -348,12 +349,13 @@ def getQ(cursor, siteid):
         datetime = date + " " + time
 
         year, month, day, hour, minute, second = splitDatetimeQ(datetime)
-        index = datetimeToIndex(year, month, day, hour, minute, second)
-        index = round(index / dayToIndexRatio) * dayToIndexRatio
+        if int(year) >= 18: # protect against when the Hanna accidentally includes "2014" data
+            index = datetimeToIndex(year, month, day, hour, minute, second)
+            index = round(index / dayToIndexRatio) * dayToIndexRatio
 
-        dateToData["datetime"].append(datetime)
-        dateToData["discharge_measured"].append(discharge)
-        dateToData["index"].append(index)
+            dateToData["datetime"].append(datetime)
+            dateToData["discharge_measured"].append(discharge)
+            dateToData["index"].append(index)
 
     return dateToData
 
@@ -361,7 +363,7 @@ def getElementar(cursor, siteid, nbsNum, citSciNum):
 
     elementar_non_average_view = "SELECT * FROM elementar_reads INNER JOIN (SELECT MAX(elementar_batch_id), * FROM elementar_batches GROUP BY file_name, date_run) USING (elementar_batch_id)"
     #elementarAverageView = "SELECT elementar_batch_id, hole, sort_chem, method, AVG(tic_area), AVG(tc_area), AVG(npoc_area), AVG(tnb_area), AVG(tic_mg_per_liter), AVG(tc_mg_per_liter), AVG(npoc_mg_per_liter), AVG(tnb_mg_per_liter), date_run, time_run, project_id, operator, file_name, file_path FROM (" + elementarNonAverageView + ") GROUP BY sort_chem, hole, elementar_batch_id"
-    elementar_average_view = "SELECT *, MAX(elementar_batch_id) FROM (SELECT elementar_batch_id, hole, sort_chem, method, AVG(tic_area), AVG(tc_area), AVG(npoc_area), AVG(tnb_area), AVG(tic_mg_per_liter), AVG(tc_mg_per_liter), AVG(npoc_mg_per_liter), AVG(tnb_mg_per_liter), date_run, time_run, project_id, operator, file_name, file_path FROM(" + elementar_non_average_view  + ") GROUP BY sort_chem, elementar_batch_id) GROUP BY sort_chem ORDER BY sort_chem;"
+    elementar_average_view = "SELECT *, MAX(elementar_batch_id) FROM (SELECT elementar_batch_id, hole, sort_chem, method, AVG(tic_area), AVG(tc_area), AVG(npoc_area), AVG(tnb_area), AVG(tic_mg_per_liter), AVG(tc_mg_per_liter), AVG(npoc_mg_per_liter), AVG(tnb_mg_per_liter), date_run, time_run, project_id, operator, file_name, file_path FROM(" + elementar_non_average_view  + ") GROUP BY sort_chem, elementar_batch_id) GROUP BY sort_chem ORDER BY sort_chem"
     sqlquery = "SELECT *, MAX(datetime_uploaded) FROM (" + elementar_average_view + ") JOIN sort_chems USING (sort_chem) WHERE site_id LIKE \"%NBS%" + nbsNum + "\" OR site_id LIKE \"%NBS%" + str(int(nbsNum)) + "\" OR site_id = ? OR site_id = ? GROUP BY sort_chem;"
     sitetuple = (siteid, citSciNum)
     cursor.execute(sqlquery, sitetuple)
@@ -405,7 +407,7 @@ def getScanPar(cursor, siteid, nbsNum, citSciNum):
 
 
     #scanParIntermediate = "SELECT * FROM scan_par_reads INNER JOIN (SELECT * FROM scan_par_batches WHERE scan_par_batches.scan_par_batch_id = (SELECT MAX(scan_par_batch_id) FROM scan_datetimes_to_scan_par_batches GROUP BY datetime_run))"
-    scanParIntermediate = "SELECT *, MAX(scan_par_batch_id) FROM scan_par_reads INNER JOIN scan_par_batches USING (scan_par_batch_id) GROUP BY datetime_run;"
+    scanParIntermediate = "SELECT *, MAX(scan_par_batch_id) FROM scan_par_reads INNER JOIN scan_par_batches USING (scan_par_batch_id) GROUP BY datetime_run"
     scanParView = "SELECT * FROM (" + scanParIntermediate + ") INNER JOIN sort_chems_to_datetime_run USING (datetime_run)"
     sqlquery = "SELECT *, MAX(datetime_uploaded) FROM (" + scanParView + ") JOIN sort_chems USING (sort_chem) WHERE site_id LIKE \"%NBS%" + nbsNum + "\" OR site_id LIKE \"%NBS%" + str(int(nbsNum)) + "\" OR site_id = ? OR site_id = ? GROUP BY sort_chem;"
     sitetuple = (siteid, citSciNum)
@@ -448,7 +450,7 @@ def getScanPar(cursor, siteid, nbsNum, citSciNum):
 def getScanFp(cursor, siteid, nbsNum, citSciNum):
 
     #scanFPIntermediate = "SELECT * FROM scan_fp_reads INNER JOIN (SELECT * FROM scan_fp_batches WHERE scan_fp_batches.scan_fp_batch_id = (SELECT MAX(scan_fp_batch_id) FROM scan_datetimes_to_scan_fp_batches GROUP BY datetime_run))"
-    scanFPIntermediate = "SELECT * FROM (SELECT *, MAX(scan_fp_batch_id) FROM scan_fp_reads INNER JOIN scan_fp_batches USING (scan_fp_batch_id) GROUP BY datetime_run) INNER JOIN sort_chems_to_datetime_run USING (datetime_run);"
+    scanFPIntermediate = "SELECT * FROM (SELECT *, MAX(scan_fp_batch_id) FROM scan_fp_reads INNER JOIN scan_fp_batches USING (scan_fp_batch_id) GROUP BY datetime_run) INNER JOIN sort_chems_to_datetime_run USING (datetime_run)"
     scanFPView = "SELECT * FROM (" + scanFPIntermediate + ") INNER JOIN sort_chems_to_datetime_run USING (datetime_run)"
     sqlquery = "SELECT *, MAX(datetime_uploaded) FROM (" + scanFPView + ") JOIN sort_chems USING (sort_chem) WHERE site_id LIKE \"%NBS%" + nbsNum + "\" OR site_id LIKE \"%NBS%" + str(int(nbsNum)) + "\" OR site_id = ? OR site_id = ? GROUP BY sort_chem;"
     sitetuple = (siteid, citSciNum)
@@ -606,7 +608,7 @@ def getICAnion(cursor, siteid, nbsNum, citSciNum):
     return dateToData
 
 def getICP(cursor, siteid, nbsNum, citSciNum):
-    icpView = "SELECT *, MAX(icp_batch_id) FROM icp_reads INNER JOIN icp_batches USING(icp_batch_id) GROUP BY(sort_chem);"
+    icpView = "SELECT *, MAX(icp_batch_id) FROM icp_reads INNER JOIN icp_batches USING(icp_batch_id) GROUP BY(sort_chem)"
     #icpView = "SELECT * FROM icp_reads INNER JOIN(SELECT * FROM icp_batches WHERE icp_batches.icp_batch_id = (SELECT MAX(icp_batch_id) FROM sort_chems_to_icp_batches GROUP BY sort_chem)) USING(icp_batch_id)"
     sqlquery = "SELECT *, MAX(datetime_uploaded) FROM (" + icpView + ") JOIN sort_chems USING (sort_chem) WHERE site_id LIKE \"%NBS%" + nbsNum + "\" OR site_id LIKE \"%NBS%" + str(int(nbsNum)) + "\" OR site_id = ? OR site_id = ? GROUP BY sort_chem;"
     sitetuple = (siteid,citSciNum)

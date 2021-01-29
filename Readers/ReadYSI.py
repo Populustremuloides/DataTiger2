@@ -45,6 +45,20 @@ class ReadYSI:
 
     def fixDate(self, date):
         month, day, year = date.split("/")
+
+        month = int(month)
+        day = int(day)
+        year = int(year)
+
+        if month > 2000:
+            nyear = month
+            nmonth = day
+            nday = year
+
+            day = str(nday)
+            month = str(nmonth)
+            year = str(nyear)
+
         return year + '-' + month + "-" + day
 
     def getValues(self, row):
