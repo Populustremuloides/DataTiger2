@@ -151,9 +151,12 @@ class SenseFileOrigin():
                         if len(secondRow) == 0:
                             secondRow = thirdRow
 
-                        print("FIRST ROW:")
+                        print("FIRST RoW:")
                         print(firstRow)
-
+                        
+                        if "Inj" in firstRow[0] and "Inj" in firstRow[1] and "Type" in firstRow[2]:
+                            return "ic_new"
+                        
                         if firstRow[0].endswith(".LOG"):
                             return "field_eureka"
                         elif "project" in secondRow[0].lower():

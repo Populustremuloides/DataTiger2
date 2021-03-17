@@ -510,6 +510,10 @@ class Database:
         except ElementarProblemRowsOccured as e:
             self.conn.commit()
             return (e.message + self.easterEggs.pickRandomCongrats(self.sassCoefficient))
+        except BadHobo as e:
+            self.conn.commit()
+            return (e.message + self.easterEggs.pickRandomCongrats(self.sassCoefficient))
+
         except IgnoreFile as e:
             self.conn.rollback()
             message = "ERROR: file type for " + path + " recognized as irrelevant. File ignored.\n" + self.easterEggs.pickRandomCondolence(self.sassCoefficient)

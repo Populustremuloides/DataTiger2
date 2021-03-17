@@ -75,7 +75,7 @@ def joinDict(dict1, fullDict):
             #             print(dtime[i])
 
             newData = [None] * len(fullDict["index"])
-
+            print(fullDict["datetime"][-5:])
             for i in range(len(indices)):
                 index = indices[i]
                 data = dataList[i]

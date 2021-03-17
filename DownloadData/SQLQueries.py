@@ -62,7 +62,7 @@ def splitDatetimeQ(datetime):
     return year, month, day, hour, minute, second
 
 def getP(cursor, siteid):
-    sqlquery = "SELECT *, MAX(batch_id) FROM (hobo_logs INNER JOIN hobo_batches USING(batch_id)) WHERE site_id = ? GROUP BY logging_date, logging_time;"
+    sqlquery = "SELECT *, MAX(batch_id) FROM (hobo_pressure_logs_1 INNER JOIN hobo_pressure_batches_1 USING(batch_id)) WHERE site_id = ? GROUP BY logging_date, logging_time;"
     sitetuple = (siteid,)
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
@@ -146,7 +146,7 @@ def getSlopeInterceptDicts(cursor, siteID):
     return keyToIndex, siteToInfoDict
 
 def getLightHobo(cursor, siteid):
-    sqlquery = "SELECT *, MAX(batch_id) FROM (hobo_light_logs INNER JOIN hobo_light_batches USING(batch_id)) WHERE site_id = ? GROUP BY logging_date, logging_time;"
+    sqlquery = "SELECT *, MAX(batch_id) FROM (hobo_light_logs_1 INNER JOIN hobo_light_batches_1 USING(batch_id)) WHERE site_id = ? GROUP BY logging_date, logging_time;"
     sitetuple = (siteid,)
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
@@ -159,8 +159,8 @@ def getLightHobo(cursor, siteid):
     for item in result:
         date = item[0]
         time = item[1]
-        intensity = item[2]
-        temperature = item[3]
+        intensity = item[3]
+        temperature = item[2]
         date = date.split(" ")[0]
         datetime = date + " " + time
 
@@ -176,7 +176,7 @@ def getLightHobo(cursor, siteid):
     return dateToData
 
 def getConductivityHobo(cursor, siteid):
-    sqlquery = "SELECT *, MAX(batch_id) FROM (hobo_conductivity_logs INNER JOIN hobo_conductivity_batches USING(batch_id)) WHERE site_id = ? GROUP BY logging_date, logging_time;"
+    sqlquery = "SELECT *, MAX(batch_id) FROM (hobo_conductivity_logs_1 INNER JOIN hobo_conductivity_batches_1 USING(batch_id)) WHERE site_id = ? GROUP BY logging_date, logging_time;"
     sitetuple = (siteid,)
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
@@ -189,8 +189,8 @@ def getConductivityHobo(cursor, siteid):
     for item in result:
         date = item[0]
         time = item[1]
-        conductance = item[2]
-        temperature = item[3]
+        conductance = item[3]
+        temperature = item[2]
         date = date.split(" ")[0]
         datetime = date + " " + time
 
@@ -206,7 +206,7 @@ def getConductivityHobo(cursor, siteid):
     return dateToData
 
 def getOxygenHobo(cursor, siteid):
-    sqlquery = "SELECT *, MAX(batch_id) FROM (hobo_oxygen_logs INNER JOIN hobo_oxygen_batches USING(batch_id)) WHERE site_id = ? GROUP BY logging_date, logging_time;"
+    sqlquery = "SELECT *, MAX(batch_id) FROM (hobo_oxygen_logs_1 INNER JOIN hobo_oxygen_batches_1 USING(batch_id)) WHERE site_id = ? GROUP BY logging_date, logging_time;"
     sitetuple = (siteid,)
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
@@ -215,14 +215,16 @@ def getOxygenHobo(cursor, siteid):
     dateToData["dissolvedOxygen_mgl_hobo"] = []
     dateToData["temperature_hobo"] = []
     dateToData["index"] = []
+    dateToData["filename"] = []
 
     for item in result:
         date = item[0]
         time = item[1]
-        dissolvedOxygen = item[2]
-        temperature = item[3]
+        dissolvedOxygen = item[3]
+        temperature = item[2]
         date = date.split(" ")[0]
         datetime = date + " " + time
+        filename = item[-5]
 
         year, month, day, hour, minute, second = splitDatetimeP(datetime)
         index = datetimeToIndex(year, month, day, hour, minute, second)
@@ -232,7 +234,7 @@ def getOxygenHobo(cursor, siteid):
         dateToData["dissolvedOxygen_mgl_hobo"].append(dissolvedOxygen)
         dateToData["index"].append(index)
         dateToData["temperature_hobo"].append(temperature)
-
+        dateToData["filename"].append(filename)
     return dateToData
 
 def getHanna(cursor, siteid):
@@ -732,6 +734,7 @@ def getFieldSheetInfo(cursor, siteid, nbsNum, citSciNum):
     dateToData["barometricPressure_fieldsheet"] = []
     dateToData["dissolvedOxygenPercent_fieldsheet"] = []
     dateToData["dissolvedOxygen_mgL_fieldsheet"] = []
+    dateToData["device"] = []
     dateToData["chlorophyl_ugl"] = []
     dateToData["chlorophyl_rfu"] = []
     dateToData["pc_ug"] = []
@@ -750,6 +753,7 @@ def getFieldSheetInfo(cursor, siteid, nbsNum, citSciNum):
             pressure = item[11]
             calibrated = item[12]
             qGrams = item[13]
+            device = item[-5]
             chlorophyl_ugl = item[-4]
             chlorophyl_rfu = item[-3]
             pc_ug = item[-2]
@@ -779,6 +783,7 @@ def getFieldSheetInfo(cursor, siteid, nbsNum, citSciNum):
             dateToData["dissolvedOxygen_mgL_fieldsheet"].append(o2mg)
             dateToData["calibrated_fieldsheet"].append(calibrated)
             dateToData["qGrams_fieldsheet"].append(qGrams)
+            dateToData["device"].append(device)
             dateToData["chlorophyl_ugl"].append(chlorophyl_ugl)
             dateToData["chlorophyl_rfu"].append(chlorophyl_rfu)
             dateToData["pc_ug"].append(pc_ug)

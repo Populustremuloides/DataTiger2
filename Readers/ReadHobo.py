@@ -3,6 +3,7 @@ import csv
 from CustomErrors import NoDataToParse, HoboSerialNumUnparsable, HoboIncorrectlyFormated, HoboMissingData, SiteNotInFileName
 from UnitConversions import *
 import numpy as np
+from datetime import datetime
 
 class ReadHobo():
     def __init__(self, path):
@@ -114,14 +115,22 @@ class ReadHobo():
 
         if len(stringList) > 2:
             meridian = stringList[2]
+            timeList = time.split(":")
+            hour = int(timeList[0])
+            if meridian == "AM":
+                if hour == 12:
+                    hour = 0 # midnight is 0 hours in military time
 
             if meridian == "PM":
-                timeList = time.split(":")
-                hour = int(timeList[0])
-                if hour > 12:
+                if hour == 12:
+                    pass
+                else:
                     hour = hour + 12
-                    timeList[0] = str(hour)
-                time = ":".join(timeList)
+            hour = str(hour)
+            if len(hour) == 1:
+                hour = "0" + hour
+            timeList[0] = str(hour)
+            time = ":".join(timeList)
 
         return[date, time]
 
@@ -175,6 +184,8 @@ class ReadHobo():
             return doPercentTomgL
         if "ppm" in header:
             return ppmTomgL
+        if "psi" in header:
+            return psiTommHg
         return identity
 
     def getTempConversion(self, val):
@@ -271,6 +282,8 @@ class ReadHobo():
         print(self.letterToTypeDict)
 
     def readBatch(self):
+        self.datetimeUploaded = str(datetime.now())
+
         # get the site id from the file name
         fileList = self.fileName.split(".")
         fileWords = fileList[0]

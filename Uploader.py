@@ -20,7 +20,7 @@ from Uploaders.UploadWater import *
 from Uploaders.UploadQ import *
 from Uploaders.UploadSites import *
 from Uploaders.UploadYSI import *
-
+from Uploaders.UploadICNew import *
 
 from Readers.ReadICP import *
 from Readers.ReadIC import *
@@ -38,6 +38,7 @@ from Readers.ReadWater import *
 from Readers.ReadQ import *
 from Readers.ReadSites import *
 from Readers.ReadYSI import *
+from Readers.ReadICNew import *
 
 class Uploader:
     def __init__(self, database):
@@ -48,8 +49,8 @@ class Uploader:
         return self.database.getProjectId()
 
     def uploadFile(self, cursor, filePath, fileOrigin, allowDuplicates):
-        self.allowDuplicates = allowDuplicates
-        try:
+            self.allowDuplicates = allowDuplicates
+        # try:
             if fileOrigin == "field_hanna":
 
                 self.hannaReader = ReadHanna(filePath)
@@ -71,7 +72,7 @@ class Uploader:
 
             if fileOrigin == "field_hobo.csv":
                 self.hoboReader = ReadHobo(filePath)
-                self.hoboUploader = UploadHobo(cursor, self, self.hoboReader, "absolute_pressure","hobo_logs", "hobo_batches")
+                self.hoboUploader = UploadHobo(cursor, self, self.hoboReader, "absolute_pressure","hobo_pressure_logs_1", "hobo_pressure_batches_1")
 
                 self.hoboUploader.uploadHobo()
                 self.hoboUploader.uploadBatch()
@@ -79,7 +80,7 @@ class Uploader:
 
             if fileOrigin == "light_hobo":
                 self.hoboReader = ReadHobo(filePath)
-                self.hoboUploader = UploadHobo(cursor, self, self.hoboReader, "intensity","hobo_light_logs", "hobo_light_batches")
+                self.hoboUploader = UploadHobo(cursor, self, self.hoboReader, "intensity","hobo_light_logs_1", "hobo_light_batches_1")
 
                 self.hoboUploader.uploadHobo()
                 self.hoboUploader.uploadBatch()
@@ -87,7 +88,7 @@ class Uploader:
 
             if fileOrigin == "dissolved_oxygen_hobo":
                 self.hoboReader = ReadHobo(filePath)
-                self.hoboUploader = UploadHobo(cursor, self, self.hoboReader, "dissolved_oxygen_mgl","hobo_oxygen_logs", "hobo_oxygen_batches")
+                self.hoboUploader = UploadHobo(cursor, self, self.hoboReader, "dissolved_oxygen_mgl","hobo_oxygen_logs_1", "hobo_oxygen_batches_1")
 
                 self.hoboUploader.uploadHobo()
                 self.hoboUploader.uploadBatch()
@@ -95,7 +96,7 @@ class Uploader:
 
             if fileOrigin == "conductivity_hobo":
                 self.hoboReader = ReadHobo(filePath)
-                self.hoboUploader = UploadHobo(cursor, self, self.hoboReader, "conductivity","hobo_conductivity_logs", "hobo_conductivity_batches")
+                self.hoboUploader = UploadHobo(cursor, self, self.hoboReader, "conductivity","hobo_conductivity_logs_1", "hobo_conductivity_batches_1")
 
                 self.hoboUploader.uploadHobo()
                 self.hoboUploader.uploadBatch()
@@ -116,6 +117,13 @@ class Uploader:
 
                 self.icUploader.uploadBatch()
                 self.icUploader.uploadReads()
+            if fileOrigin == "ic_new":
+                self.icReader = ReadICNew(filePath)
+                self.icUploader = UploadICNew(cursor, self, self.icReader)
+
+                self.icUploader.uploadBatch()
+                self.icUploader.uploadReads()
+
             if fileOrigin == "scan.fp":
                 self.scanFPReader = ReadScanFP(filePath)
                 self.scanFPUploader = UploadScanFP(cursor, self, self.scanFPReader)
@@ -208,11 +216,11 @@ class Uploader:
                 self.sitesUploader.uploadBatch()
                 self.sitesUploader.uploadReads()
 
-        except sqlite3.OperationalError: # FIXME: PUT THIS BACK
-            raise DatabaseLocked()
+        # except sqlite3.OperationalError: # FIXME: PUT THIS BACK
+        #     raise DatabaseLocked()
         #
-        except Error as e:
-            print("ERROR in UPLOADER")
-            print(type(e))
-            raise e
+        # except Error as e:
+        #     print("ERROR in UPLOADER")
+        #     print(type(e))
+        #     raise e
 

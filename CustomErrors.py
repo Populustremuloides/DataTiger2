@@ -88,6 +88,10 @@ class DuplicateNotAllowed(Error):
                       "and according to the settings, duplicates are not allowed. If you are trying to submit a file with data that has been corrected, then " \
                       "make sure to hit the \' allow duplicates\' button above before re-submitting the file.\n\n"
 
+class BadHobo(Error):
+    def __init__(self, path):
+        self.message = "ERROR: the file " + path + " was recognized to contain faulty data, and was therefore no logging data were uploaded.\n\n"
+
 class ICHasExtraSheets(Error):
     def __init__(self, path):
         self.message = "ERROR: unable to upload " + path + " because the excel file contained multiple sheets, and DataTiger can only parse " \

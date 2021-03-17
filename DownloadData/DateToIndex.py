@@ -203,7 +203,7 @@ def timeToIndex(hour, minute, second, index):
     # add minutes
     index += int(minute) / (24 * 60)
     # add seconds
-    index += int(second) / (24 * 60 * 60)
+    index += float(second) / (24 * 60 * 60)
     return index
 
 def datetimeToIndex(year, month, day, hour, minute, second):

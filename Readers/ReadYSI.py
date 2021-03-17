@@ -59,6 +59,10 @@ class ReadYSI:
             month = str(nmonth)
             year = str(nyear)
 
+        month = str(month)
+        day = str(day)
+        year = str(year)
+
         return year + '-' + month + "-" + day
 
     def getValues(self, row):
