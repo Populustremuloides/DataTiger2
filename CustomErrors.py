@@ -44,6 +44,7 @@ class EurekaFileIncorrectlyNamed(Error):
     def __init__(self, path):
         self.message = "ERROR: the eureka file, " + path + " was incorrectly named. It is essential that the " \
                        "file be named with the SITEDATE.xls format. Please rename the file and submit again.\n\n"
+
 class EurekaFileIncorrectlyFormated(Error):
     def __init__(self, path):
         self.message = "ERROR: the eureka file, " + path + " was not correctly formated. There was a row with an incorect number of commas.\n\n"
@@ -90,7 +91,7 @@ class DuplicateNotAllowed(Error):
 
 class BadHobo(Error):
     def __init__(self, path):
-        self.message = "ERROR: the file " + path + " was recognized to contain faulty data, and was therefore no logging data were uploaded.\n\n"
+        self.message = "ERROR: the file " + path + " was recognized to contain faulty data. No logging data were uploaded.\n\n"
 
 class ICHasExtraSheets(Error):
     def __init__(self, path):

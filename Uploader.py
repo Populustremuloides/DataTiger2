@@ -117,6 +117,7 @@ class Uploader:
 
                 self.icUploader.uploadBatch()
                 self.icUploader.uploadReads()
+
             if fileOrigin == "ic_new":
                 self.icReader = ReadICNew(filePath)
                 self.icUploader = UploadICNew(cursor, self, self.icReader)

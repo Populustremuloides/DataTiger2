@@ -379,7 +379,10 @@ class ReadHobo():
                 self.logDate = ""
                 self.logTime = ""
             if self.dataIndex != None:
+                #print(row[self.dataIndex])
                 self.data = self.dataConversion(row[self.dataIndex])
+                #print(self.data)
+                #print()
             else:
                 self.data = ""
             if self.tempIndex != None:

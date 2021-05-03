@@ -90,84 +90,87 @@ class ReadICP:
         self.runDate = year + "-" + month + "-" + day
 
         # get the column indices of the columns we want to parse
-        fullReport = False
-        dilutionIncluded = False
-        startIndex = 0
-        stopIndex = len(columns)
+        # fullReport = False
+        # dilutionIncluded = False
+        # startIndex = 0
+        # stopIndex = len(columns)
 
-        i = 0
-        for column in columns:
-            column = column.lower()
-            if "total dissolved solids" in column:
-                fullReport = True
-                startIndex = i + 1
-            if "dilution" in column:
-                stopIndex = i
-                dilutionIncluded = True
-            i = i + 1
-        if fullReport:
-            columnsToSearch = range(startIndex,stopIndex)
-        else:
-            if dilutionIncluded:
-                columnsToSearch = range(1,stopIndex)
-            else:
-                raise ICPMustHaveDilutionColumn(self.fileName)
+        # i = 0
+        # for column in columns:
+        #     column = column.lower()
+        #     if "total dissolved solids" in column:
+        #         fullReport = True
+        #         startIndex = i + 1
+        #     if "dilution" in column:
+        #         stopIndex = i
+        #         dilutionIncluded = True
+        #     i = i + 1
+        # if fullReport:
+        #     columnsToSearch = range(startIndex,stopIndex)
+        # else:
+        #     if dilutionIncluded:
+        #         columnsToSearch = range(1,stopIndex)
+        #     else:
+        #         raise ICPMustHaveDilutionColumn(self.fileName)
 
-        for index in columnsToSearch:
+        for index in range(len(columns)):
             column = columns[index].lower()
 
             if ("sort" in column and "chem" in column) or ("lab" in column and "#" in column) or ("sample" in column and "id" in column):
                 self.sortChemIndex = index
-            elif column == "al" and not "ppm" in column:
+            elif "al" in column and not "ppm" in column and index > 0:
                 self.aluminumIndex = index
-            elif column == "as"  and not "ppm" in column:
+            elif "as" in column and not "ppm" in column and index > 0:
                 self.arsenicIndex = index
-            elif column == "b":
+            elif "b" in column and not "ppm" in column and index > 0:
                 self.boronIndex = index
-            elif column == "ba":
+            elif "ba" in column and not "ppm" in column and index > 0:
                 self.bariumIndex = index
-            elif column == "ca":
+            elif "ca" in column and not "ppm" in column and index > 0:
                 self.calciumIndex = index
-            elif column == "cd":
+            elif "cd" in column and not "ppm" in column and index > 0:
                 self.cadmiumIndex = index
-            elif column == "co":
+            elif "co" in column and not "ppm" in column and index > 0:
                 self.cobaltIndex = index
-            elif column == "cr":
+            elif "cr" in column and not "ppm" in column and index > 0:
                 self.chromiumIndex = index
-            elif column == "cu":
+            elif "cu" in column and not "ppm" in column and index > 0:
                 self.copperIndex = index
-            elif column == "fe":
+            elif "fe" in column and not "ppm" in column and index > 0:
                 self.ironIndex = index
-            elif column == "k":
+            elif "k" in column and not "ppm" in column and index > 0:
                 self.potassiumIndex = index
-            elif column == "mg":
+            elif "mg" in column and not "ppm" in column and index > 0:
                 self.magnesiumIndex = index
-            elif column == "mn":
+            elif "mn" in column and not "ppm" in column and index > 0:
                 self.manganeseIndex = index
-            elif column == "mo":
+            elif "mo" in column and not "ppm" in column and index > 0:
                 self.molybdenumIndex = index
-            elif column == "na":
+            elif "na" in column and not "ppm" in column and index > 0:
                 self.sodiumIndex = index
-            elif column == "ni":
+            elif "ni" in column and not "ppm" in column and index > 0:
                 self.nickelIndex = index
-            elif column == "p":
+            elif "p" in column and not "ppm" in column and index > 0:
                 self.phosphorusIndex = index
-            elif column == "pb":
+            elif "pb" in column and not "ppm" in column and index > 0:
                 self.leadIndex = index
-            elif column == "s":
+            elif "s" in column and not "ppm" in column and index > 0:
                 self.sulfurIndex = index
-            elif column == "se":
+            elif "se" in column and not "ppm" in column and index > 0:
                 self.seleniumIndex = index
-            elif column == "si":
+            elif "si" in column and not "ppm" in column and index > 0:
                 self.siliconIndex = index
-            elif column == "sr":
+            elif "sr" in column and not "ppm" in column and index > 0:
                 self.strontiumIndex = index
-            elif column == "ti":
+            elif "ti" in column and not "ppm" in column and index > 0:
                 self.titaniumIndex = index
-            elif column == "v":
+            elif "v" in column and not "ppm" in column and index > 0:
                 self.vanadiumIndex = index
-            elif column == "zn":
+            elif "zn" in column and not "ppm" in column and index > 0:
                 self.zincIndex = index
+            else:
+                print("skipped this column")
+                print(column)
 
 
     def clearValues(self):

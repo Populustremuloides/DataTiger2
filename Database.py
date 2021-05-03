@@ -402,10 +402,10 @@ class Database:
     def writeStandardCurveReport(self, path, testDict, optionsDict):
         if path == "":
             return "no path selected. Standard curve report not downloaded.\n"
-        try:
-           return downloadStandardCurve(path, testDict, optionsDict, self.cursor)
-        except:
-            return "unable to download time series report"
+        # try:
+        return downloadStandardCurve(path, testDict, optionsDict, self.cursor)
+        # except:
+        #     return "unable to download time series report"
 
     def writeTimeSeriesReport(self, path, testDict, optionsDict):
         if path == "":

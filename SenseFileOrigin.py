@@ -14,15 +14,16 @@ class SenseFileOrigin():
             raise Warnings(message, filePath)
 
         hannaReader = ReadHanna(filePath)
-        try:
+        # try:
+        if True:
             hannaReader.readDataSheetRow(df,3)
             time1 = hannaReader.time
             second1 = int(time1.split(":")[-1])
             minute1 = int(time1.split(":")[-2])
             hour1 = int(time1.split(":")[-3])
-        except:
-            message = "ERROR: Hanna file missing critical headers.\n"
-            raise Warnings(message, filePath)
+        # except:
+        #     message = "ERROR: Hanna file missing critical headers.\n"
+        #     raise Warnings(message, filePath)
 
         hannaReader.readDataSheetRow(df,4)
         time2 = hannaReader.time
@@ -44,7 +45,7 @@ class SenseFileOrigin():
             return False
 
     def senseFileOrigin(self, filePath):
-        try:
+        # try:
         # check file handle:
 
         # if filePath.endswith(".xls"):
@@ -202,5 +203,7 @@ class SenseFileOrigin():
                 return "scan.par"
             else:
                 return "unrecognized"
-        except:
-            return "causedException"
+        # except:
+
+        # except:
+        #     return "causedException"

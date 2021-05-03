@@ -393,6 +393,16 @@ def getBarometricPressureColumn(siteID, pdf, stationToPriority):
     barometricData = pd.Series(barometricData)
     return barometricData
 
+def replaceBlankWithNone(array):
+    array = list(array)
+    for j in range(len(array)):
+        val = array[j]
+        val = str(val)
+        val.replace(" ","")
+        if val == "":
+            array[j] = None
+    return array
+
 def getDischargeToPressureDF(df, siteID, pdf, stationToPriority, cursor):
     barometricData = getBarometricPressureColumn(siteID, pdf, stationToPriority)
 
@@ -400,7 +410,11 @@ def getDischargeToPressureDF(df, siteID, pdf, stationToPriority, cursor):
     priorityList = stationToPriority[siteID]
 
     print(df)
-    dischargeIndices = pdf[~df["discharge_measured"].isna()]["index"]
+    print(pdf)
+    pdfMask = list(~df["discharge_measured"].isna())
+    if len(pdfMask) != len(df["pressure_hobo"]):
+        pdfMask = pdfMask[:len(df["pressure_hobo"]) - len(pdfMask)]
+    dischargeIndices = pdf[pdfMask]["index"]
     pressurePoints = df[~df["discharge_measured"].isna()]["pressure_hobo"]
     pressureData = df["pressure_hobo"]
     dischargePoints = df[~df["discharge_measured"].isna()]["discharge_measured"]
@@ -422,8 +436,17 @@ def getDischargeToPressureDF(df, siteID, pdf, stationToPriority, cursor):
 
         expandedIndex = expandIndex(index, df["index"])
         expandedIndex = expandedIndex[:len(pdf[pdf.columns[0]])]
-        nearbyBarometricMeasurements = pd.Series(barometricData[expandedIndex])
-        nearbyPressureMeasurements = pd.Series(pressureData[:len(barometricData)][expandedIndex])
+
+        # because "" values can be in there instead of None values
+        nearbyBarometricMeasurements = barometricData[expandedIndex]
+        nearbyPressureMeasurements = pressureData[:len(barometricData)][expandedIndex]
+
+        nearbyBarometricMeasurements = replaceBlankWithNone(nearbyBarometricMeasurements)
+        nearbyPressureMeasurements = replaceBlankWithNone(nearbyPressureMeasurements)
+
+
+        nearbyBarometricMeasurements = pd.Series(nearbyBarometricMeasurements)
+        nearbyPressureMeasurements = pd.Series(nearbyPressureMeasurements)
 
         maskB = np.asarray(~nearbyBarometricMeasurements.isna())
         maskP = np.asarray(~nearbyPressureMeasurements.isna())
@@ -455,6 +478,7 @@ def getDischargeToPressureDF(df, siteID, pdf, stationToPriority, cursor):
     returnDict = {"barometric_discounted_pressure":xs,
                       "measured_discharge":ys, "datetime":dates}
     longDict = {"barometricPressure":barPress,"absolutePressure":press,"discharge":dis, "datetime":fullDates}
+    # FIXME: this isn't quite getting it right!
     returnDF = pd.DataFrame.from_dict(returnDict)
     longDF = pd.DataFrame.from_dict(longDict)
     return returnDF, longDF

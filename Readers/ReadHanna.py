@@ -45,6 +45,8 @@ class ReadHanna():
         self.pressureConversionPSI = False
         self.pressureConversionIdentity = False
 
+        self.ppmConversion = False
+
         # Grab the first three letters of the file name
         self.filePath = path
         cleanPath = path.replace("\\", "/")
@@ -255,7 +257,11 @@ class ReadHanna():
                     raise hannaPressureUnitNotRecognized(header)
             elif "d.o." in header and "%" in header:
                 self.dissolvedOxygenPercentIndex = i
-            elif "d.o." in header and "mg" in header:
+            elif "d.o." in header and "%" not in header:
+                if "mg" in header:
+                    pass
+                elif "ppm" in header:
+                    self.ppmConversion = True
                 self.dissolvedOxygenIndex = i
             elif "remarks" in header:
                 self.remarksIndex = i
@@ -319,7 +325,10 @@ class ReadHanna():
                 self.dissolvedOxygenPercent = row[self.dissolvedOxygenPercentIndex]
         if self.dissolvedOxygenIndex != None:
             if "--" not in str(row[self.dissolvedOxygenIndex]):
-                self.dissolvedOxygen = row[self.dissolvedOxygenIndex]
+                if self.ppmConversion:
+                    self.dissolvedOxygen = ppmTomgL(row[self.dissolvedOxygenIndex])
+                else:
+                    self.dissolvedOxygen = row[self.dissolvedOxygenIndex]
         if self.remarksIndex != None:
             if "--" not in str(row[self.remarksIndex]):
                 self.remarks = row[self.remarksIndex]

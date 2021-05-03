@@ -12,6 +12,10 @@ class UploadHobo():
         self.logTableName = logTableName
         self.batchTableName = batchTableName
         self.autocorrelationCoefficient = None
+        if dataName == "intensity":
+            self.autocorrelationThreshold = 1.7
+        else:
+            self.autocorrelationThreshold = 0.7
 
     def getProjectId(self):
         # cheat for the moment
@@ -38,7 +42,8 @@ class UploadHobo():
 
         print("autocorrelation number: (<<1 is normal for non-light files)")
         print(self.autocorrelationCoefficient)
-        if self.autocorrelationCoefficient > 1.7:
+
+        if self.autocorrelationCoefficient > self.autocorrelationThreshold:
             raise BadHobo(self.hoboReader.getFileName())
 
         with open(self.hoboReader.getFilePath()) as csvFile:
@@ -112,7 +117,7 @@ class UploadHobo():
                 i = i + 1
         self.autocorrelationCoefficient = self.autocorrelation(datalist)
         goodData = 1
-        if self.autocorrelationCoefficient > 1:
+        if self.autocorrelationCoefficient > self.autocorrelationThreshold:
             goodData = 0
 
         # upload to the database
