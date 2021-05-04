@@ -323,7 +323,7 @@ class QueryAnalyses:
         i = 0
         for sortChem in self.sortChemsToTests.keys():
             timeElapsed = time.time() - startTime
-            if timeElapsed > 60:
+            if timeElapsed > 190:
                 raise DatabaseTooLong()
 
             i = i + 1

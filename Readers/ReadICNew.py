@@ -87,7 +87,7 @@ class ReadICNew():
         with open(self.filePath) as file:
             l = 0
             for line in file:
-                print(line)
+                # print(line)
                 line = line.split(",")
                 if l == 0:
                     i = 0
@@ -252,8 +252,8 @@ class ReadICNew():
                 # locate the name index
                 # locate the amount index to the next thing
         self.data = pd.DataFrame.from_dict(dataDict)
-        print(self.data)
-        print("here")
+        # print(self.data)
+        # print("here")
 
 
     def fixDate(self, date):
@@ -321,7 +321,7 @@ class ReadICNew():
     def readRow(self, row):
         self.resetValues()
 
-        print(row)
+        # print(row)
         if self.nameIndex != None:
             self.sortChem = self.replaceNA(row["sort_chem"])
         if self.fluorideIndex != None:

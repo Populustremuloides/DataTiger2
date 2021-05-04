@@ -118,55 +118,80 @@ class ReadICP:
 
             if ("sort" in column and "chem" in column) or ("lab" in column and "#" in column) or ("sample" in column and "id" in column):
                 self.sortChemIndex = index
-            elif "al" in column and not "ppm" in column and index > 0:
+            # elif ("al" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "al":
                 self.aluminumIndex = index
-            elif "as" in column and not "ppm" in column and index > 0:
+            # elif ("as" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "as":
                 self.arsenicIndex = index
-            elif "b" in column and not "ppm" in column and index > 0:
+            # elif ("b" in column) and (not "ppm" in column) and (index > 0) and ("ba" not in column) and ("pb" not in column):
+            elif column == "b":
                 self.boronIndex = index
-            elif "ba" in column and not "ppm" in column and index > 0:
+            # elif ("ba" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "ba":
                 self.bariumIndex = index
-            elif "ca" in column and not "ppm" in column and index > 0:
+            # elif ("ca" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "ca":
                 self.calciumIndex = index
-            elif "cd" in column and not "ppm" in column and index > 0:
+            # elif ("cd" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "cd":
                 self.cadmiumIndex = index
-            elif "co" in column and not "ppm" in column and index > 0:
+            # elif ("co" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "co":
                 self.cobaltIndex = index
-            elif "cr" in column and not "ppm" in column and index > 0:
+            # elif ("cr" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "cr":
                 self.chromiumIndex = index
-            elif "cu" in column and not "ppm" in column and index > 0:
+            # elif ("cu" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "cu":
                 self.copperIndex = index
-            elif "fe" in column and not "ppm" in column and index > 0:
+            # elif ("fe" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "fe":
                 self.ironIndex = index
-            elif "k" in column and not "ppm" in column and index > 0:
+            # elif ("k" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "k":
                 self.potassiumIndex = index
-            elif "mg" in column and not "ppm" in column and index > 0:
+            # elif ("mg" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "mg":
                 self.magnesiumIndex = index
-            elif "mn" in column and not "ppm" in column and index > 0:
+            # elif ("mn" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "mn":
                 self.manganeseIndex = index
-            elif "mo" in column and not "ppm" in column and index > 0:
+            # elif ("mo" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "mo":
                 self.molybdenumIndex = index
-            elif "na" in column and not "ppm" in column and index > 0:
+            # elif ("na" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "na":
                 self.sodiumIndex = index
-            elif "ni" in column and not "ppm" in column and index > 0:
+            # elif ("ni" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "ni":
                 self.nickelIndex = index
-            elif "p" in column and not "ppm" in column and index > 0:
+            # elif ("p" in column) and (not "ppm" in column) and (index > 0) and ("pb" not in column):
+            elif column == "p":
                 self.phosphorusIndex = index
-            elif "pb" in column and not "ppm" in column and index > 0:
+            # elif ("pb" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "pb":
                 self.leadIndex = index
-            elif "s" in column and not "ppm" in column and index > 0:
+            # elif ("s" in column) and (not "ppm" in column) and (index > 0) and ("se" not in column) and ("si" not in column) and ("sr" not in column):
+            elif column == "s":
                 self.sulfurIndex = index
-            elif "se" in column and not "ppm" in column and index > 0:
+            # elif ("se" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "se":
                 self.seleniumIndex = index
-            elif "si" in column and not "ppm" in column and index > 0:
+            # elif ("si" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "si":
                 self.siliconIndex = index
-            elif "sr" in column and not "ppm" in column and index > 0:
+            # elif ("sr" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "sr":
                 self.strontiumIndex = index
-            elif "ti" in column and not "ppm" in column and index > 0:
+            # elif ("ti" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "ti":
                 self.titaniumIndex = index
-            elif "v" in column and not "ppm" in column and index > 0:
+            # elif ("v" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "v":
                 self.vanadiumIndex = index
-            elif "zn" in column and not "ppm" in column and index > 0:
+            # elif ("zn" in column) and (not "ppm" in column) and (index > 0):
+            elif column == "zn":
                 self.zincIndex = index
             else:
                 print("skipped this column")

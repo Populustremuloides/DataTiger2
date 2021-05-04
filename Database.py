@@ -424,10 +424,10 @@ class Database:
         #     return "unable to download logger gaps report"
 
     def writeMissingTestsReport(self, path):
-        if path == "":
-            return "no path selected. Missing tests report not downloaded.\n"
+        # if path == "":
+        #     return "no path selected. Missing tests report not downloaded.\n"
 
-        try:
+        # try:
             self.analyzeTests()
             with open(path, "w+") as outputFile:
                 if len(self.sortChemsWithBatches) == 0:
@@ -443,9 +443,9 @@ class Database:
             outputFile.close()
             message = "Successfully downloaded report to " + path + "\n\n"
             return message
-        except:
-            message = "ERROR: unable to download report.\n\n"
-            return message
+        # except:
+        #     message = "ERROR: unable to download report.\n\n"
+        #     return message
 
 
     def uploadFile(self, path):

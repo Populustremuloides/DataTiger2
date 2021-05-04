@@ -610,8 +610,8 @@ def getICAnion(cursor, siteid, nbsNum, citSciNum):
     return dateToData
 
 def getICP(cursor, siteid, nbsNum, citSciNum):
-    icpView = "SELECT *, MAX(icp_batch_id) FROM icp_reads INNER JOIN icp_batches USING(icp_batch_id) GROUP BY(sort_chem)"
-    #icpView = "SELECT * FROM icp_reads INNER JOIN(SELECT * FROM icp_batches WHERE icp_batches.icp_batch_id = (SELECT MAX(icp_batch_id) FROM sort_chems_to_icp_batches GROUP BY sort_chem)) USING(icp_batch_id)"
+    icpView = "SELECT *, MAX(icp_batch_id) FROM icp_reads_1 INNER JOIN icp_batches_1 USING(icp_batch_id) GROUP BY(sort_chem)"
+    #icpView = "SELECT * FROM icp_reads_1 INNER JOIN(SELECT * FROM icp_batches_1 WHERE icp_batches_1.icp_batch_id = (SELECT MAX(icp_batch_id) FROM sort_chems_to_icp_batches_1 GROUP BY sort_chem)) USING(icp_batch_id)"
     sqlquery = "SELECT *, MAX(datetime_uploaded) FROM (" + icpView + ") JOIN sort_chems USING (sort_chem) WHERE site_id LIKE \"%NBS%" + nbsNum + "\" OR site_id LIKE \"%NBS%" + str(int(nbsNum)) + "\" OR site_id = ? OR site_id = ? GROUP BY sort_chem;"
     sitetuple = (siteid,citSciNum)
     cursor.execute(sqlquery, sitetuple)
