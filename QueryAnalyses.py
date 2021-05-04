@@ -214,7 +214,7 @@ class QueryAnalyses:
         return self.returnFile(sqlFile, fileTuple)
 
     def getIcpFile(self, batchNumber):
-        sqlFile = "SELECT file_path FROM icp_batches WHERE icp_batch_id = ?;"
+        sqlFile = "SELECT file_path FROM icp_batches_1 WHERE icp_batch_id = ?;"
         fileTuple = (batchNumber,)
         return self.returnFile(sqlFile, fileTuple)
 
@@ -585,7 +585,7 @@ class QueryAnalyses:
         return self.cursor.fetchall()
 
     def icpBatch(self, sortChem):
-        sqlIcp = "SELECT icp_batch_id FROM sort_chems_to_icp_batches WHERE sort_chem = ?;"
+        sqlIcp = "SELECT icp_batch_id FROM sort_chems_to_icp_batches_1 WHERE sort_chem = ?;"
         icpTuple = (sortChem,)
 
         self.cursor.execute(sqlIcp, icpTuple)
