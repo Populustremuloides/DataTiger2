@@ -13,16 +13,21 @@ class UploadScanMaster:
         self.currentBatch = None
 
         # separate the different excel sheets
-        xls = pd.ExcelFile(self.scanMasterReader.filePath)
-        self.sheets = xls.sheet_names
-
-        self.data = None
+        if self.scanMasterReader.filePath.endswith(".csv"):
+            pass
+        else:
+            xls = pd.ExcelFile(self.scanMasterReader.filePath)
+            self.sheets = xls.sheet_names
+            self.data = None
         self.errorOccured = False
 
 
     def uploadBatch(self):
         # get the data
-        self.data = pd.read_excel(self.scanMasterReader.filePath, self.sheets[0])
+        if self.scanMasterReader.filePath.endswith(".csv"):
+            self.data = pd.read_csv(self.scanMasterReader.filePath)
+        else:
+            self.data = pd.read_excel(self.scanMasterReader.filePath, self.sheets[0])
 
         # get the info about the batch
         columns = list(self.data.columns.values)
@@ -83,12 +88,12 @@ class UploadScanMaster:
 
             sqlUpdate = "UPDATE sort_chems_to_datetime_run SET datetime_run = ?, scan_master_batch_id = ? WHERE sort_chem = ?;"
             updateTuple = (str(self.scanMasterReader.timestamp), self.currentBatch, self.scanMasterReader.sortChem)
-            try:
-                self.cursor.execute(sqlUpdate, updateTuple)
-            except:
-                print("update error")
-                print(self.scanMasterReader.sortChem)
-                return self.scanMasterReader.error
+            # try:
+            self.cursor.execute(sqlUpdate, updateTuple)
+            # except:
+            #     print("update error")
+            #     print(self.scanMasterReader.sortChem)
+            #     return self.scanMasterReader.error
 
 
             if not self.sortChemOnDatabase():
