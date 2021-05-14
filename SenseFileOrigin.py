@@ -71,6 +71,11 @@ class SenseFileOrigin():
                 if "Sortchem" in str(columns[0]):
                     return "srp"
 
+                if "sortchem" in str(columns[0]):
+                    if "Site" in str(columns[1]):
+                        if ("sample" in str(columns[4])) and ("volume" in str(columns[4])):
+                            return "tss"
+
                 if "Operator" in str(columns[0]):
                     return "aqualog"
 
@@ -160,6 +165,8 @@ class SenseFileOrigin():
                         
                         if firstRow[0].endswith(".LOG"):
                             return "field_eureka"
+                        elif "Operator" in firstRow[0]:
+                            return "aqualog"
                         elif "project" in secondRow[0].lower():
                             if "device" in secondRow[1].lower():
                                 if "date" in secondRow[2].lower():

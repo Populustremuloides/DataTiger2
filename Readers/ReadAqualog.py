@@ -83,21 +83,21 @@ class ReadAqualog:
             header = header.lower()
             if "operator" in header:
                 self.operatorIndex = i
-            elif "corrected by" in header:
+            elif ("corrected" in header) and ("by" in header):
                 self.correctedByIndex = i
             elif "collected" in header:
                 self.dateCollectedIndex = i
-            elif "date corrected" in header:
+            elif ("date" in header) and ("corrected" in header):
                 self.dateCorrectedIndex = i
-            elif "project file" in header:
+            elif ("project" in header) and ("file" in header):
                 self.projectFileIndex = i
-            elif "sample name" in header:
+            elif ("sample" in header) and ("name" in header):
                 self.sampleNameIndex = i
-            elif "sample id" in header:
+            elif ("sample" in header) and ("id" in header):
                 self.sortChemIndex = i
-            elif "corrected name" in header:
+            elif ("corrected" in header) and ("name" in header):
                 self.correctedNameIndex = i
-            elif "blank name" in header:
+            elif ("blank" in header) and ("name" in header):
                 self.blankNameIndex = i
             elif "dilution" in header:
                 self.dilutionFactorIndex = i

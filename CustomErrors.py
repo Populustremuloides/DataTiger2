@@ -152,8 +152,8 @@ class ScanFileDelimiterNotRecognized(Error):
 
 class ICPFileNotNamedCorrectly(Error):
     def __init__(self, path):
-        self.message = "ERROR: " + path + " was not uploaded to the database because the file was not propperly named. The file must " \
-                          "be named according to the following convention: year.proejct.operator.xlsx. Please rename the file and try again.\n\n"
+        self.message = "ERROR: " + path + " was not uploaded to the database because the file was not properly named. The file must " \
+                          "be named according to the following convention: year.project.operator.xlsx. Please rename the file and try again.\n\n"
 class NoDataOnRow(Error):
     def __init__(self, path):
         self.message = "ERROR: this message should not display to screen.\n\n"
@@ -170,7 +170,7 @@ class FileTypeNotRecognized(Error):
 
 class ElementarFileNotNamedCorrectly(Error):
     def __init__(self, path):
-        self.message = "ERROR: " + path + " was not uploaded to the database because the file was not propperly named. The file is an " \
+        self.message = "ERROR: " + path + " was not uploaded to the database because the file was not properly named. The file is an " \
                           " Elementar file and must " \
                           "be named according to the following convention: year.proejct.operator.csv. Please rename the file and try again.\n\n"
 class ElementarFileIncorrectlyFormated(Error):
