@@ -28,13 +28,13 @@ class UploadTss:
 
             # upload the file as a batch
             self.datetimeUploaded = str(datetime.now())
-            sqlBatch = "INSERT INTO tss_batches (file_name, datetime_uploaded) VALUES (?,?);"
-            batchTuple = (self.tssReader.filePath, self.datetimeUploaded)
+            sqlBatch = "INSERT INTO tss_batches (file_path, file_name, datetime_uploaded) VALUES (?,?,?);"
+            batchTuple = (self.tssReader.filePath, self.tssReader.fileName, self.datetimeUploaded)
             self.cursor.execute(sqlBatch, batchTuple)
 
             # get the batch id
             sqlBatch = "SELECT tss_batch_id FROM tss_batches WHERE file_name = ? AND datetime_uploaded = ?;"
-            batchTuple = (self.tssReader.filePath, self.datetimeUploaded)
+            batchTuple = (self.tssReader.fileName, self.datetimeUploaded)
             self.cursor.execute(sqlBatch, batchTuple)
             self.batchNumber = self.cursor.fetchall()[0][0]
 
@@ -65,7 +65,6 @@ class UploadTss:
                     self.tssReader.initialFilterWeight, self.tssReader.finalFilterWeight,
                     self.tssReader.tss, self.tssReader.notes,
                     self.tssReader.dryingNotes)
-        """
         sqlSort = "INSERT INTO sort_chems_to_tss_batches (sort_chem, tss_batch_id) VALUES (?,?);"
         sortTuple = (self.tssReader.sortChem, self.batchNumber)
 
@@ -74,10 +73,8 @@ class UploadTss:
 
         sqlSort1 = "INSERT INTO sort_chems (sort_chem) VALUES (?);"
         sort1Tuple = (self.tssReader.sortChem,)
-        """
         try:
             self.cursor.execute(sqlRow, rowTuple)
-            """
             self.cursor.execute(sqlSort, sortTuple)
 
             # add to the sort-chem table **************************8
@@ -88,7 +85,6 @@ class UploadTss:
             # if not, upload it
             if len(sortChems) == 0:
                 self.cursor.execute(sqlSort1, sort1Tuple)
-            """
             return self.noErrors
 
         except:
