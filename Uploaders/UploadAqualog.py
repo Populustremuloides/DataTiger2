@@ -13,7 +13,10 @@ class UploadAqualog:
         self.error = 1
 
         # open the file as a pandas dataframe object
-        self.df = pd.read_excel(self.aqualogReader.filePath)
+        try:
+            self.df = pd.read_excel(self.aqualogReader.filePath)
+        except:
+            self.df = pd.read_csv(self.aqualogReader.filePath)
 
     def uploadBatch(self):
         # register the headers
@@ -119,7 +122,7 @@ class UploadAqualog:
             message = message + "ERROR: The following rows were not " \
                                 "uploaded because they were missing critical values: " + str(self.problemRows) + "\n"
         if len(self.duplicateRows) > 0:
-            message = message + "ERROR: The following rows were not uploaded because they were duplciates" \
+            message = message + "ERROR: The following rows were not uploaded because they were duplicates" \
                                 " of sort-chems with EEMs data already present in the " \
                                 "database: " + str(self.duplicateRows) + " If you would like to " \
                                 "add these rows anyway, please select \'allow duplicates\' above, and re-submit.\n"

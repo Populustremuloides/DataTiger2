@@ -14,7 +14,7 @@ class UploadICP:
 
         # go through column 0 until you find the date, and the water ID. Store those.
         cutoffIndex = None
-        self.bastchDate = None
+        self.batchDate = None
         self.batchId = None
 
         for i in range(20):

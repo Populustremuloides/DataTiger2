@@ -16,6 +16,7 @@ from Uploaders.UploadDOCIsotopes import *
 from Uploaders.UploadLachat import *
 from Uploaders.UploadNo3 import *
 from Uploaders.UploadSrp import *
+from Uploaders.UploadTss import *
 from Uploaders.UploadWater import *
 from Uploaders.UploadQ import *
 from Uploaders.UploadSites import *
@@ -34,6 +35,7 @@ from Readers.ReadDOCIsotopes import *
 from Readers.ReadLachat import *
 from Readers.ReadNo3 import *
 from Readers.ReadSrp import *
+from Readers.ReadTss import *
 from Readers.ReadWater import *
 from Readers.ReadQ import *
 from Readers.ReadSites import *
@@ -192,6 +194,12 @@ class Uploader:
 
                 self.srpUploader.uploadBatch()
                 self.srpUploader.uploadReads()
+            if fileOrigin == "tss":
+                self.tssReader = ReadTss(filePath)
+                self.tssUploader = UploadTss(cursor, self, self.tssReader)
+
+                self.tssUploader.uploadBatch()
+                self.tssUploader.uploadReads()
             if fileOrigin == "water":
                 self.waterReader = ReadWater(filePath)
                 self.waterUploader = UploadWater(cursor, self, self.waterReader)
