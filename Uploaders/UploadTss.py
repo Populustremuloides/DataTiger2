@@ -65,6 +65,7 @@ class UploadTss:
                     self.tssReader.initialFilterWeight, self.tssReader.finalFilterWeight,
                     self.tssReader.tss, self.tssReader.notes,
                     self.tssReader.dryingNotes)
+
         sqlSort = "INSERT INTO sort_chems_to_tss_batches (sort_chem, tss_batch_id) VALUES (?,?);"
         sortTuple = (self.tssReader.sortChem, self.batchNumber)
 
