@@ -114,7 +114,13 @@ class ReadICP:
         #         raise ICPMustHaveDilutionColumn(self.fileName)
 
         for index in range(len(columns)):
-            column = columns[index].lower()
+            column = columns[index]
+            column = column.lower() if type(column) == str else None
+
+            if not column:
+                print("skipped this column")
+                print(column)
+                break
 
             if ("sort" in column and "chem" in column) or ("lab" in column and "#" in column) or ("sample" in column and "id" in column):
                 self.sortChemIndex = index

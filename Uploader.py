@@ -22,6 +22,7 @@ from Uploaders.UploadQ import *
 from Uploaders.UploadSites import *
 from Uploaders.UploadYSI import *
 from Uploaders.UploadICNew import *
+from Uploaders.UploadNewSrp import *
 
 from Readers.ReadICP import *
 from Readers.ReadIC import *
@@ -41,6 +42,7 @@ from Readers.ReadQ import *
 from Readers.ReadSites import *
 from Readers.ReadYSI import *
 from Readers.ReadICNew import *
+from Readers.ReadNewSrp import *
 
 class Uploader:
     def __init__(self, database):
@@ -224,6 +226,12 @@ class Uploader:
 
                 self.sitesUploader.uploadBatch()
                 self.sitesUploader.uploadReads()
+            if fileOrigin == "srp_new":
+                self.newSrpReader = ReadNewSrp(filePath)
+                self.newSrpUploader = UploadNewSrp(cursor, self, self.newSrpReader)
+
+                self.newSrpUploader.uploadBatch()
+                self.newSrpUploader.uploadReads()
 
         # except sqlite3.OperationalError: # FIXME: PUT THIS BACK
         #     raise DatabaseLocked()
