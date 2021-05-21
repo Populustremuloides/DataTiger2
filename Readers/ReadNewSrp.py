@@ -1,5 +1,4 @@
 from datetime import datetime
-from Readers.ReadHanna import *
 import pandas as pd
 
 class ReadNewSrp:
@@ -93,7 +92,7 @@ class ReadNewSrp:
             self.runDate = nameList[0]
             self.projectId = nameList[1]
         except:
-            raise ICPFileNotNamedCorrectly(self.fileName)
+            raise NewSRPFileNotNamedCorrectly(self.fileName)
 
         self.projectId = self.projectId.replace(" ", "")
 
@@ -118,7 +117,6 @@ class ReadNewSrp:
                 self.nh4Index = index
             elif "ppm" in column and preheader and "soluble reactive p" in preheader and index > 0:
                 self.srpIndex = index
-                break
             else:
                 print("skipped this column")
                 print(column)

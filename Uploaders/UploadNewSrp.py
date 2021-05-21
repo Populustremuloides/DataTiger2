@@ -25,14 +25,15 @@ class UploadNewSrp:
             return False
 
     def getHeaders(self):
-        first_col = self.df.iloc[:,0]
+        first_col = self.df.iloc[:, 0]
         first_col = first_col.values.tolist()
 
         for i in range(20):
-            value = first_col[i].lower() if type(first_col[i])==str else ""
+            value = first_col[i].lower() if type(first_col[i]) == str else ""
             if "customer" in value and "sample" in value and "id" in value:
                 headers = self.df.iloc[i].values.tolist()
                 preheaders = self.df.iloc[i-1].values.tolist()
+                # reset self.df to exclude fluff
                 self.df = self.df.iloc[(i + 1):, :]
                 self.newSrpReader.readBatch(headers, preheaders)
         return
