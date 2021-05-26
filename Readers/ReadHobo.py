@@ -22,6 +22,8 @@ class ReadHobo():
 
         self.firstLoggedDate = None
         self.firstLoggedTime = None
+        self.lastLoggedDate = None
+        self.lastLoggedTime = None
 
         self.tempIndex = None
         self.dataIndex = None
@@ -320,10 +322,11 @@ class ReadHobo():
                 useFourthRow = False
                 indexToUse = 1
 
-                firsRow = next(reader)
+                firstRow = next(reader)
                 secondRow = next(reader)
                 thirdRow = next(reader)
                 fourthRow = next(reader)
+
 
                 for item in secondRow:
                     if not item.isnumeric():
@@ -354,7 +357,8 @@ class ReadHobo():
             dates = []
             for row in reader:
                 dates.append(row[indexToUse])
-            #print(dates)
+            # print(dates)
+            lastDate = dates[-1]
             self.senseDateFormat(dates)
             # print("happy")
             if useThirdRow:
@@ -363,21 +367,35 @@ class ReadHobo():
             elif useFourthRow:
                 self.getHeaderIndices(thirdRow)
                 self.firstLoggedDate, self.firstLoggedTime = self.getDateAndTime(fourthRow[indexToUse])
+            self.lastLoggedDate, self.lastLoggedTime = self.getDateAndTime(lastDate)
 
+            self.firstLoggedDate = self.firstLoggedDate.split("-")
+            self.firstLoggedDate = ["0" + n if len(n) < 2 else n for n in self.firstLoggedDate]
+            self.firstLoggedDate = "-".join(self.firstLoggedDate)
+            self.firstLoggedTime = self.firstLoggedTime + ":00" if len(self.firstLoggedTime.split(":")) < 3 else self.firstLoggedTime
 
+            self.lastLoggedDate = self.lastLoggedDate.split("-")
+            self.lastLoggedDate = ["0" + n if len(n) < 2 else n for n in self.lastLoggedDate]
+            self.lastLoggedDate = "-".join(self.lastLoggedDate)
+            self.lastLoggedTime = self.lastLoggedTime + ":00" if len(self.lastLoggedTime.split(":")) < 3 else self.lastLoggedTime
             # except:
             #     raise HoboIncorrectlyFormated(self.fileName)
 
         self.siteId = self.siteId.upper() # this must be done here because if it were to be done earlier, the date would be messed up
 
 
-    def readRow(self, row, i):
+    def readRow(self, row, i, firstLoggedDatetime):
         # try:
             if self.dateIndex != None:
                 self.logDate, self.logTime = self.getDateAndTime(row[self.dateIndex])
             else:
                 self.logDate = ""
                 self.logTime = ""
+
+            rowLogTime = self.logTime + ":00" if len(self.logTime.split(":")) < 3 else self.logTime
+            if firstLoggedDatetime > datetime.strptime(self.logDate + ' ' + rowLogTime, '%m-%d-%y %H:%M:%S'):
+                return False
+        
             if self.dataIndex != None:
                 #print(row[self.dataIndex])
                 self.data = self.dataConversion(row[self.dataIndex])
@@ -394,6 +412,7 @@ class ReadHobo():
                 self.logDate = None
             if self.logTime == "":
                 self.logTime = None
+            return True
             # if self.data == "":
             #     self.data = None
             # if self.temperature == "": # sometimes the temperature isn't there. That's okay

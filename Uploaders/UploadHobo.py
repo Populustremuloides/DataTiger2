@@ -1,6 +1,9 @@
+import traceback
+
 from Readers.ReadHobo import *
 from CustomErrors import HoboRowsError, batchAlreadyUploadedError, DuplicateNotAllowed, BadHobo
 from UnitConversions import *
+from datetime import datetime
 
 class UploadHobo():
 
@@ -53,16 +56,17 @@ class UploadHobo():
                 if len(row) > 0:
                     if row[0][0].isnumeric() and i >= 5:
                         # parse the row
-                        self.hoboReader.readRow(row, i)
+                        if self.hoboReader.readRow(row, i, self.hoboReader.firstLoggedDateTime):
 
-                        # upload the row
-                        sqlLog = "INSERT INTO " + self.logTableName + " (logging_date, logging_time, " + self.dataName + ", " \
-                                "temperature_celsius, batch_id) VALUES (?,?,?,?,?)"
-                        logTuple = (self.hoboReader.logDate, self.hoboReader.logTime, self.hoboReader.data,
-                                self.hoboReader.temperature, self.currentBatch)
-                        # try:
-                        self.cursor.execute(sqlLog, logTuple)
-
+                            # upload the row
+                            sqlLog = "INSERT INTO " + self.logTableName + " (logging_date, logging_time, " + self.dataName + ", " \
+                                    "temperature_celsius, batch_id) VALUES (?,?,?,?,?)"
+                            logTuple = (self.hoboReader.logDate, self.hoboReader.logTime, self.hoboReader.data,
+                                    self.hoboReader.temperature, self.currentBatch)
+                            # try:
+                            self.cursor.execute(sqlLog, logTuple)
+                        else:
+                            problemRows.append(i)
                         # except:
                         #     problemRows.append(i)
                         #     noErrors = False
@@ -83,7 +87,7 @@ class UploadHobo():
 
         # check for duplicates
         sqlCheck = "SELECT * FROM " + self.batchTableName + " WHERE site_id = ? AND project_id = ? AND hobo_serial_num = ? " \
-                   "AND first_logged_date = ? AND first_logged_time = ? "
+                   "AND first_logged_date = ? AND first_logged_time = ?"
         checkTuple = (
             self.hoboReader.siteId,
             self.getProjectId(),
@@ -92,55 +96,95 @@ class UploadHobo():
             self.hoboReader.firstLoggedTime,
         )
 
-
         self.cursor.execute(sqlCheck, checkTuple)
         batches = self.cursor.fetchall()
 
         if not self.uploader.allowDuplicates:
             if len(batches) > 0:
-                raise DuplicateNotAllowed(self.hoboReader.getFileName())
+                # check to see whether the last logged date + time of last batch are less than the last logged date + time of this batch
+                for batch in batches:
+                    if batch[12] is None:
+                        # if old batch is legacy and doesn't have a last_logged_date, just add to database (essentially an automation of checking allow duplicates when this kind of file doesn't go through)
+                        pass
+                    elif self.hoboReader.lastLoggedDate == batch[12] and self.hoboReader.lastLoggedTime == batch[13]:
+                        # first and last logged date + time are the same, don't add
+                        raise DuplicateNotAllowed(self.hoboReader.getFileName())
+                    else:
+                        # clean date and time
+                        oldBatchTime = batch[13] + ":00" if len(batch[13].split(":")) < 3 else batch[13]
+                        oldBatchLastDate = datetime.strptime(batch[12] + ' ' + oldBatchTime, '%m-%d-%y %H:%M:%S')
+                        newBatchTime = self.hoboReader.lastLoggedTime + ":00" if len(self.hoboReader.lastLoggedTime.split(":")) < 3 else self.hoboReader.lastLoggedTime
+                        newBatchLastDate = datetime.strptime(self.hoboReader.lastLoggedDate + ' ' + newBatchTime, '%m-%d-%y %H:%M:%S')
 
+                        # if old batch's last logged date is less recent than new batch's, check whether new lines have already been added
+                        if oldBatchLastDate < newBatchLastDate:
+                            sqlCheck = "SELECT * FROM " + self.batchTableName + " WHERE site_id = ? AND project_id = ? AND hobo_serial_num = ? " \
+                                                                                "AND first_logged_date = ? AND first_logged_time = ?"
+                            checkTuple = (
+                                self.hoboReader.siteId,
+                                self.getProjectId(),
+                                self.hoboReader.serialNum,
+                                batch[12], batch[13]
+                            )
+                            
+                            self.cursor.execute(sqlCheck, checkTuple)
+                            secondbatches = self.cursor.fetchall()
+                            if len(secondbatches) > 0:
+                                raise DuplicateNotAllowed(self.hoboReader.getFileName())
+                            else:
+                                print(batch[12] + ' ' + oldBatchTime + " < " + self.hoboReader.lastLoggedDate + ' ' + newBatchTime)
+
+                                # if not already added, set first logged date and time to old batch's last logged date and time
+                                self.hoboReader.firstLoggedDate = batch[12]
+                                self.hoboReader.firstLoggedTime = batch[13]
 
         # test if it is a bad file
         datalist = []
         with open(self.hoboReader.getFilePath()) as csvFile:
+            batchTime = self.hoboReader.firstLoggedTime + ":00" if len(self.hoboReader.firstLoggedTime.split(":")) < 3 else self.hoboReader.firstLoggedTime
+            self.hoboReader.firstLoggedDateTime = datetime.strptime(self.hoboReader.firstLoggedDate + ' ' + batchTime,'%m-%d-%y %H:%M:%S')
             reader = csv.reader(csvFile, delimiter=",")
             i = 3
             for row in reader:
                 if len(row) > 0:
                     if row[0][0].isnumeric() and i >= 5:
-                        self.hoboReader.readRow(row, i)
-                        try:
-                            datalist.append(float(self.hoboReader.data))
-                        except:
-                            pass
+                        if self.hoboReader.readRow(row, i, self.hoboReader.firstLoggedDateTime):
+                            try:
+                                datalist.append(float(self.hoboReader.data))
+                            except:
+                                pass
+                        else:
+                            try:
+                                datalist.append(float(self.hoboReader.data))
+                            except:
+                                pass
                 i = i + 1
         self.autocorrelationCoefficient = self.autocorrelation(datalist)
         goodData = 1
-        if self.autocorrelationCoefficient > self.autocorrelationThreshold:
+        if self.autocorrelationCoefficient > self.autocorrelationThreshold or self.autocorrelationCoefficient is None:
             goodData = 0
 
         # upload to the database
         sqlBatch = "INSERT INTO " + self.batchTableName + " (site_id, project_id, hobo_serial_num, first_logged_date," \
-                   "first_logged_time, date_extracted, file_name, file_path, datetime_uploaded, " \
-                                                          "good_data, autocorrelation_value) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
+                   "first_logged_time, last_logged_date, last_logged_time, date_extracted, file_name, file_path, datetime_uploaded, " \
+                                                          "good_data, autocorrelation_value) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)"
         batchTuple = (self.hoboReader.siteId, self.getProjectId(), self.hoboReader.serialNum,
-                      self.hoboReader.firstLoggedDate, self.hoboReader.firstLoggedTime,
+                      self.hoboReader.firstLoggedDate, self.hoboReader.firstLoggedTime, self.hoboReader.lastLoggedDate, self.hoboReader.lastLoggedTime,
                       self.hoboReader.extractionDate, self.hoboReader.fileName, self.hoboReader.filePath,
                       self.hoboReader.datetimeUploaded, goodData, self.autocorrelationCoefficient)
-        # try:
-        self.cursor.execute(sqlBatch, batchTuple)
-        # except:
-        #     raise batchAlreadyUploadedError(self.hoboReader.getFilePath())
+        try:
+            self.cursor.execute(sqlBatch, batchTuple)
+        except:
+            print(traceback.format_exc())
 
 
         # get the batch id
 
         sqlId = "SELECT batch_id FROM " + self.batchTableName + " WHERE project_id = ? AND site_id = ? AND hobo_serial_num = ? AND " \
-                "first_logged_date = ? AND first_logged_time = ?"
+                "first_logged_date = ? AND first_logged_time = ? AND last_logged_date = ? AND last_logged_time = ?"
 
         idTuple = (self.getProjectId(), self.hoboReader.siteId, self.hoboReader.serialNum, self.hoboReader.firstLoggedDate,
-                   self.hoboReader.firstLoggedTime)
+                   self.hoboReader.firstLoggedTime, self.hoboReader.lastLoggedDate, self.hoboReader.lastLoggedTime)
 
         result = self.cursor.execute(sqlId, idTuple)
         ids = self.cursor.fetchall()
@@ -163,5 +207,3 @@ class UploadHobo():
             hoboTuple = (self.hoboReader.serialNum,)
 
             self.cursor.execute(sqlHobo, hoboTuple)
-
-
