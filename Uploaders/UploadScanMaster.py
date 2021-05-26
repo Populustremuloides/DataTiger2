@@ -19,7 +19,7 @@ class UploadScanMaster:
             xls = pd.ExcelFile(self.scanMasterReader.filePath)
             self.sheets = xls.sheet_names
             self.data = None
-        self.errorOccured = False
+        self.errorOccurred = False
 
 
     def uploadBatch(self):
@@ -117,7 +117,7 @@ class UploadScanMaster:
             return self.scanMasterReader.noError
 
     def uploadReads(self):
-        self.errorOccured = False
+        self.errorOccurred = False
         problematicRows = []
         repeatedRows = []
 
@@ -128,7 +128,7 @@ class UploadScanMaster:
             # make sure there were no errors when parsing the data
             if result == self.scanMasterReader.error:
                 problematicRows.append(index + 2)
-                self.errorOccured = True
+                self.errorOccurred = True
 
             elif result == self.scanMasterReader.noError:
                 # attempt to upload the data
@@ -136,7 +136,7 @@ class UploadScanMaster:
 
                 # make sure there were no errors when uploading the data
                 if uploadResult == self.scanMasterReader.error:
-                    self.errorOccured = True
+                    self.errorOccurred = True
                     repeatedRows.append(index + 2)
 
         message = ""

@@ -184,7 +184,7 @@ class UploadIC():
 
     def uploadReads(self):
 
-        problemOccured = False
+        problemOccurred = False
         problemRows = []
 
         for index, row in self.df.iterrows(): # parse each row
@@ -197,9 +197,9 @@ class UploadIC():
                      self.uploadCation()
             except:
                 problemRows.append(int(index) + 2)
-                problemOccured = True
+                problemOccurred = True
 
-        if problemOccured:
+        if problemOccurred:
             raise ICDataError(self.icReader.fileName, problemRows)
         if len(self.errorColumns) > 0:
             message = "Warning: The following expected columns were missing from the headers of the IC sheet: " + str(self.errorColumns) + "\n\n"

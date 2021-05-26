@@ -27,7 +27,7 @@ class UploadScanPAR():
 
 
         if (len(batches) > 0) and (not self.uploader.allowDuplicates):
-            self.errorsOccured = True
+            self.errorsOccurred = True
             self.duplicateRows.append(i)
         else:
             sqlRead = "INSERT INTO scan_par_reads (scan_par_batch_id, datetime_run, turbidity, no3, toc, doc) VALUES (?,?,?,?,?,?);"
@@ -42,7 +42,7 @@ class UploadScanPAR():
 
         self.cursor.execute(sqlSort, sortTuple)
     def uploadReads(self):
-        self.errorsOccured = False
+        self.errorsOccurred = False
         self.duplicateRows = []
         self.problemRows = []
 
@@ -63,7 +63,7 @@ class UploadScanPAR():
                     self.uploadRow(row, i)
                 except NoDataOnRow:
                     self.problemRows.append(i)
-                    self.errorsOccured = True
+                    self.errorsOccurred = True
 
                 i = i + 1
 

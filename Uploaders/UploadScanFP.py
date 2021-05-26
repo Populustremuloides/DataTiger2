@@ -80,7 +80,7 @@ class UploadScanFP:
 
 
         if (len(batches) > 0) and (not self.uploader.allowDuplicates):
-            self.errorsOccured = True
+            self.errorsOccurred = True
             self.duplicateRows.append(i)
         else:
 
@@ -206,7 +206,7 @@ class UploadScanFP:
 
 
     def uploadReads(self):
-        self.errorsOccured = False
+        self.errorsOccurred = False
         self.duplicateRows = []
         self.problemRows = []
 
@@ -229,7 +229,7 @@ class UploadScanFP:
 
 
                 i = i + 1
-        if self.errorsOccured:
+        if self.errorsOccurred:
             raise DuplicateScanTimes(self.scanFPReader.fileName, self.duplicateRows)
         message = ""
         if len(self.duplicateRows) > 0:

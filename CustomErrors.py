@@ -218,7 +218,7 @@ class MissingColumn(Error):
 
 class SortChemProblemRows(Error):
     def __init__(self, message, path):
-        self.message = "WARNING: " + path + " was uploaded correctly, but the following errors occured:\n" + message
+        self.message = "WARNING: " + path + " was uploaded correctly, but the following errors occurred:\n" + message
 
 class AqualogMissingColumns(Error):
     def __init__(self, path):
@@ -226,7 +226,7 @@ class AqualogMissingColumns(Error):
 
 class ErrorInAqualogRows(Error):
     def __init__(self, message, path):
-        self.message = "WARNING: " + path + " was uploaded correctly, but the following errors occured:\n" + message
+        self.message = "WARNING: " + path + " was uploaded correctly, but the following errors occurred:\n" + message
 
 
 class DuplicateDOCBatch(Error):
@@ -238,7 +238,7 @@ class DuplicateDOCBatch(Error):
 
 class Warnings(Error):
     def __init__(self, message, path):
-        self.message = "WARNING: " + path + " was uploaded correctly, but the following errors occured:\n" + message
+        self.message = "WARNING: " + path + " was uploaded correctly, but the following errors occurred:\n" + message
 
 
 class LachatNotFormattedCorrectly(Error):
@@ -259,7 +259,7 @@ class DuplicateBatch(Error):
 class ScanPARReadsError(Error):
     def __init__(self, message, path):
         self.message = "WARNING: The file " + path + " was succesfully uploaded to the database. However, the following " \
-                     "errors occured:\n" + message
+                     "errors occurred:\n" + message
 class DatabaseTooLong(Error):
     def __init__(self):
         pass
