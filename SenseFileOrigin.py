@@ -95,6 +95,11 @@ class SenseFileOrigin():
                         return "lachat"
                     if "selected" in value and "peak" in value:
                         return "ic"
+                    if "lab" in value and "#" in value and "Water" in sheetNames and not 'date' in str(df.iloc[i,0]).lower():
+                        return "srp_new"
+                    elif "lab" in value and "#" in value and "Water" in sheetNames and 'date' in str(df.iloc[i,0]).lower():
+                        return "icp"
+
                     i = i + 1
 
                 i = 0

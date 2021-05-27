@@ -106,8 +106,8 @@ class UploadElementar():
 
 
     def uploadReads(self):
-        self.problemsOccured = False
-        self.duplicatesOccured = False
+        self.problemsOccurred = False
+        self.duplicatesOccurred = False
         self.problemRows = []
         self.duplicateRows = []
         with open(self.elementarReader.filePath) as csvFile:
@@ -119,16 +119,16 @@ class UploadElementar():
 
                 result = self.elementarReader.readRow(row)
                 if result != 0:
-                    self.problemsOccured = True
+                    self.problemsOccurred = True
                     self.problemRows.append(i)
 
                 else: # upload the row
                     result = self.uploadRow()
                     if result == self.duplicate:
-                        self.duplicatesOccured = True
+                        self.duplicatesOccurred = True
                         self.duplicateRows.append(i)
                     elif result == self.problem:
-                        self.problemsOccured = True
+                        self.problemsOccurred = True
                         self.problemRows.append(i)
                     else: # if it was a success
                         # add the sort-chem to batch
@@ -139,13 +139,13 @@ class UploadElementar():
 
                 i = i + 1
 
-        if self.duplicatesOccured and self.problemsOccured:
-            raise ElementarDuplicatesAndProblemsOccured(
+        if self.duplicatesOccurred and self.problemsOccurred:
+            raise ElementarDuplicatesAndProblemsOccurred(
             self.elementarReader.fileName, self.duplicateRows, self.problemRows)
-        elif self.duplicatesOccured:
-            raise ElementarDuplicateRowsOccured(self.elementarReader.fileName, self.duplicateRows)
-        elif self.problemsOccured:
-            raise ElementarProblemRowsOccured(self.elementarReader.fileName, self.problemRows)
+        elif self.duplicatesOccurred:
+            raise ElementarDuplicateRowsOccurred(self.elementarReader.fileName, self.duplicateRows)
+        elif self.problemsOccurred:
+            raise ElementarProblemRowsOccurred(self.elementarReader.fileName, self.problemRows)
 
 
 

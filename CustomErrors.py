@@ -154,6 +154,12 @@ class ICPFileNotNamedCorrectly(Error):
     def __init__(self, path):
         self.message = "ERROR: " + path + " was not uploaded to the database because the file was not properly named. The file must " \
                           "be named according to the following convention: year.project.operator.xlsx. Please rename the file and try again.\n\n"
+
+class NewSRPFileNotNamedCorrectly(Error):
+    def __init__(self, path):
+        self.message = "ERROR: " + path + " was not uploaded to the database because the file was not properly named. The file must " \
+                                          "be named according to the following convention: date.project.xlsx. Please rename the file and try again.\n\n"
+
 class NoDataOnRow(Error):
     def __init__(self, path):
         self.message = "ERROR: this message should not display to screen.\n\n"
@@ -212,7 +218,7 @@ class MissingColumn(Error):
 
 class SortChemProblemRows(Error):
     def __init__(self, message, path):
-        self.message = "WARNING: " + path + " was uploaded correctly, but the following errors occured:\n" + message
+        self.message = "WARNING: " + path + " was uploaded correctly, but the following errors occurred:\n" + message
 
 class AqualogMissingColumns(Error):
     def __init__(self, path):
@@ -220,7 +226,7 @@ class AqualogMissingColumns(Error):
 
 class ErrorInAqualogRows(Error):
     def __init__(self, message, path):
-        self.message = "WARNING: " + path + " was uploaded correctly, but the following errors occured:\n" + message
+        self.message = "WARNING: " + path + " was uploaded correctly, but the following errors occurred:\n" + message
 
 
 class DuplicateDOCBatch(Error):
@@ -232,7 +238,7 @@ class DuplicateDOCBatch(Error):
 
 class Warnings(Error):
     def __init__(self, message, path):
-        self.message = "WARNING: " + path + " was uploaded correctly, but the following errors occured:\n" + message
+        self.message = "WARNING: " + path + " was uploaded correctly, but the following errors occurred:\n" + message
 
 
 class LachatNotFormattedCorrectly(Error):
@@ -253,7 +259,7 @@ class DuplicateBatch(Error):
 class ScanPARReadsError(Error):
     def __init__(self, message, path):
         self.message = "WARNING: The file " + path + " was succesfully uploaded to the database. However, the following " \
-                     "errors occured:\n" + message
+                     "errors occurred:\n" + message
 class DatabaseTooLong(Error):
     def __init__(self):
         pass
