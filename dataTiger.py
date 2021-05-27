@@ -6,7 +6,7 @@
 # > matplotLib
 # > xlrd
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QScrollArea
 from Database import *
 from EasterEggs import *
 import time
@@ -169,6 +169,66 @@ class Ui_DataTiger(object):
         else:
             self.statusUpdateText.append("Unable to download missing analyzer tests. Invalid database.\n\n")
 
+    def sendToUVU(self):
+        # FIXME! edit which files are to be sent to UVU
+        # get the folder to save to
+        if self.db.databaseOpen:
+            fileName = str(QtWidgets.QFileDialog.getExistingDirectory(self.mainWindow, "Select A Directory"))
+
+            # get the truth value of check buttons
+            fieldSheetInfo = self.FieldSheetCheck.isChecked()
+            measuredDischarge = self.MeasuredDischargeCheck.isChecked()
+            hoboPressure = self.HoboPressureCheck.isChecked()
+            hoboConductivity = self.HoboConductivityCheck.isChecked()
+            hoboLight = self.HoboLightCheck.isChecked()
+            hoboOxygen = self.HoboOxygenCheck.isChecked()
+            eureka = self.EurekaCheck.isChecked()
+            hanna = self.HannaCheck.isChecked()
+            scanCalculated = self.ScanCaclulatedCheck.isChecked()
+            scanRaw = self.ScanRawCheck.isChecked()
+            elementar = self.ElementarCheck.isChecked()
+            ic = self.ICCheck.isChecked()
+            icp = self.ICPCheck.isChecked()
+            aqualog = self.AqualogCheck.isChecked()
+            invertibrates = self.InvertibratesCheck.isChecked()
+            eDNA = self.eDNADiversityCheck.isChecked()
+
+            calculateDischarge = self.CalculateDischargeAndConcentrationsCheck.isChecked()
+            includeSynoptic = self.IncludeSynopticCheck.isChecked()
+            linearlyInterpolate = self.LinearInterpolateCheck.isChecked()
+            frequencyInterpolate = self.FrequencyInterpolateCheck.isChecked()
+
+            self.testDict["fieldSheetInfo"] = fieldSheetInfo
+            self.testDict["measuredDischarge"] = measuredDischarge
+            self.testDict["hoboPressure"] = hoboPressure
+            self.testDict["hoboConductivity"] = hoboConductivity
+            self.testDict["hoboLight"] = hoboLight
+            self.testDict["hoboOxygen"] = hoboOxygen
+            self.testDict["eureka"] = eureka
+            self.testDict["hanna"] = hanna
+            self.testDict["scanCalculated"] = scanCalculated
+            self.testDict["scanRaw"] = scanRaw
+            self.testDict["elementar"] = elementar
+            self.testDict["ic"] = ic
+            self.testDict["icp"] = icp
+            self.testDict["aqualog"] = aqualog
+            self.testDict["invertibrates"] = invertibrates
+            self.testDict["eDNA"] = eDNA
+
+            self.optionsDict = {
+                "calculateStandardCurve": False,
+                "calculateDischarge": calculateDischarge,
+                "includeSynoptic": includeSynoptic,
+                "interpolate": linearlyInterpolate,
+                "interpolateFrequency": frequencyInterpolate
+            }
+
+            result = self.db.writeTimeSeriesReport(fileName, self.testDict, self.optionsDict)
+
+            self.statusUpdateText.append(result)
+        else:
+            self.statusUpdateText.append("Unable to download missing analyzer tests. Invalid database.\n\n")
+
     def downloadTimeSeriesReport(self):
         # get the folder to save to
         if self.db.databaseOpen:
@@ -299,12 +359,19 @@ class Ui_DataTiger(object):
         DataTiger.setObjectName("DataTiger")
         DataTiger.resize(1063, 865)
         self.mainWindow = DataTiger
-        
-        self.centralwidget = QtWidgets.QWidget(DataTiger)
+        self.scroll = QScrollArea()
+        self.scroll.setObjectName("scroll")
+
+        self.centralwidget = QtWidgets.QWidget()
         self.centralwidget.setObjectName("centralwidget")
-        
-        self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(0, 0, 1061, 811))
+
+        self.scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setWidget(self.centralwidget)
+
+        self.tabWidget = QtWidgets.QTabWidget(self.scroll)
+        self.tabWidget.setGeometry(QtCore.QRect(0, 0, 1061, 1000))
         self.tabWidget.setObjectName("tabWidget")
         
         self.tab = QtWidgets.QWidget()
@@ -420,6 +487,16 @@ class Ui_DataTiger(object):
         self.downloadTimeSeriesButton.setGeometry(QtCore.QRect(10, 690, 181, 28))
         self.downloadTimeSeriesButton.clicked.connect(self.downloadTimeSeriesReport)
         self.downloadTimeSeriesButton.setObjectName("downloadTimeSeriesButton")
+
+        self.sendToUVUButton = QtWidgets.QPushButton(self.tab)
+        self.sendToUVUButton.setGeometry(QtCore.QRect(10, 770, 181, 28))
+        self.sendToUVUButton.clicked.connect(self.sendToUVU)
+        self.sendToUVUButton.setObjectName("sendToUVUButton")
+
+        self.calculateStandardCurveButton = QtWidgets.QPushButton(self.tab)
+        self.calculateStandardCurveButton.setGeometry(QtCore.QRect(10, 730, 181, 28))
+        self.calculateStandardCurveButton.clicked.connect(self.downloadStandardCurveReport)
+        self.calculateStandardCurveButton.setObjectName("calculateStandardCurveButton")
 
         self.ExportGapsLabel = QtWidgets.QTextBrowser(self.tab)
         self.ExportGapsLabel.setGeometry(QtCore.QRect(10, 110, 291, 41))
@@ -561,7 +638,7 @@ class Ui_DataTiger(object):
         
         self.tabWidget.addTab(self.tab_2, "")
         
-        DataTiger.setCentralWidget(self.centralwidget)
+        DataTiger.setCentralWidget(self.scroll)
         
         self.menubar = QtWidgets.QMenuBar(DataTiger)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1063, 26))
@@ -617,6 +694,7 @@ class Ui_DataTiger(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; font-weight:600;\">Export Time Series!</span></p></body></html>"))
         self.dragAndDropFilesLabel_2.setText(_translate("DataTiger", "Select the analyers you wish to include"))
         self.downloadTimeSeriesButton.setText(_translate("DataTiger", "Download .csv files to folder"))
+        self.sendToUVUButton.setText(_translate("DataTiger", "Send to UVU"))
         self.IncludeSynopticCheck.setText(_translate("DataTiger", "Include all synoptic sites"))
         self.ExportGapsLabel.setHtml(_translate("DataTiger", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
