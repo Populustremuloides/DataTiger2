@@ -134,13 +134,14 @@ class UploadHobo():
                             else:
                                 print(batch[12] + ' ' + oldBatchTime + " < " + self.hoboReader.lastLoggedDate + ' ' + newBatchTime)
 
-                                # if not already added, set first logged date and time to old batch's last logged date and time
+                                # if not already added, set first logged date and time to old batch's last logged date and time and add new lines
                                 self.hoboReader.firstLoggedDate = batch[12]
                                 self.hoboReader.firstLoggedTime = batch[13]
 
         # test if it is a bad file
         datalist = []
         with open(self.hoboReader.getFilePath()) as csvFile:
+            # clean date and time
             batchTime = self.hoboReader.firstLoggedTime + ":00" if len(self.hoboReader.firstLoggedTime.split(":")) < 3 else self.hoboReader.firstLoggedTime
             self.hoboReader.firstLoggedDateTime = datetime.strptime(self.hoboReader.firstLoggedDate + ' ' + batchTime,'%m-%d-%y %H:%M:%S')
             reader = csv.reader(csvFile, delimiter=",")

@@ -369,6 +369,7 @@ class ReadHobo():
                 self.firstLoggedDate, self.firstLoggedTime = self.getDateAndTime(fourthRow[indexToUse])
             self.lastLoggedDate, self.lastLoggedTime = self.getDateAndTime(lastDate)
 
+            # clean date and time
             self.firstLoggedDate = self.firstLoggedDate.split("-")
             self.firstLoggedDate = ["0" + n if len(n) < 2 else n for n in self.firstLoggedDate]
             self.firstLoggedDate = "-".join(self.firstLoggedDate)
