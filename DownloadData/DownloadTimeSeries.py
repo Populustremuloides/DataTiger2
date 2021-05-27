@@ -1,4 +1,5 @@
 import sqlite3
+import platform
 from DownloadData.SQLQueries import *
 import pandas as pd
 from DownloadData.DateToIndex import *
@@ -248,10 +249,16 @@ def makeSiteDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict):
     return df
 
 def saveDF(df, outputPath, siteID, nbsNum):
-    if siteID != "":
-        filePath = outputPath + "\\timeSeriesReport_" + siteID + ".csv"
+    if platform.system() == "Windows":
+        if siteID != "":
+            filePath = outputPath + "\\timeSeriesReport_" + siteID + ".csv"
+        else:
+            filePath = outputPath + "\\timeSeriesReport_NBS" + nbsNum + ".csv"
     else:
-        filePath = outputPath + "\\timeSeriesReport_NBS" + nbsNum + ".csv"
+        if siteID != "":
+            filePath = outputPath + "/timeSeriesReport_" + siteID + ".csv"
+        else:
+            filePath = outputPath + "/timeSeriesReport_NBS" + nbsNum + ".csv"
     print(filePath)
     df.to_csv(filePath, index=False)
 
@@ -589,6 +596,8 @@ def processDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputP
     saveDF(df, outputPath, siteID, nbsNum)
 
 def downloadTimeSeries(outputPath, testsDict, optionsDict, cursor):
+    print("SYSTEM: ", platform.system())
+
     if optionsDict["calculateDischarge"] == True:
         pdf = getAllHannaPressuresDF(cursor)
         xdict, ydict = getSiteCoordinateDicts(cursor)
@@ -740,8 +749,10 @@ def downloadLoggerGapsReport(outputPath, cursor, testsDict, optionsDict):
             dataDict[key] = dataDict[key] + extra
 
         missingDf = pd.DataFrame.from_dict(dataDict)
-
-        filePath = outputPath + "\\loggerGapsReport_" + siteID + ".csv"
+        if platform.system() == "Windows":
+            filePath = outputPath + "\\loggerGapsReport_" + siteID + ".csv"
+        else:
+            filePath = outputPath = "/loggerGapsReport_" + siteID + ".csv"
         missingDf.to_csv(filePath, index=False)
 
     return "successfully downloaded logger gaps report to " + outputPath

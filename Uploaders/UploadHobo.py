@@ -1,5 +1,4 @@
 import traceback
-
 from Readers.ReadHobo import *
 from CustomErrors import HoboRowsError, batchAlreadyUploadedError, DuplicateNotAllowed, BadHobo
 from UnitConversions import *
@@ -57,7 +56,6 @@ class UploadHobo():
                     if row[0][0].isnumeric() and i >= 5:
                         # parse the row
                         if self.hoboReader.readRow(row, i, self.hoboReader.firstLoggedDateTime):
-
                             # upload the row
                             sqlLog = "INSERT INTO " + self.logTableName + " (logging_date, logging_time, " + self.dataName + ", " \
                                     "temperature_celsius, batch_id) VALUES (?,?,?,?,?)"
@@ -149,16 +147,11 @@ class UploadHobo():
             for row in reader:
                 if len(row) > 0:
                     if row[0][0].isnumeric() and i >= 5:
-                        if self.hoboReader.readRow(row, i, self.hoboReader.firstLoggedDateTime):
-                            try:
-                                datalist.append(float(self.hoboReader.data))
-                            except:
-                                pass
-                        else:
-                            try:
-                                datalist.append(float(self.hoboReader.data))
-                            except:
-                                pass
+                        self.hoboReader.readRow(row, i, self.hoboReader.firstLoggedDateTime)
+                        try:
+                            datalist.append(float(self.hoboReader.data))
+                        except:
+                            pass
                 i = i + 1
         self.autocorrelationCoefficient = self.autocorrelation(datalist)
         goodData = 1
