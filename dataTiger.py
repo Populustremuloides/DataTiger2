@@ -24,7 +24,9 @@ class FilesListWidget(QtWidgets.QListWidget):
             "calculateDischarge": False,
             "includeSynoptic": False,
             "interpolate": False,
-            "interpolateFrequency": False
+            "interpolateFrequency": False,
+            "include_batch_id": False,
+            "correct_values": False,
         }
 
     def dragEnterEvent(self, event):
@@ -162,7 +164,9 @@ class Ui_DataTiger(object):
                 "calculateDischarge": False,
                 "includeSynoptic": False,
                 "interpolate": False,
-                "interpolateFrequency": False
+                "interpolateFrequency": False,
+                "include_batch_id": True,
+                "correct_values": False,
             }
 
             folderName = str(QtWidgets.QFileDialog.getExistingDirectory(self.mainWindow, "Select A Directory"))
@@ -222,7 +226,9 @@ class Ui_DataTiger(object):
                 "calculateDischarge": calculateDischarge,
                 "includeSynoptic": includeSynoptic,
                 "interpolate": linearlyInterpolate,
-                "interpolateFrequency": frequencyInterpolate
+                "interpolateFrequency": frequencyInterpolate,
+                "include_batch_id": False,
+                "correct_values": False,
             }
 
             result = self.db.writeTimeSeriesReport(fileName, self.testDict, self.optionsDict)
@@ -281,7 +287,9 @@ class Ui_DataTiger(object):
                 "calculateDischarge": calculateDischarge,
                 "includeSynoptic": includeSynoptic,
                 "interpolate": linearlyInterpolate,
-                "interpolateFrequency": frequencyInterpolate
+                "interpolateFrequency": frequencyInterpolate,
+                "include_batch_id": False,
+                "correct_values": True,
             }
 
             result = self.db.writeTimeSeriesReport(fileName, self.testDict, self.optionsDict)
@@ -317,7 +325,9 @@ class Ui_DataTiger(object):
                 "calculateDischarge": False,
                 "includeSynoptic": False,
                 "interpolate": False,
-                "interpolateFrequency": False
+                "interpolateFrequency": False,
+                "include_batch_id": False,
+                "correct_values": False,
             }
 
             result = self.db.writeLoggerGapsReport(fileName, self.testDict, self.optionsDict)
@@ -359,14 +369,14 @@ class Ui_DataTiger(object):
         self.easterEgg = EasterEggs()
 
         DataTiger.setObjectName("DataTiger")
-        DataTiger.resize(1063, 865)
+        DataTiger.resize(1080, 865)
         self.mainWindow = DataTiger
 
         self.centralwidget = QtWidgets.QWidget(DataTiger)
         self.centralwidget.setObjectName("centralwidget")
 
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(0, 0, 1061, 811))
+        self.tabWidget.setGeometry(QtCore.QRect(0, 0, 1078, 863))
         self.tabWidget.setObjectName("tabWidget")
 
         self.tab = QtWidgets.QWidget()

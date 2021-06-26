@@ -199,6 +199,8 @@ class SenseFileOrigin():
                             return "elementar"
                         elif "Eureka" in thirdRow[0]:
                             return "field_eureka"
+                        elif "Chem #" in str(firstRow[0]):
+                            return 'masterScan'
                         else:
                             return "unrecognized"
                     except:

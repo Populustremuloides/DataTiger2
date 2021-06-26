@@ -43,9 +43,10 @@ def splitDatetimeP(datetime):
     if len(year) == 4:
         year = year[-2:]
 
-    if int(year) <= 18 or int(year) > 20:
-        print(datetime)
+    # if int(year) <= 18 or int(year) > 20:
+        # print(datetime)
     #print(year)
+
     return year, month, day, hour, minute, second
 
 def splitDatetimeQ(datetime):
@@ -59,6 +60,16 @@ def splitDatetimeQ(datetime):
     hour, minute, second = time.split(":")
     year = year[-2:]
 
+    if int(month) > 12:
+        ###
+        # probably year, month, day
+        year1 = month
+        month1 = day
+        day1 = year
+
+        year = year1
+        month = month1
+        day = day1
     return year, month, day, hour, minute, second
 
 def getP(cursor, siteid):
@@ -67,12 +78,15 @@ def getP(cursor, siteid):
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
     dateToData = {}
+
+    dateToData["batch_id"] = []
     dateToData["datetime"] = []
     dateToData["pressure_hobo"] = []
     dateToData["temperature_hobo"] = []
     dateToData["index"] = []
 
     for item in result:
+        batch_id = item[4]
         date = item[0]
         time = item[1]
         pressure = item[2]
@@ -91,9 +105,11 @@ def getP(cursor, siteid):
             month = month1
             day = day1
 
+
         index = datetimeToIndex(year, month, day, hour, minute, second)
         index = round(index / dayToIndexRatio) * dayToIndexRatio
 
+        dateToData["batch_id"].append(batch_id)
         dateToData["datetime"].append(datetime)
         dateToData["pressure_hobo"].append(pressure)
         dateToData["index"].append(index)
@@ -151,6 +167,7 @@ def getLightHobo(cursor, siteid):
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
     dateToData = {}
+    dateToData["batch_id"] = []
     dateToData["datetime"] = []
     dateToData["intensity_hobo"] = []
     dateToData["temperature_hobo"] = []
@@ -160,6 +177,7 @@ def getLightHobo(cursor, siteid):
         date = item[0]
         time = item[1]
         intensity = item[3]
+        batch_id = item[4]
         temperature = item[2]
         date = date.split(" ")[0]
         datetime = date + " " + time
@@ -168,6 +186,7 @@ def getLightHobo(cursor, siteid):
         index = datetimeToIndex(year, month, day, hour, minute, second)
         index = round(index / dayToIndexRatio) * dayToIndexRatio
 
+        dateToData["batch_id"].append(batch_id)
         dateToData["datetime"].append(datetime)
         dateToData["intensity_hobo"].append(intensity)
         dateToData["index"].append(index)
@@ -181,12 +200,15 @@ def getConductivityHobo(cursor, siteid):
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
     dateToData = {}
+    dateToData["batch_id"] = []
     dateToData["datetime"] = []
     dateToData["conductivity_hobo"] = []
     dateToData["temperature_hobo"] = []
     dateToData["index"] = []
 
     for item in result:
+        batch_id = item[0]
+        ###
         date = item[0]
         time = item[1]
         conductance = item[3]
@@ -197,7 +219,8 @@ def getConductivityHobo(cursor, siteid):
         year, month, day, hour, minute, second = splitDatetimeP(datetime)
         index = datetimeToIndex(year, month, day, hour, minute, second)
         index = round(index / dayToIndexRatio) * dayToIndexRatio
-
+        dateToData["batch_id"].append(batch_id)
+# n
         dateToData["datetime"].append(datetime)
         dateToData["conductivity_hobo"].append(conductance)
         dateToData["index"].append(index)
@@ -211,6 +234,7 @@ def getOxygenHobo(cursor, siteid):
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
     dateToData = {}
+    dateToData["batch_id"] = []
     dateToData["datetime"] = []
     dateToData["dissolvedOxygen_mgl_hobo"] = []
     dateToData["temperature_hobo"] = []
@@ -221,6 +245,7 @@ def getOxygenHobo(cursor, siteid):
         date = item[0]
         time = item[1]
         dissolvedOxygen = item[3]
+        batch_id = item[4]
         temperature = item[2]
         date = date.split(" ")[0]
         datetime = date + " " + time
@@ -230,6 +255,7 @@ def getOxygenHobo(cursor, siteid):
         index = datetimeToIndex(year, month, day, hour, minute, second)
         index = round(index / dayToIndexRatio) * dayToIndexRatio
 
+        dateToData["batch_id"].append(batch_id)
         dateToData["datetime"].append(datetime)
         dateToData["dissolvedOxygen_mgl_hobo"].append(dissolvedOxygen)
         dateToData["index"].append(index)
@@ -243,6 +269,7 @@ def getHanna(cursor, siteid):
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
     dateToData = {}
+    dateToData["batch_id"] = []
     dateToData["datetime"] = []
     dateToData["index"] = []
     dateToData["temperature_hanna"] = []
@@ -264,6 +291,7 @@ def getHanna(cursor, siteid):
         barometricPressure = item[7]
         dissolvedOxygenPercent = item[8]
         dissolvedOxygen_mgL = item[9]
+        batch_id = item[29]
 
         # date = date.split(" ")[0]
         datetime = date + " " + time
@@ -273,6 +301,7 @@ def getHanna(cursor, siteid):
             index = datetimeToIndex(year, month, day, hour, minute, second)
             index = round(index / dayToIndexRatio) * dayToIndexRatio
 
+            dateToData["batch_id"].append(batch_id)
             dateToData["datetime"].append(datetime)
             dateToData["index"].append(index)
             dateToData["temperature_hanna"].append(temperature)
@@ -291,6 +320,7 @@ def getEureka(cursor, siteid):
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
     dateToData = {}
+    dateToData["batch_id"] = []
     dateToData["datetime"] = []
     dateToData["index"] = []
     dateToData["temperature_eureka"] = []
@@ -303,6 +333,8 @@ def getEureka(cursor, siteid):
     dateToData["pH_mv_eureka"] = []
 
     for item in result:
+        batch_id = item[0]
+        ###
         date = item[0]
         time = item[1]
         temperature = item[2]
@@ -320,6 +352,7 @@ def getEureka(cursor, siteid):
         index = datetimeToIndex(year, month, day, hour, minute, second)
         index = round(index / dayToIndexRatio) * dayToIndexRatio
 
+        dateToData["batch_id"].append(batch_id)
         dateToData["datetime"].append(datetime)
         dateToData["index"].append(index)
         dateToData["temperature_eureka"].append(temperature)
@@ -339,11 +372,13 @@ def getQ(cursor, siteid):
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
     dateToData = {}
+    dateToData["batch_id"] = []
     dateToData["datetime"] = []
     dateToData["discharge_measured"] = []
     dateToData["index"] = []
 
     for item in result:
+        batch_id = item[0]
         date = item[2]
         time = item[3]
         discharge = item[4]
@@ -355,6 +390,7 @@ def getQ(cursor, siteid):
             index = datetimeToIndex(year, month, day, hour, minute, second)
             index = round(index / dayToIndexRatio) * dayToIndexRatio
 
+            dateToData["batch_id"].append(batch_id)
             dateToData["datetime"].append(datetime)
             dateToData["discharge_measured"].append(discharge)
             dateToData["index"].append(index)
@@ -372,6 +408,7 @@ def getElementar(cursor, siteid, nbsNum, citSciNum):
     result = cursor.fetchall()
 
     dateToData = {}
+    dateToData["batch_id"] = []
     dateToData["datetime"] = []
     dateToData["tic_mgl"] = []
     dateToData["tc_mgl"] = []
@@ -381,6 +418,8 @@ def getElementar(cursor, siteid, nbsNum, citSciNum):
 
     for item in result:
         try:
+            batch_id = item[0]
+           ###
             tic_mgl = item[8]
             tc_mgl = item[9]
             npoc_mgl = item[10]
@@ -392,6 +431,7 @@ def getElementar(cursor, siteid, nbsNum, citSciNum):
             year, month, day, hour, minute, second = splitDatetimeQ(datetime)
             index = datetimeToIndex(year, month, day, hour, minute, second)
 
+            dateToData["batch_id"].append(batch_id)
             dateToData["datetime"].append(datetime)
             dateToData["tic_mgl"].append(tic_mgl)
             dateToData["tc_mgl"].append(tc_mgl)
@@ -718,8 +758,7 @@ def getICP(cursor, siteid, nbsNum, citSciNum):
 
 
 def getFieldSheetInfo(cursor, siteid, nbsNum, citSciNum):
-    sqlquery = "SELECT *, MAX(datetime_uploaded) FROM sort_chems WHERE date_sampled != \"NULL\" AND date_sampled != \"None\" AND time_sampled != \"NULL\" AND time_sampled != \"None\" AND site_id LIKE \"%NBS%" + nbsNum + "\" OR site_id LIKE \"%NBS%" + str(
-        int(nbsNum)) + "\" OR site_id = ? OR site_id = ? GROUP BY sort_chem;"
+    sqlquery = "SELECT *, MAX(datetime_uploaded) FROM sort_chems WHERE date_sampled != \"NULL\" AND date_sampled != \"None\" AND time_sampled != \"NULL\" AND time_sampled != \"None\" AND site_id LIKE \"%NBS." + nbsNum + "\" OR site_id LIKE \"%NBS " + nbsNum + "\" OR site_id LIKE \"%NBS" + nbsNum + "\" OR site_id LIKE \"%NBS." + str(int(nbsNum)) + "\" OR site_id LIKE \"%NBS " + str(int(nbsNum)) + "\" OR site_id LIKE \"%NBS" + str(int(nbsNum)) + "\" OR site_id = ? OR site_id = ? GROUP BY sort_chem;"
     sitetuple = (siteid, citSciNum)
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
