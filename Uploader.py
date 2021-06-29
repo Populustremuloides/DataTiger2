@@ -157,6 +157,8 @@ class Uploader:
                 self.elementarUploader.uploadReads()
 
             if fileOrigin == "sampleID":
+                # FIXME automate filling blank tests
+                # self.filePath = filePath
                 self.sampleIdReader = ReadSampleId(filePath)
                 self.sampleIdUploader = UploadSampleId(cursor, self, self.sampleIdReader)
 

@@ -37,17 +37,18 @@ class ReadSampleId:
         self.qtimeIndex = None
         self.notesIndex = None
         self.samplersIndex = None
-        self.aqualogIndex = None
-        self.docIndex = None
-        self.elementarIndex = None
-        self.scanIndex = None
-        self.icIndex = None
-        self.icpIndex = None
-        self.lachatIndex = None
-        self.no3Index = None
-        self.srpIndex = None
-        self.waterIndex = None
-        self.ignoreIndex = None
+        self.eventTypeIndex = None
+        # self.aqualogIndex = None
+        # self.docIndex = None
+        # self.elementarIndex = None
+        # self.scanIndex = None
+        # self.icIndex = None
+        # self.icpIndex = None
+        # self.lachatIndex = None
+        # self.no3Index = None
+        # self.srpIndex = None
+        # self.waterIndex = None
+        # self.ignoreIndex = None
 
         self.project = None
         self.device = None
@@ -71,6 +72,7 @@ class ReadSampleId:
         self.qtime = None
         self.notes = None
         self.samplers = None
+        self.eventType = None
         self.aqualog = None
         self.doc = None
         self.elementar = None
@@ -81,6 +83,7 @@ class ReadSampleId:
         self.no3 = None
         self.srp = None
         self.water = None
+        self.tss = None
         self.ignore = None
 
         self.datetimeUploaded = str(datetime.now())
@@ -108,6 +111,7 @@ class ReadSampleId:
         self.qtime = None
         self.notes = None
         self.samplers = None
+        self.eventType = None
         self.aqualog = None
         self.doc = None
         self.elementar = None
@@ -118,6 +122,7 @@ class ReadSampleId:
         self.no3 = None
         self.srp = None
         self.water = None
+        self.tss = None
         self.ignore = None
 
     def nullIndexPresent(self):
@@ -165,28 +170,30 @@ class ReadSampleId:
         #     return True
         # if self.samplersIndex == None:
         #     return True
-        if self.aqualogIndex == None:
+        if self.eventTypeIndex == None:
             return True
-        if self.docIndex == None:
-            return True
-        if self.elementarIndex == None:
-            return True
-        if self.scanIndex == None:
-            return True
-        if self.icIndex == None:
-            return True
-        if self.icpIndex == None:
-            return True
-        if self.lachatIndex == None:
-            return True
-        if self.no3Index == None:
-            return True
-        if self.srpIndex == None:
-            return True
-        if self.waterIndex == None:
-            return True
-        if self.ignoreIndex == None:
-            return True
+        # if self.aqualogIndex == None:
+        #     return True
+        # if self.docIndex == None:
+        #     return True
+        # if self.elementarIndex == None:
+        #     return True
+        # if self.scanIndex == None:
+        #     return True
+        # if self.icIndex == None:
+        #     return True
+        # if self.icpIndex == None:
+        #     return True
+        # if self.lachatIndex == None:
+        #     return True
+        # if self.no3Index == None:
+        #     return True
+        # if self.srpIndex == None:
+        #     return True
+        # if self.waterIndex == None:
+        #     return True
+        # if self.ignoreIndex == None:
+        #     return True
 
         return False
 
@@ -240,28 +247,30 @@ class ReadSampleId:
                 self.notesIndex = i
             elif "sampler" in header:
                 self.samplersIndex = i
-            elif "aqualog" in header:
-                self.aqualogIndex = i
-            elif "doci" in header:
-                self.docIndex = i
-            elif "elementar" in header:
-                self.elementarIndex = i
-            elif "scan" in header:
-                self.scanIndex = i
-            elif "ic" in header and not "icp" in header:
-                self.icIndex = i
-            elif "icp" in header:
-                self.icpIndex = i
-            elif "lachat" in header:
-                self.lachatIndex = i
-            elif "no3" in header:
-                self.no3Index = i
-            elif "srp" in header:
-                self.srpIndex = i
-            elif "water" in header:
-                self.waterIndex = i
-            elif "ignore" in header:
-                self.ignoreIndex = i
+            elif "event" in header and "type" in header:
+                self.eventTypeIndex = i
+            # elif "aqualog" in header:
+            #     self.aqualogIndex = i
+            # elif "doci" in header:
+            #     self.docIndex = i
+            # elif "elementar" in header:
+            #     self.elementarIndex = i
+            # elif "scan" in header:
+            #     self.scanIndex = i
+            # elif "ic" in header and not "icp" in header:
+            #     self.icIndex = i
+            # elif "icp" in header:
+            #     self.icpIndex = i
+            # elif "lachat" in header:
+            #     self.lachatIndex = i
+            # elif "no3" in header:
+            #     self.no3Index = i
+            # elif "srp" in header:
+            #     self.srpIndex = i
+            # elif "water" in header:
+            #     self.waterIndex = i
+            # elif "ignore" in header:
+            #     self.ignoreIndex = i
 
             i = i + 1
 
@@ -269,7 +278,7 @@ class ReadSampleId:
             raise MissingColumn(self.fileName)
 
     def isnt1or0(self, character):
-        if character != "0" and character != "1":
+        if character != "0" and character != "1" and character != 0 and character != 1:
             print(character)
             print(type(character))
             print(character == "1")
@@ -330,6 +339,7 @@ class ReadSampleId:
         self.qtime = self.blankForNull(self.qtime)
         self.notes = self.blankForNull(self.notes)
         self.samplers = self.blankForNull(self.samplers)
+        self.eventType = self.blankForNull(self.eventType)
         self.aqualog = self.blankForNull(self.aqualog)
         self.doc = self.blankForNull(self.doc)
         self.elementar = self.blankForNull(self.elementar)
@@ -340,23 +350,42 @@ class ReadSampleId:
         self.no3 = self.blankForNull(self.no3)
         self.srp = self.blankForNull(self.srp)
         self.water = self.blankForNull(self.water)
+        self.tss = self.blankForNull(self.tss)
         self.ignore = self.blankForNull(self.ignore)
+
+    def assignTestValues(self, event):
+        if event == "uvu":
+            return 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0
+        elif event == "synoptic":
+            return 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0
+        elif event == "baseline":
+            return 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0
+        elif "0" in event and "1" in event:
+            try:
+                return event.strip().split(",")
+            except:
+                return None, None, None, None, None, None, None, None, None, None, None, None
+        elif event == "none":
+            return 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        else:
+            return None, None, None, None, None, None, None, None, None, None, None, None
+            
 
     def readRow(self, row):
         self.resetValues()
 
         # make sure there are enough
-        if len(row) < 27:
+        if len(row) < 16:
             return self.missingValues
 
-        if self.projectIndex != None:
+        if self.projectIndex is not None:
             self.project = row[self.projectIndex]
-        if self.deviceIndex != None:
+        if self.deviceIndex is not None:
             self.device = row[self.deviceIndex]
-        if self.dateIndex != None:
+        if self.dateIndex is not None:
             self.date = row[self.dateIndex]
             self.date = self.fixDate(self.date)
-        if self.siteIndex != None:
+        if self.siteIndex is not None:
             self.site = row[self.siteIndex]
             self.site = self.site.replace(" ","")
             try:
@@ -375,67 +404,72 @@ class ReadSampleId:
                     self.site = "NBS." + num
             except:
                 self.site = None
-        if self.timeIndex != None:
+        if self.timeIndex is not None:
             self.time = row[self.timeIndex]
-        if self.sortChemIndex != None:
+        if self.sortChemIndex is not None:
             self.sortChem = row[self.sortChemIndex]
-        if self.tempIndex != None:
+            if self.sortChem == "2021-0301":
+                print("stop here!!!")
+        if self.tempIndex is not None:
             self.temp = row[self.tempIndex]
-        if self.pressIndex != None:
+        if self.pressIndex is not None:
             self.press = row[self.pressIndex]
-        if self.o2percentIndex != None:
+        if self.o2percentIndex is not None:
             self.o2percent = row[self.o2percentIndex]
-        if self.o2mgIndex != None:
+        if self.o2mgIndex is not None:
             self.o2mg = row[self.o2mgIndex]
-        if self.condIndex != None:
+        if self.condIndex is not None:
             self.cond = row[self.condIndex]
-        if self.phIndex != None:
+        if self.phIndex is not None:
             self.ph = row[self.phIndex]
-        if self.orpIndex != None:
+        if self.orpIndex is not None:
             self.orp = row[self.orpIndex]
-        if self.chlUGLIndex != None:
+        if self.chlUGLIndex is not None:
             self.chlUGL = row[self.chlUGLIndex]
-        if self.chlRFUIndex != None:
+        if self.chlRFUIndex is not None:
             self.chlRFU = row[self.chlRFUIndex]
-        if self.pcUGIndex != None:
+        if self.pcUGIndex is not None:
             self.pcUG = row[self.pcUGIndex]
-        if self.volumeFilteredIndex != None:
+        if self.volumeFilteredIndex is not None:
             self.volumeFiltered = row[self.volumeFilteredIndex]
-        if self.calIndex != None:
+        if self.calIndex is not None:
             self.cal = row[self.calIndex]
-        if self.qsaltIndex != None:
+        if self.qsaltIndex is not None:
             self.qsalt = row[self.qsaltIndex]
-        if self.qtimeIndex != None:
+        if self.qtimeIndex is not None:
             self.qtime = row[self.qtimeIndex]
-        if self.notesIndex != None:
+        if self.notesIndex is not None:
             self.notes = row[self.notesIndex]
-        if self.samplersIndex != None:
+        if self.samplersIndex is not None:
             self.samplers = row[self.samplersIndex]
-        if self.aqualogIndex != None:
-            self.aqualog = row[self.aqualogIndex]
-        if self.docIndex != None:
-            self.doc = row[self.docIndex]
-        if self.elementarIndex != None:
-            self.elementar = row[self.elementarIndex]
-        if self.scanIndex != None:
-            self.scan = row[self.scanIndex]
-        if self.icIndex != None:
-            self.ic = row[self.icIndex]
-        if self.icpIndex != None:
-            self.icp = row[self.icpIndex]
-        if self.lachatIndex != None:
-            self.lachat = row[self.lachatIndex]
-        if self.no3Index != None:
-            self.no3 = row[self.no3Index]
-        if self.srpIndex != None:
-            self.srp = row[self.srpIndex]
-        if self.waterIndex != None:
-            self.water = row[self.waterIndex]
-        if self.ignoreIndex != None:
-            self.ignore = row[self.ignoreIndex]
-
+        if self.eventTypeIndex is not None:
+            self.eventType = row[self.eventTypeIndex].lower()
+            self.aqualog, self.doc, self.elementar, self.scan, self.ic, self.icp, self.lachat, self.no3, self.srp, self.water, self.tss, self.ignore = self.assignTestValues(self.eventType)      # if self.aqualogIndex is not None:
+        #     self.aqualog = row[self.aqualogIndex]
+        # if self.docIndex is not None:
+        #     self.doc = row[self.docIndex]
+        # if self.elementarIndex is not None:
+        #     self.elementar = row[self.elementarIndex]
+        # if self.scanIndex is not None:
+        #     self.scan = row[self.scanIndex]
+        # if self.icIndex is not None:
+        #     self.ic = row[self.icIndex]
+        # if self.icpIndex is not None:
+        #     self.icp = row[self.icpIndex]
+        # if self.lachatIndex is not None:
+        #     self.lachat = row[self.lachatIndex]
+        # if self.no3Index is not None:
+        #     self.no3 = row[self.no3Index]
+        # if self.srpIndex is not None:
+        #     self.srp = row[self.srpIndex]
+        # if self.waterIndex is not None:
+        #     self.water = row[self.waterIndex]
+        # if self.ignoreIndex is not None:
+        #     self.ignore = row[self.ignoreIndex]
 
         # make sure there were 0's and 1's
+        if self.aqualog == "":
+            print("look here")
         if self.isnt1or0(self.aqualog):
             print('aqualog')
             return self.noZeroOrOne

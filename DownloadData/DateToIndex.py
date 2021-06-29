@@ -38,9 +38,9 @@ def dateToIndex(year, month, day, startYear):
             index += monthToDays[preMonth]
 
         index += day  # add the days
-        if index == None:
-            print("start year")
-            print(index)
+        # if index == None:
+        #     print("start year")
+        #     print(index)
 
         return index
 
@@ -49,9 +49,9 @@ def dateToIndex(year, month, day, startYear):
         for preMonth in range(10, 13):
             index += monthToDays[preMonth]
 
-        if index == None:
-            print("pre anything")
-            print(index)
+        # if index == None:
+        #     print("pre anything")
+        #     print(index)
 
         startYear += 1
         # now treat as if we were calculating days since Jan 1, (startYear + 1)
@@ -68,9 +68,9 @@ def dateToIndex(year, month, day, startYear):
 
             index = index + daysInYear
 
-        if index == None:
-            print("year")
-            print(index)
+        # if index == None:
+        #     print("year")
+        #     print(index)
 
         # add the months ******************************************
         if year % 4 == 0:  # if it is a leap year
@@ -80,24 +80,21 @@ def dateToIndex(year, month, day, startYear):
 
         monthVal = int(month)
 
-        if index == None:
-            print("month")
-            print(index)
-
+        # if index == None:
+        #     print("month")
+        #     print(index)
         if monthVal > 1:
             for month in range(1, monthVal):  # don't include the current month because it isn't over yet!
-                # print("month")
-                # print(month)
                 index = index + monthToDays[month]
 
-        if index == None:
-            print("day")
-            print(index)
+        # if index == None:
+        #     print("day")
+        #     print(index)
 
         # add the days *******************************************
         index = index + day
-        if index == None:
-            print(index)
+        # if index == None:
+        #     print(index)
 
         return index
 
@@ -297,6 +294,8 @@ for i in range(0,600):
         # print(index)
         date = str(year) + "-" + str(month) + "-" + str(day) + " " + str(hour) + ":" + str(minute) + ":" + str(second)
         # print(date)
+        if month == "13":
+            print(month)
         newIndex = datetimeToIndex(year, month, day, hour, minute, second)
         # print(newIndex)
         # input("")
