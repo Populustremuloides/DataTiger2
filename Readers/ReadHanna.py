@@ -367,7 +367,6 @@ class ReadHanna():
             #     return [1, errorProcessingHannaData]
 
             if not isnan(row[5]): # check to see if this is the bottom of the table
-
                 self.assignRowValues(row)
                 self.cleanRowValues()
                 return [0]

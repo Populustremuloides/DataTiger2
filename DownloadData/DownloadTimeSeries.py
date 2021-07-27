@@ -1,4 +1,5 @@
 import sqlite3
+from scipy.optimize import curve_fit
 import copy
 from statistics import *
 import platform
@@ -302,21 +303,30 @@ def saveFigure(df, figPath, target_list, sensors, figTitle, device):
             plt.xlabel("Days Since October 1, 2018")
             plt.ylabel(f"{target}")
             plt.plot(df["index"], df[f"{target}_{device}"], c="grey", lw=.5, zorder=1, label="raw data")
-            for point_sensor in sensors:
-                if point_sensor == "Hanna":
-                    plt.plot(df["index"], df[f"{point_sensor}_residual_{target}"], lw=1, ls="dotted", c="coral",
-                             zorder=1, label=f"{point_sensor} residual")
-                    plt.plot(df["index"], df[f"{point_sensor}_corrected_{target}"], lw=.5, c="orange", zorder=1,
-                             label=f"{point_sensor} corrected values")
-                    plt.scatter(df["index"], df[f"{point_sensor}_{target}_fieldsheet"], s=2, c="orangered", zorder=2,
-                                label=f"{point_sensor} fieldsheet values")
-                else:
-                    plt.plot(df["index"], df[f"{point_sensor}_residual_{target}"], lw=1, ls="dotted",
-                             c="cornflowerblue", zorder=2, label=f"{point_sensor} residual")
-                    plt.plot(df["index"], df[f"{point_sensor}_corrected_{target}"], lw=1, c="darkcyan", zorder=3,
-                             label=f"{point_sensor} corrected values")
-                    plt.scatter(df["index"], df[f"{point_sensor}_{target}_fieldsheet"], s=6, c="indigo", zorder=4,
-                                label=f"{point_sensor} fieldsheet values")
+
+
+            # for point_sensor in sensors:
+            #     if point_sensor == "Hanna":
+            #         plt.plot(df["index"], df[f"{point_sensor}_residual_{target}"], lw=1, ls="dotted", c="coral",
+            #                  zorder=1, label=f"{point_sensor} residual")
+            #         plt.plot(df["index"], df[f"{point_sensor}_corrected_{target}"], lw=.5, c="orange", zorder=1,
+            #                  label=f"{point_sensor} corrected values")
+            #         plt.scatter(df["index"], df[f"{point_sensor}_{target}_fieldsheet"], s=2, c="orangered", zorder=2,
+            #                     label=f"{point_sensor} fieldsheet values")
+            #     else:
+
+
+            # THESE ARE REAL!
+            # plt.plot(df["index"], df[f"YSI_curve_{target}"], lw=1, ls="dotted",
+            #          c="cornflowerblue", zorder=2, label=f"residual_curve_{target}")
+            # plt.plot(df["index"], df[f"residual_curve_{target}"], lw=1, c="darkcyan", zorder=3,
+            #          label=f"residual_curve_{target}")
+            # plt.plot(df["index"], df[f"{target}_{device}_corrected"], lw=1, c="indigo", zorder=4,
+            #             label=f"{target}_{device}_corrected")
+            # plt.scatter(df["index"], df[f"{target}"], s=6, c="green", zorder=4,
+            #             label=f"residual points")
+            plt.scatter(df["index"], df[f"{target}_fieldsheet"], s=6, c="tomato", zorder=4,
+                        label=f"{target}_YSI")
             plt.axvline(x=945, c="tomato", zorder=7, label="Stopped calibrating May 3, 2021")
             plt.title(f"{figTitle} {target}")
             plt.legend()
@@ -733,7 +743,7 @@ def processDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputP
     if optionsDict["correct_values"] == True:
         sensors = ["Hanna", "YSI"]
         target_list = ["electricalConductivity", "pH", "temperature", "orpMV", "dissolvedOxygen_mgL"]
-        corrections_df, device = correctValues(df, sensors, target_list)
+        corrections_df, device = correctValuesCurve(df, sensors, target_list)
 
         if corrections_df is None:
             if siteID == "":
@@ -748,50 +758,140 @@ def processDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputP
     else:
         saveDF(df, outputPath, siteID, nbsNum)
 
-def correctValues(df, sensors, target_list):
+def objective(x, a, b, c, d, e, f, g, h):
+    return (a * x) + (b * x ** 2) + (c * x ** 3) + (d * x ** 4) + (e * x ** 5) + (f * x ** 6) + (g * x ** 7) + h
+
+def correctValuesCurve(df, sensors, target_list):
     df = df.replace("", np.nan, regex=True)
     df = df.fillna(value=np.nan)
 
-    resDict, device, df, target_list = loadResidualDict(df, target_list, sensors)
+    device = senseDeviceType(target_list, df)
     if device is None:
         return None, None
 
-    # specify only important columns for final export
-    cols = []
-    for point_sensor in resDict.keys():
-        for target in target_list:
-            df[f"{point_sensor}_corrected_{target}"] = [None] * len(df[df.columns[0]])
-            df[f"{point_sensor}_residual_{target}"] = [None] * len(df[df.columns[0]])
-            cols.extend([f"{point_sensor}_residual_{target}", f"{point_sensor}_corrected_{target}"])
-            if f"{target}_fieldsheet" not in cols and f"{target}_{device}" not in cols:
-                cols.extend([f"{target}_fieldsheet", f"{target}_{device}"])
+    return df, device # FIXME
+    # correct df names based on device type
+    if device == "hobo":
+        df = df.rename(columns={"conductivity_hobo": "electricalConductivity_hobo", "dissolvedOxygen_mgl_hobo": "dissolvedOxygen_mgL_hobo"})
+        target_list.remove("orpMV")
+        target_list.remove("pH")
+    elif device == "eureka":
+        df = df.rename(columns={"orp_eureka": "orpMV_eureka"})
+        target_list.remove("dissolvedOxygen_mgL")
+    elif device == "hanna":
+        target_list.append("dissolvedOxygenPercent")
+    else:
+        return None, None
 
-    # for each row in df, point_sensor, and target, calculate necessary values based on preloaded line formula dictionary
-    nan_df = pd.isnull(df)
-    for index, row in df.iterrows():
-        for point_sensor in resDict.keys():
-            for target in resDict[point_sensor].keys():
-                for k, v in resDict[point_sensor][target].items():
-                    if index < k[0]:
-                        pass
-                    elif k[0] <= index < k[1]:
-                        # calculate corrected position of current index using point-slope formula from piecewise residual function
-                        y = (v["m"] * (index - v["x1"])) + v["y1"]
-                        df.at[index, f"{point_sensor}_residual_{target}"] = y
-                        try:
-                            if not nan_df.at[index, f"{target}_{device}"]:
-                                df.at[index, f"{point_sensor}_corrected_{target}"] = float(
-                                    df.at[index, f"{target}_{device}"]) + y
-                        except:
-                            print(traceback.format_exc())
-                            print(f"{target}_{device}")
-                        # if current index lies within range, continue to subsequent targets
-                    elif index >= k[1]:
-                        # it'd be nice for performance' sake to not have to cycle through each visited key after it's been passed but I can't think of a quick fix that works at the moment
-                        # following doesn't work
-                        pass
+    for target in target_list:
+        filtered_df = df[~df[f"{target}_fieldsheet"].isna()]
+        x = filtered_df["index"].tolist()
+        y = filtered_df[f"{target}_fieldsheet"].tolist()
+        minind = x[0]
+        maxind = x[-1]
+
+        if len(x) < 3:
+            continue
+
+        popt, _ = curve_fit(objective, x, y)
+
+        df[f"YSI_curve_{target}"] = objective(df["index"], *popt)
+
+        # cut off errant tails of curve
+        df[f"YSI_curve_{target}"] = df[f"YSI_curve_{target}"].where((df["index"] > minind), None)
+        df[f"YSI_curve_{target}"] = df[f"YSI_curve_{target}"].where((df["index"] < maxind), None)
+
+        # filter df for creating residuals between ysi curve and data points, find residual points
+        filtered_df = df[~df[f"{target}_fieldsheet"].isna()]
+        filtered_df = filtered_df[~filtered_df[f"{target}_{device}"].isna()]
+        filtered_df = filtered_df[~filtered_df[f"YSI_curve_{target}"].isna()]
+
+        filtered_df[f"residual_curve_{target}"] = [None] * len(filtered_df)
+        # fdf["res_curve"] = fdf["YSI_curve"] - fdf["electricalConductivity_eureka"]
+        filtered_df[f"residual_curve_{target}"] = filtered_df[f"YSI_curve_{target}"] - filtered_df[f"{target}_{device}"]
+        asdf = copy.copy(filtered_df)
+        asdf = asdf.rename(columns={f"residual_curve_{target}": f"{target}"})
+        asdf = asdf[f"{target}"]
+        df = pd.concat([df, asdf], axis=1)
+
+        res = filtered_df[f"residual_curve_{target}"].tolist()
+        x = filtered_df["index"].tolist()
+
+        # add residual points to df
+        filtered_df = filtered_df[f"residual_curve_{target}"]
+        df = pd.concat([df, filtered_df], axis=1)
+
+        # optimize curve for residual points
+        popt, _ = curve_fit(objective, x, res)
+
+        filtered_df = df[~df[f"residual_curve_{target}"].isna()]
+        x = filtered_df["index"].tolist()
+        minind = x[0]
+        maxind = x[-1]
+
+        df[f"residual_curve_{target}"] = objective(df["index"], *popt)
+        df[f"residual_curve_{target}"] = df[f"residual_curve_{target}"].where((df["index"] > minind), None)
+        df[f"residual_curve_{target}"] = df[f"residual_curve_{target}"].where((df["index"] < maxind), None)
+
+        df[f"{target}_{device}_corrected"] = df[f"{target}_{device}"] + df[f"residual_curve_{target}"]
 
     return df, device
+
+    #
+    # cols = []
+    #     for point_sensor in resDict.keys():
+    #         for target in target_list:
+    #             df[f"{point_sensor}_corrected_{target}"] = [None] * len(df[df.columns[0]])
+    #             df[f"{point_sensor}_residual_{target}"] = [None] * len(df[df.columns[0]])
+    #             cols.extend([f"{point_sensor}_residual_{target}", f"{point_sensor}_corrected_{target}"])
+    #             if f"{target}_fieldsheet" not in cols and f"{target}_{device}" not in cols:
+    #                 cols.extend([f"{target}_fieldsheet", f"{target}_{device}"])
+
+
+# def correctValues(df, sensors, target_list):
+#     df = df.replace("", np.nan, regex=True)
+#     df = df.fillna(value=np.nan)
+#
+#     resDict, device, df, target_list = loadResidualDict(df, target_list, sensors)
+#     if device is None:
+#         return None, None
+#
+#     # specify only important columns for final export
+#     cols = []
+#     for point_sensor in resDict.keys():
+#         for target in target_list:
+#             df[f"{point_sensor}_corrected_{target}"] = [None] * len(df[df.columns[0]])
+#             df[f"{point_sensor}_residual_{target}"] = [None] * len(df[df.columns[0]])
+#             cols.extend([f"{point_sensor}_residual_{target}", f"{point_sensor}_corrected_{target}"])
+#             if f"{target}_fieldsheet" not in cols and f"{target}_{device}" not in cols:
+#                 cols.extend([f"{target}_fieldsheet", f"{target}_{device}"])
+#
+#     # for each row in df, point_sensor, and target, calculate necessary values based on preloaded line formula dictionary
+#     nan_df = pd.isnull(df)
+#     for index, row in df.iterrows():
+#         for point_sensor in resDict.keys():
+#             for target in resDict[point_sensor].keys():
+#                 for k, v in resDict[point_sensor][target].items():
+#                     if index < k[0]:
+#                         pass
+#                     elif k[0] <= index < k[1]:
+#                         # calculate corrected position of current index using point-slope formula from piecewise residual function
+#                         y = (v["m"] * (index - v["x1"])) + v["y1"]
+#                         df.at[index, f"{point_sensor}_residual_{target}"] = y
+#                         try:
+#                             if not nan_df.at[index, f"{target}_{device}"]:
+#                                 df.at[index, f"{point_sensor}_corrected_{target}"] = float(
+#                                     df.at[index, f"{target}_{device}"]) + y
+#                         except:
+#                             print(traceback.format_exc())
+#                             print(f"{target}_{device}")
+#                         # if current index lies within range, continue to subsequent targets
+#                     elif index >= k[1]:
+#                         # it'd be nice for performance' sake to not have to cycle through each visited key after it's been passed but I can't think of a quick fix that works at the moment
+#                         # following doesn't work
+#                         pass
+#
+#     return df, device
 
 def senseDeviceType(target_list, df):
     parse_df = df[~df[f"{target_list[0]}_fieldsheet"].isna()]
@@ -807,77 +907,77 @@ def senseDeviceType(target_list, df):
         print("see whether you can trace the error?")
     return device
 
-def loadResidualDict(df, target_list, sensors):
-    point_slope_dict = {}
-
-    # sense device type
-    device = senseDeviceType(target_list, df)
-
-    # correct df names based on device type
-    if device == "hobo":
-        df = df.rename(columns={"conductivity_hobo": "electricalConductivity_hobo", "dissolvedOxygen_mgl_hobo": "dissolvedOxygen_mgL_hobo"})
-        target_list.remove("orpMV")
-        target_list.remove("pH")
-    elif device == "eureka":
-        df = df.rename(columns={"orp_eureka": "orpMV_eureka"})
-        target_list.remove("dissolvedOxygen_mgL")
-    elif device == "hanna":
-        target_list.append("dissolvedOxygenPercent")
-    else:
-        return None, None, None, None
-
-    for point_sensor in sensors:
-        point_slope_dict[point_sensor] = {}
-        filtered_df = df[~df[f"{target_list[0]}_fieldsheet"].isna()]
-        filtered_df = filtered_df[filtered_df['device'].str.contains(f"{point_sensor}", na=False)]
-
-        for target in target_list:
-            # further filter df to include only entries with valid readings
-            filter_by_target = filtered_df[~filtered_df[f"{target}_{device}"].isna()]
-            df[f"{point_sensor}_{target}_fieldsheet"] = df[f"{target}_fieldsheet"].mask((~df['device'].str.contains(f"{point_sensor}", na=True)), other=None)
-
-            point_slope_dict[point_sensor][target] = {}
-
-            filter_by_target.loc[:, f"{point_sensor}_{target}_residual_line"] = [None] * len(filter_by_target.index)
-
-            x1, y1, m = None, None, None
-            for index, row in filter_by_target.iterrows():
-                try:
-                    tf = row[f"{target}_fieldsheet"]
-                    # Error check type etc!
-                    if type(tf) == str:
-                        if ":" in tf:
-                            tf = tf.replace(":", ".")
-                            df.at[index, f"{target}_fieldsheet"] = tf
-                        if tf == "-" or "0($0 !11&8$" in tf or r"435.\x01$0$" in tf:
-                            tf == None
-                        else:
-                            tf = float(tf)
-                    elif type(tf) == int:
-                        tf = float(tf)
-                    elif type(tf) != float:
-                        if tf is None:
-                            tf = np.nan
-                        else:
-                            print(f"ERR: type {type(tf)}")
-                    if not math.isnan(tf):
-                        if type(row[f"{target}_{device}"]) == str:
-                            if row[f"{target}_{device}"] == "":
-                                print("help!")
-                        filter_by_target.at[index, f"{target}_{device}"] = float(row[f"{target}_{device}"])
-                        # if not first iteration
-                        if x1 is not None:
-                            # calculate slope
-                            m = ((tf - float(row[f"{target}_{device}"]) - y1) / (index - x1))
-                            # from points x1 - x2, slope is m with y1 of y1
-                            point_slope_dict[point_sensor][target][(x1, index)] = {"x1": x1, "y1": y1, "m": m}
-                        y1 = tf - float(row[f"{target}_{device}"])
-                        x1 = index
-                except:
-                    print(traceback.format_exc())
-                    print("could not convert", row[f"{target}_fieldsheet"], "on target:", target)
-
-    return point_slope_dict, device, df, target_list
+# def loadResidualDict(df, target_list, sensors):
+#     point_slope_dict = {}
+#
+#     # sense device type
+#     device = senseDeviceType(target_list, df)
+#
+#     # correct df names based on device type
+#     if device == "hobo":
+#         df = df.rename(columns={"conductivity_hobo": "electricalConductivity_hobo", "dissolvedOxygen_mgl_hobo": "dissolvedOxygen_mgL_hobo"})
+#         target_list.remove("orpMV")
+#         target_list.remove("pH")
+#     elif device == "eureka":
+#         df = df.rename(columns={"orp_eureka": "orpMV_eureka"})
+#         target_list.remove("dissolvedOxygen_mgL")
+#     elif device == "hanna":
+#         target_list.append("dissolvedOxygenPercent")
+#     else:
+#         return None, None, None, None
+#
+#     for point_sensor in sensors:
+#         point_slope_dict[point_sensor] = {}
+#         filtered_df = df[~df[f"{target_list[0]}_fieldsheet"].isna()]
+#         filtered_df = filtered_df[filtered_df['device'].str.contains(f"{point_sensor}", na=False)]
+#
+#         for target in target_list:
+#             # further filter df to include only entries with valid readings
+#             filter_by_target = filtered_df[~filtered_df[f"{target}_{device}"].isna()]
+#             df[f"{point_sensor}_{target}_fieldsheet"] = df[f"{target}_fieldsheet"].mask((~df['device'].str.contains(f"{point_sensor}", na=True)), other=None)
+#
+#             point_slope_dict[point_sensor][target] = {}
+#
+#             filter_by_target.loc[:, f"{point_sensor}_{target}_residual_line"] = [None] * len(filter_by_target.index)
+#
+#             x1, y1, m = None, None, None
+#             for index, row in filter_by_target.iterrows():
+#                 try:
+#                     tf = row[f"{target}_fieldsheet"]
+#                     # Error check type etc!
+#                     if type(tf) == str:
+#                         if ":" in tf:
+#                             tf = tf.replace(":", ".")
+#                             df.at[index, f"{target}_fieldsheet"] = tf
+#                         if tf == "-" or "0($0 !11&8$" in tf or r"435.\x01$0$" in tf:
+#                             tf == None
+#                         else:
+#                             tf = float(tf)
+#                     elif type(tf) == int:
+#                         tf = float(tf)
+#                     elif type(tf) != float:
+#                         if tf is None:
+#                             tf = np.nan
+#                         else:
+#                             print(f"ERR: type {type(tf)}")
+#                     if not math.isnan(tf):
+#                         if type(row[f"{target}_{device}"]) == str:
+#                             if row[f"{target}_{device}"] == "":
+#                                 print("help!")
+#                         filter_by_target.at[index, f"{target}_{device}"] = float(row[f"{target}_{device}"])
+#                         # if not first iteration
+#                         if x1 is not None:
+#                             # calculate slope
+#                             m = ((tf - float(row[f"{target}_{device}"]) - y1) / (index - x1))
+#                             # from points x1 - x2, slope is m with y1 of y1
+#                             point_slope_dict[point_sensor][target][(x1, index)] = {"x1": x1, "y1": y1, "m": m}
+#                         y1 = tf - float(row[f"{target}_{device}"])
+#                         x1 = index
+#                 except:
+#                     print(traceback.format_exc())
+#                     print("could not convert", row[f"{target}_fieldsheet"], "on target:", target)
+#
+#     return point_slope_dict, device, df, target_list
 
 def downloadTimeSeries(outputPath, testsDict, optionsDict, cursor):
     print("SYSTEM: ", platform.system())
@@ -894,7 +994,7 @@ def downloadTimeSeries(outputPath, testsDict, optionsDict, cursor):
     siteListTable = "SELECT * FROM master_site"
     cursor.execute(siteListTable)
     result = cursor.fetchall()
-    
+
     progress_length = len(result)
     progress_list = [x[3] for x in result]
     
@@ -906,6 +1006,9 @@ def downloadTimeSeries(outputPath, testsDict, optionsDict, cursor):
         siteID = line[3]
         nbsNum = line[2]
         citSciNum = line[4]
+
+        if siteID != "NEB":
+            continue
 
         nbsNum = nbsNum.split(".")[1]
 

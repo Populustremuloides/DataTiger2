@@ -242,23 +242,45 @@ class Ui_DataTiger(object):
         if self.db.databaseOpen:
             fileName = str(QtWidgets.QFileDialog.getExistingDirectory(self.mainWindow, "Select A Directory"))
 
-            # get the truth value of check buttons
-            fieldSheetInfo = self.FieldSheetCheck.isChecked()
-            measuredDischarge = self.MeasuredDischargeCheck.isChecked()
-            hoboPressure = self.HoboPressureCheck.isChecked()
-            hoboConductivity = self.HoboConductivityCheck.isChecked()
-            hoboLight = self.HoboLightCheck.isChecked()
-            hoboOxygen = self.HoboOxygenCheck.isChecked()
-            eureka = self.EurekaCheck.isChecked()
-            hanna = self.HannaCheck.isChecked()
-            scanCalculated = self.ScanCaclulatedCheck.isChecked()
-            scanRaw = self.ScanRawCheck.isChecked()
-            elementar = self.ElementarCheck.isChecked()
-            ic = self.ICCheck.isChecked()
-            icp = self.ICPCheck.isChecked()
-            aqualog = self.AqualogCheck.isChecked()
-            invertibrates = self.InvertibratesCheck.isChecked()
-            eDNA = self.eDNADiversityCheck.isChecked()
+            # # get the truth value of check buttons
+            # fieldSheetInfo = self.FieldSheetCheck.isChecked()
+            # measuredDischarge = self.MeasuredDischargeCheck.isChecked()
+            # hoboPressure = self.HoboPressureCheck.isChecked()
+            # hoboConductivity = self.HoboConductivityCheck.isChecked()
+            # hoboLight = self.HoboLightCheck.isChecked()
+            # hoboOxygen = self.HoboOxygenCheck.isChecked()
+            # eureka = self.EurekaCheck.isChecked()
+            # hanna = self.HannaCheck.isChecked()
+            # scanCalculated = self.ScanCaclulatedCheck.isChecked()
+            # scanRaw = self.ScanRawCheck.isChecked()
+            # elementar = self.ElementarCheck.isChecked()
+            # ic = self.ICCheck.isChecked()
+            # icp = self.ICPCheck.isChecked()
+            # aqualog = self.AqualogCheck.isChecked()
+            # invertibrates = self.InvertibratesCheck.isChecked()
+            # eDNA = self.eDNADiversityCheck.isChecked()
+
+            fieldSheetInfo = True
+            measuredDischarge = True
+            hoboPressure = True
+            hoboConductivity = True
+            hoboLight = True
+            hoboOxygen = True
+            eureka = True
+            hanna = True
+            scanCalculated = True
+            scanRaw = True
+            elementar = True
+            ic = True
+            icp = True
+            aqualog = True
+            invertibrates = True
+            eDNA = True
+
+            calculateDischarge = True
+            includeSynoptic = True
+            linearlyInterpolate = True
+            frequencyInterpolate = True
 
             calculateDischarge = self.CalculateDischargeAndConcentrationsCheck.isChecked()
             includeSynoptic = self.IncludeSynopticCheck.isChecked()
