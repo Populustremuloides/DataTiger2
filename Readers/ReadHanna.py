@@ -1,3 +1,5 @@
+import traceback
+
 from CustomErrors import *
 import pandas as pd
 import re
@@ -366,10 +368,13 @@ class ReadHanna():
             # if len(row) < 5:
             #     return [1, errorProcessingHannaData]
 
-            if not isnan(row[5]): # check to see if this is the bottom of the table
-                self.assignRowValues(row)
-                self.cleanRowValues()
-                return [0]
+            try:
+                if not row[5] == '----' and not isnan(row[5]): # check to see if this is the bottom of the table
+                    self.assignRowValues(row)
+                    self.cleanRowValues()
+                    return [0]
+            except:
+                print(traceback.format_exc())
 
         except errorProcessingHannaData as e:
             print("error in ReadHanna")

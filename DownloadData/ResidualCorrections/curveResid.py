@@ -24,11 +24,8 @@ minind = x[0]
 maxind = x[-1]
 
 popt, _ = curve_fit(objective, x, y)
-# a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s = popt
-# a, b, c, d, e, f, g, h = popt
 
 # define curve fit to YSI points
-# df["YSI_curve"] = objective(df["index"], a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s)
 df["YSI_curve"] = objective(df["index"], *popt)
 
 # cut off errant tails of curve

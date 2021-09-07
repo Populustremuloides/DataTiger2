@@ -1,3 +1,4 @@
+import traceback
 from datetime import datetime
 import pandas as pd
 from CustomErrors import *
@@ -96,6 +97,7 @@ class UploadAqualog:
 
             return self.noErrors
         except:
+            print(traceback.format_exc())
             return self.error
 
     def uploadReads(self):
@@ -119,13 +121,13 @@ class UploadAqualog:
 
         message = ""
         if len(self.problemRows) > 0:
-            message = message + "ERROR: The following rows were not " \
-                                "uploaded because they were missing critical values: " + str(self.problemRows) + "\n"
+            message = message + "ERROR: The following " + str(len(self.problemRows)) + " rows were not " \
+                                "uploaded because they were missing critical values: " + str(self.problemRows) + "\n\n"
         if len(self.duplicateRows) > 0:
-            message = message + "ERROR: The following rows were not uploaded because they were duplicates" \
+            message = message + "ERROR: The following " + str(len(self.duplicateRows)) + " rows were not uploaded because they were duplicates" \
                                 " of sort-chems with EEMs data already present in the " \
                                 "database: " + str(self.duplicateRows) + " If you would like to " \
-                                "add these rows anyway, please select \'allow duplicates\' above, and re-submit.\n"
+                                "add these rows anyway, please select \'allow duplicates\' above, and re-submit.\n\n"
         if message != "":
             raise ErrorInAqualogRows(message, self.aqualogReader.fileName)
 

@@ -1,4 +1,6 @@
 import csv
+import traceback
+
 from CustomErrors import batchAlreadyUploadedError, DuplicateNotAllowed
 import re
 
@@ -73,19 +75,23 @@ class UploaderEureka:
         # parse the individual logs
         with open(self.eurekaReader.getPath(), encoding="utf8") as csvFile:
             reader = csv.reader(csvFile, delimiter=",")
-            for row in reader:
-                if re.match(r"^\d+/\d+/\d+", row[0]): # keep only those rows that start with a date
-                    self.eurekaReader.readRow(row)
-                    sqlUploadRow = "INSERT INTO eureka_logs (logging_date, " \
-                                   "logging_time, temp, ph_units, orp, sp_cond," \
-                                   "turbidity, hdo_perc_sat, hdo_concentration, " \
-                                   "ph_mv, int_batt_v, eureka_batch_id) VALUES " \
-                                   "(?,?,?,?,?,?,?,?,?,?,?,?)"
-                    uploadRowTuple = (self.eurekaReader.loggingDate, self.eurekaReader.loggingTime,
-                                      self.eurekaReader.temp, self.eurekaReader.phUnits, self.eurekaReader.orp,
-                                      self.eurekaReader.spCond, self.eurekaReader.turbidity, self.eurekaReader.hdoPercSat,
-                                      self.eurekaReader.hdoConcentration, self.eurekaReader.phMv,
-                                      self.eurekaReader.intBattV, self.currentBatch)
 
-                    self.cursor.execute(sqlUploadRow, uploadRowTuple)
+            try:
+                for row in reader:
+                    if re.match(r"^\d+/\d+/\d+", row[0]): # keep only those rows that start with a date
+                        self.eurekaReader.readRow(row)
+                        sqlUploadRow = "INSERT INTO eureka_logs (logging_date, " \
+                                       "logging_time, temp, ph_units, orp, sp_cond," \
+                                       "turbidity, hdo_perc_sat, hdo_concentration, " \
+                                       "ph_mv, int_batt_v, eureka_batch_id) VALUES " \
+                                       "(?,?,?,?,?,?,?,?,?,?,?,?)"
+                        uploadRowTuple = (self.eurekaReader.loggingDate, self.eurekaReader.loggingTime,
+                                          self.eurekaReader.temp, self.eurekaReader.phUnits, self.eurekaReader.orp,
+                                          self.eurekaReader.spCond, self.eurekaReader.turbidity, self.eurekaReader.hdoPercSat,
+                                          self.eurekaReader.hdoConcentration, self.eurekaReader.phMv,
+                                          self.eurekaReader.intBattV, self.currentBatch)
+
+                        self.cursor.execute(sqlUploadRow, uploadRowTuple)
+            except:
+                print(traceback.format_exc())
 

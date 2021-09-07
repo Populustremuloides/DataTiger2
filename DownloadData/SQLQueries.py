@@ -1,3 +1,5 @@
+import traceback
+
 from DownloadData.DateToIndex import *
 
 def getDatetime(date, time):
@@ -294,7 +296,14 @@ def getHanna(cursor, siteid):
         batch_id = item[29]
 
         # date = date.split(" ")[0]
-        datetime = date + " " + time
+        try:
+            if date is None or time is None:
+                continue
+            datetime = date + " " + time
+        except:
+            print(date)
+            print(time)
+            print(traceback.format_exc())
 
         year, month, day, hour, minute, second = splitDatetimeQ(datetime)
         if int(year) >= 18: # ignore all the 2014 results

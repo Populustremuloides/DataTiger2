@@ -1,5 +1,7 @@
 import sqlite3
 from scipy.optimize import curve_fit
+from scipy import stats
+
 import copy
 from statistics import *
 import platform
@@ -213,11 +215,11 @@ def makeSiteDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict):
         # except:
         #     print("error")
     if testsDict["hanna"]:
-        # try:
+        try:
             hannaDict = getHanna(cursor, siteID)
             fullDict = joinDict(hannaDict, fullDict)
-        # except:
-        #     print("error")
+        except:
+            print("error")
     if testsDict["eureka"]:
         # try:
             eurekaDict = getEureka(cursor, siteID)
@@ -300,9 +302,9 @@ def saveFigure(df, figPath, target_list, sensors, figTitle, device):
             # save figure
             plt.figure(figsize=(17, 7))
             plt.style.use('ggplot')
-            plt.xlabel("Days Since October 1, 2018")
+            plt.xlabel("Days since 2018")
             plt.ylabel(f"{target}")
-            plt.plot(df["index"], df[f"{target}_{device}"], c="grey", lw=.5, zorder=1, label="raw data")
+            plt.scatter(df["index"], df[f"{target}_{device}"], c="grey", s=.5, zorder=1, label="raw data")
 
 
             # for point_sensor in sensors:
@@ -430,7 +432,7 @@ def getClosestStationsDict(xdict, ydict):
     stations = list(stationToDistances.keys())
     for station in stations:
         ds = stationToDistances[station]
-        sortedDs = ds
+        sortedDs = copy.copy(ds)
         sortedDs.sort()
         priorityList = []
         for distance in sortedDs:
@@ -444,9 +446,14 @@ def getClosestStationsDict(xdict, ydict):
 
 def expandIndex(targetIndex, allIndices):
     newBools = []
+    found_newBool = False
     for index in allIndices:
         if abs(index - targetIndex) < 0.1:
             newBools.append(True)
+            found_newBool = True
+        # if the first statement has been reached and passed, you can break the loop :)
+        # elif found_newBool:
+        #     break
         else:
             newBools.append(False)
     return newBools
@@ -463,6 +470,8 @@ def getBarometricPressureColumn(siteID, pdf, stationToPriority):
     priorityList = stationToPriority[siteID]
 
     barometricData = pd.Series([None] * len(pdf[pdf.columns[0]]))
+    barometricDataSites = pd.Series([None] * len(pdf[pdf.columns[0]]))
+
     mask = np.asarray(barometricData.isna())
 
     for site in priorityList:
@@ -470,8 +479,71 @@ def getBarometricPressureColumn(siteID, pdf, stationToPriority):
         siteBarometricData = pdf[columnName]
         siteBarometricData = np.asarray(siteBarometricData)
         barometricData[mask] = siteBarometricData[mask]
+        barometricDataSites = barometricDataSites.where(~mask, site)
         mask = np.asarray(barometricData.isna())
     barometricData = pd.Series(barometricData)
+    barometricDataSites = barometricDataSites.where(~barometricData.isna(), None)
+
+    bdf = pd.DataFrame({'data': barometricData, 'sites': barometricDataSites})
+    bdf["corrections"] = [0] * len(bdf[bdf.columns[0]])
+    bdf["corrected_values"] = [None] * len(bdf[bdf.columns[0]])
+
+    # chooses how many steps to look forward/backward in determining average correction to apply
+    interval = 2
+
+    # finds unique batches and uses them to determine where to apply corrections
+    batch_switches = bdf.drop_duplicates(subset='sites', keep='first')
+    bdf["site_changed"] = bdf["sites"].shift(1, fill_value=bdf["sites"].head(1)) != bdf["sites"]
+    bdf['site_changed'] = bdf['site_changed'].where(~bdf['data'].isna(), False)
+    batch_switches = bdf[bdf['site_changed']]
+
+    index_switches = batch_switches.index.tolist()
+    cumulative_correction = 0
+
+    for i in range(len(index_switches)):
+        item = index_switches[i]
+        prev_b = bdf["sites"][item - interval:item].tolist()
+        next_b = bdf["sites"][item:item + interval].tolist()
+
+        prev = bdf["data"][item - interval:item].tolist()
+        next = bdf["data"][item:item + interval].tolist()
+
+        if not all([elem is None for elem in prev_b]) and not all([elem is None for elem in next_b]):
+            prev = [float(pressure) for pressure in prev if pressure is not None and pressure != ""]
+            next = [float(pressure) for pressure in next if pressure is not None and pressure != ""]
+
+            outliers = detect_outlier(prev)
+            if len(outliers) > 0:
+                print(f'help {outliers}')
+                pass
+
+            prev_no_outliers = list(set(prev) - set(outliers))
+            avg_prev = mean(prev_no_outliers)
+
+            outliers = detect_outlier(next)
+            if len(outliers) > 0:
+                print(f'help {outliers}')
+                pass
+
+            next_no_outliers = list(set(next) - set(outliers))
+            avg_next = mean(next_no_outliers)
+
+            correction_this_site = avg_prev - avg_next
+            correction = correction_this_site + cumulative_correction
+
+            if abs(correction) > 100:
+                print(f'large correction: {correction_this_site}')
+
+            mask = (bdf.index >= index_switches[i - 1]) & (bdf.index < index_switches[i])
+            bdf['corrections'] = bdf['corrections'].where(~mask, correction)
+            cumulative_correction = cumulative_correction + correction_this_site
+
+
+    bdf['corrections'] = bdf['corrections'].where(~bdf['data'].isna(), None)
+    bdf['corrected_values'] = pd.to_numeric(bdf['corrections']) + pd.to_numeric(bdf['data'])
+
+    barometricData = bdf['corrected_values']
+
     return barometricData
 
 def replaceBlankWithNone(array):
@@ -487,6 +559,29 @@ def replaceBlankWithNone(array):
 def getDischargeToPressureDF(df, siteID, pdf, stationToPriority, cursor):
     barometricData = getBarometricPressureColumn(siteID, pdf, stationToPriority)
 
+    # step is equal to the difference in index equivalent to 3 hrs (12 indices == 12 15 min intervals == 3 hrs).
+    step = 12
+
+    # drop None values in pressure_hobo
+    indices_no_na = pd.Series(barometricData[~barometricData.isna()].index)
+
+    # create series of differences between indices so we can later find the jumps where Nones were taken out
+    differences = indices_no_na.diff()
+    # create series of indices of aforementioned differences ^
+    index_df = differences.index
+    # create dict and then df from series
+    d = {'differences': differences, 'index_df': index_df}
+    idf = pd.DataFrame(d)
+
+    # starts == the beginning index of each individual grouping
+    starts = idf.loc[(idf['differences'] >= step)]['index_df'].values.tolist()
+
+    if len(starts) > 0:
+        print("we have a huge err that I don't have the bandwidth to troubleshoot rn sorry :)")
+        print("basically you have jumps within the barometric pressure data, idk maybe not a huge deal")
+
+    # barometric_pairings = [df.loc[indices_no_na.values.tolist()[0]]['index'], df.loc[indices_no_na.values.tolist()[-1]]['index']]
+
     columnPostfix = "_barometricPressure_hanna"
     priorityList = stationToPriority[siteID]
 
@@ -498,16 +593,20 @@ def getDischargeToPressureDF(df, siteID, pdf, stationToPriority, cursor):
             pdfMask = pdfMask[:-1]
 
     try:
-        dischargeIndices_1 = pdf[pdfMask]
-        dischargeIndices = dischargeIndices_1["index"]
-        pressurePoints = df[~df["discharge_measured"].isna()]["pressure_hobo"]
+        dischargeIndices = pdf[pdfMask]["index"]
+        
+        # do for barometric pressure
+
         correctedPressurePoints = df[~df["discharge_measured"].isna()]["corrected_values"]
         correctionPoints = df[~df["discharge_measured"].isna()]["corrections"]
+        pressurePoints = df[~df["discharge_measured"].isna()]["pressure_hobo"]
         pressureData = df["pressure_hobo"]
         correctedPressureData = df["corrected_values"]
         dischargePoints = df[~df["discharge_measured"].isna()]["discharge_measured"]
         datePoints = df[~df["discharge_measured"].isna()]["datetime"]
+
     except:
+        print(traceback.format_exc())
         print("tears")
 
     xs = []
@@ -578,14 +677,18 @@ def getDischargeToPressureDF(df, siteID, pdf, stationToPriority, cursor):
 
         if meanBarometricPressure != None and meanCorrectedPressure != None and discharge != None:
             if not np.isnan(meanBarometricPressure) and not np.isnan(meanPressure) and not np.isnan(discharge):
-                xs.append(float(meanPressure) - float(meanBarometricPressure))
-                zs.append(float(meanCorrectedPressure) - float(meanBarometricPressure))
-                ys.append(discharge)
-                dates.append(date)
-                corrections_short.append(correction)
+                discounted_pressure_point = float(meanPressure) - float(meanBarometricPressure)
+                if discounted_pressure_point > -15:
+                    xs.append(discounted_pressure_point)
+                    zs.append(float(meanCorrectedPressure) - float(meanBarometricPressure))
+                    ys.append(discharge)
+                    dates.append(date)
+                    corrections_short.append(correction)
+                else:
+                    print('err')
 
-    returnDict = {"barometric_discounted_original_pressure":xs, "barometric_discounted_corrected_pressure": zs, "measured_discharge":ys, "datetime":dates, "corrections": corrections_short}
-    longDict = {"barometricPressure":barPress,"absolutePressure":press,"discharge":dis, "datetime":fullDates, "correctedPressure": corrected_press, "corrections": corrections_full}
+    returnDict = {"barometric_discounted_original_pressure": xs, "barometric_discounted_corrected_pressure": zs, "measured_discharge":ys, "datetime":dates, "corrections": corrections_short}
+    longDict = {"barometricPressure": barPress, "absolutePressure": press,"discharge": dis, "datetime": fullDates, "correctedPressure": corrected_press, "corrections": corrections_full}
     # FIXME: this isn't quite getting it right!
     returnDF = pd.DataFrame.from_dict(returnDict)
     longDF = pd.DataFrame.from_dict(longDict)
@@ -615,62 +718,131 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
 
     ### update testsDict (options?) to grab batch # from database, when batch numbers switch,
     df = makeSiteDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict)
-    df["corrections"] = [None] * len(df[df.columns[0]])
+    df["corrections"] = [0] * len(df[df.columns[0]])
     df["corrected_values"] = [None] * len(df[df.columns[0]])
-    old_df = copy.copy(df)
 
     if optionsDict["include_batch_id"]:
-        temp = None
+        # chooses how many steps to look forward/backward in determining average correction to apply
         interval = 12
-        correction = 0
-        for item, row in df.iterrows():
-            current = row["batch_id"]
-            if correction != 0:
-                df.at[item, "corrections"] = correction
-                if row["pressure_hobo"] != "" and row["pressure_hobo"] is not None:
-                    df.at[item, 'corrected_values'] = row["pressure_hobo"] + correction
-            if current is not None:
-               ### Batch_id never makes it in, find a way to splice the df so that you're not parsing through the entire thing!!
-                if temp != current and not temp is None:
-                    prev_b = df["batch_id"][item - interval:item].tolist()
-                    next_b = df["batch_id"][item:item + interval].tolist()
-                    prev = df["pressure_hobo"][item - interval:item].tolist()
-                    next = df["pressure_hobo"][item:item + interval].tolist()
-                    if not all([elem == None for elem in prev_b]) and not all([elem == None for elem in next_b]):
-                        prev = [float(pressure) for pressure in prev if pressure is not None and pressure != ""]
-                        next = [float(pressure) for pressure in next if pressure is not None and pressure != ""]
 
-                        outliers = detect_outlier(prev)
-                        if len(outliers) > 0:
-                            pass
-                            # print(outliers)
-                        prev_no_outliers = list(set(prev) - set(outliers))
-                        avg_prev = mean(prev_no_outliers)
-                        outliers = detect_outlier(next)
-                        if len(outliers) > 0:
-                            pass
-                            # print(outliers)
-                        next_no_outliers = list(set(next) - set(outliers))
-                        avg_next = mean(next_no_outliers)
-                        correction = avg_prev - avg_next
-                        if correction > 100:
-                            pass
-                temp = row["batch_id"]
-    # calculate discharge
+        # finds unique batches and uses them to determine where to apply corrections
+        batch_switches = df.drop_duplicates(subset='batch_id', keep='first')
+        index_switches = batch_switches.index.tolist()
 
-    df1, df2 = getDischargeToPressureDF(df, siteID, pdf, stationToPriority, cursor)
+        for i in range(len(index_switches)):
+            item = index_switches[i]
+            prev_b = df["batch_id"][item - interval:item].tolist()
+            next_b = df["batch_id"][item:item + interval].tolist()
 
-    df1.to_csv(outputPath + "/pressure_to_discharge_no_null_" + str(siteID) + ".csv")
-    df2.to_csv(outputPath + "/pressure_and_barometric_full_" + str(siteID) + ".csv")
+            prev = df["pressure_hobo"][item - interval:item].tolist()
+            next = df["pressure_hobo"][item:item + interval].tolist()
+
+            if not all([elem is None for elem in prev_b]) and not all([elem is None for elem in next_b]):
+                prev = [float(pressure) for pressure in prev if pressure is not None and pressure != ""]
+                next = [float(pressure) for pressure in next if pressure is not None and pressure != ""]
+
+                outliers = detect_outlier(prev)
+                if len(outliers) > 0:
+                    print(f'help {outliers}')
+                    pass
+
+                prev_no_outliers = list(set(prev) - set(outliers))
+                avg_prev = mean(prev_no_outliers)
+
+                outliers = detect_outlier(next)
+                if len(outliers) > 0:
+                    print(f'help {outliers}')
+                    pass
+
+                next_no_outliers = list(set(next) - set(outliers))
+                avg_next = mean(next_no_outliers)
+
+                correction = avg_prev - avg_next
+                if abs(correction) > 100:
+                    print(f'large correction: {correction}')
+
+                mask = (index_switches[i - 1] <= df.index) & (df.index > index_switches[i])
+                df['corrections'] = df['corrections'].where(~mask, correction)
+
+    df['corrections'] = df['corrections'].where(~df['pressure_hobo'].isna(), None)
+    df['corrected_values'] = pd.to_numeric(df['corrections']) + pd.to_numeric(df['pressure_hobo'])
+
+    # -------------------------------------
+    # Separate DF into continuous segments
+    # -------------------------------------
+
+    # step is equal to the difference in index equivalent to 3 hrs (12 indices == 12 15 min intervals == 3 hrs).
+    step = df['index'].diff().mean() * 12
+
+    # drop None values in pressure_hobo
+    indices_no_na = df[~df['pressure_hobo'].isna()]['index']
+    indices_no_na = indices_no_na.reset_index()
+    indices_no_na = indices_no_na['index']
+
+    # create series of differences between indices so we can later find the jumps where Nones were taken out
+    differences = indices_no_na.diff()
+    # create series of indices of aforementioned differences ^
+    index_df = differences.index
+    # create dict and then df from series
+    d = {'differences': differences, 'index_df': index_df}
+    idf = pd.DataFrame(d)
+    idf = idf.reset_index()
+
+    # starts == the beginning index of each individual grouping
+    starts = idf.loc[(idf['differences'] >= step)]['index_df'].values.tolist()
+
+    # ends == the ending index of each individual grouping
+    ends = [i - 1 for i in starts]
+
+    # add beginning and closing index to starts
+    starts.insert(0, indices_no_na.index.tolist()[0])
+    starts.append(indices_no_na.index.tolist()[-1])
+
+    final = sorted(ends + starts)
+
+    # use indices of indices_no_na to find corresponding target df indices
+    final = [indices_no_na.loc[i] for i in final]
+    len_final = len(final)
+    if len_final % 2 != 0:
+        print('it should really be even, mayday!! 😰')
+
+    # pair those indices and you're done :)
+    pairings = [[final[i], final[i+1]] for i in range(0, len(final), 2)]
+
+
+    # This line is obnoxiously obtuse but I don't have the bandwidth to simplify rn. Basically it takes the column ['index'] and uses it to find the actual indices from df
+    list_df = [df[df.loc[df['index'] == pair[0]].index.tolist()[0]:df.loc[df['index'] == pair[1]].index.tolist()[0]] for pair in pairings]
+
+    for i in range(len(list_df)):
+        df1, df2 = getDischargeToPressureDF(list_df[i], siteID, pdf, stationToPriority, cursor)
+
+        plotRatingCurve(df1, pairings[i])
+
+        df1.to_csv(f"{outputPath}/pressure_to_discharge_no_null_{pairings[i][0]}_to_{pairings[i][1]}_{str(siteID)}.csv")
+        df2.to_csv(f"{outputPath}/pressure_and_barometric_full_{pairings[i][0]}_to_{pairings[i][1]}_{str(siteID)}.csv")
 
     # download the df
     # download the picture
     # generate the figure
-    # dowload the figure
+    # download the figure
     # download the csv # date, pressure, discharge,
     # save the slopes onto the database
 
+def plotRatingCurve(df, pair):
+    res = stats.linregress(df["barometric_discounted_original_pressure"], df["measured_discharge"])
 
+    plt.figure(figsize=(17, 7))
+    plt.style.use('ggplot')
+    plt.xlabel("barometric discounted pressure")
+    plt.ylabel("discharge")
+
+    plt.scatter(df["barometric_discounted_original_pressure"], df["measured_discharge"], s=6, c="tomato", zorder=4, label=f"discharge")
+    plt.plot(df["barometric_discounted_original_pressure"], res.intercept + res.slope * df["barometric_discounted_original_pressure"], 'r', c='teal', label='fitted line')
+    plt.title("rating curve")
+    plt.legend()
+    plt.savefig(f"{outputPath}/{siteID}_{pair[0]}_to_{pair[1]}_rating_curve.png", dpi=300)
+    plt.clf()
+    plt.close()
 
 def getSlopeIntercept(datetime, siteID, keyDict, siteDict):
     date, time = datetimes.split(" ")
@@ -769,7 +941,6 @@ def correctValuesCurve(df, sensors, target_list):
     if device is None:
         return None, None
 
-    return df, device # FIXME
     # correct df names based on device type
     if device == "hobo":
         df = df.rename(columns={"conductivity_hobo": "electricalConductivity_hobo", "dissolvedOxygen_mgl_hobo": "dissolvedOxygen_mgL_hobo"})
@@ -782,6 +953,8 @@ def correctValuesCurve(df, sensors, target_list):
         target_list.append("dissolvedOxygenPercent")
     else:
         return None, None
+
+    return df, device # FIXME
 
     for target in target_list:
         filtered_df = df[~df[f"{target}_fieldsheet"].isna()]
@@ -899,7 +1072,7 @@ def senseDeviceType(target_list, df):
         device = "hobo"
     elif not all(parse_df["electricalConductivity_eureka"].isna()):
         device = "eureka"
-    elif not all(parse_df["electricalConductivity_hanna"].isna()):
+    elif "electricalConductivity_hanna" in parse_df.columns.tolist() and not all(parse_df["electricalConductivity_hanna"].isna()):
         device = "hanna"
     else:
         device = ""
@@ -1007,9 +1180,6 @@ def downloadTimeSeries(outputPath, testsDict, optionsDict, cursor):
         nbsNum = line[2]
         citSciNum = line[4]
 
-        if siteID != "NEB":
-            continue
-
         nbsNum = nbsNum.split(".")[1]
 
         # generate the dataframe
@@ -1042,16 +1212,20 @@ def downloadStandardCurve(outputPath, testsDict, optionsDict, cursor):
     siteListTable = "SELECT * FROM master_site"
     cursor.execute(siteListTable)
     result = cursor.fetchall()
-    for line in result: 
+
+    progress_length = len(result)
+    progress_list = [x[3] for x in result]
+
+    for line in result:
+        print(f"Now starting {line[3] if line[3] != '' else str(line[2])}")
+        print("[" + (("#") * (progress_length - len(progress_list))) + ((" ") * len(progress_list)) + "]")
+        print(str(round(((((progress_length - len(progress_list)) / (progress_length)) * 100)), 2)) + "% done" + "\n")
 
         siteID = line[3]
         nbsNum = line[2]
         citSciNum = line[4]
 
         nbsNum = nbsNum.split(".")[1]
-
-        # print("new site ***************** ")
-        # print(siteID)
 
         if siteID != "":
             processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputPath, pdf, stationToPriority)

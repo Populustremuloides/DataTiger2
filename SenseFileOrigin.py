@@ -96,7 +96,12 @@ class SenseFileOrigin():
                     if "selected" in value and "peak" in value:
                         return "ic"
                     if "lab" in value and "#" in value and "Water" in sheetNames and not 'date' in str(df.iloc[i,0]).lower():
-                        return "srp_new"
+                        # If any instance of 'icp' exists in the line above "Lab #," return 'icp'. Else, return 'srp_new'
+                        preheader = df.iloc[i-1].values.tolist()
+                        if any(['icp' in str(x).lower() for x in preheader]):
+                            return 'icp'
+                        else:
+                            return "srp_new"
                     elif "lab" in value and "#" in value and "Water" in sheetNames and 'date' in str(df.iloc[i,0]).lower():
                         return "icp"
 
@@ -184,7 +189,7 @@ class SenseFileOrigin():
                             sRow = sRow.lower()
                             if "intensity" in sRow:
                                 return "light_hobo"
-                            elif "range" in sRow and "cm" in sRow:
+                            elif "cm" in sRow and ("range" in sRow or 'conductivity' in sRow):
                                 return "conductivity_hobo"
                             elif "do" in sRow and "mg" in sRow and "conc" in sRow:
                                 return "dissolved_oxygen_hobo"

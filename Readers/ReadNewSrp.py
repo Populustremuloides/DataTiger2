@@ -1,5 +1,6 @@
 from datetime import datetime
 import pandas as pd
+import re
 
 class ReadNewSrp:
     def __init__(self, filePath):
@@ -50,6 +51,12 @@ class ReadNewSrp:
 
         if not self.sortchemIndex is None:
             self.sortchem = row[self.sortchemIndex]
+            if self.sortchem is not None and type(self.sortchem) != str:
+                print(self.sortchem)
+                self.sortchem = str(self.sortchem)
+            elif 'NBS' in self.sortchem:
+                self.sortchem = re.split(r'NBS\.\d+ ', self.sortchem)[-1]
+
         if self.no3Index:
             self.no3 = row[self.no3Index]
         if self.srpIndex:
@@ -66,7 +73,7 @@ class ReadNewSrp:
     def rowMissingValues(self):
         if self.srp == None:
             return True
-        if self.sortchem == None:
+        if self.sortchem is None or pd.isnull(self.sortchem) or self.sortchem == 'nan':
             return True
         if self.no3 == None:
             return True
@@ -115,7 +122,7 @@ class ReadNewSrp:
                 self.no3Index = index
             elif "ppm" in column and "nh" in column and index > 0:
                 self.nh4Index = index
-            elif "ppm" in column and preheader and "soluble reactive p" in preheader and index > 0:
+            elif "ppm" in column and ((preheader and "soluble reactive p" in preheader) or "srp" in column) and index > 0:
                 self.srpIndex = index
             else:
                 print("skipped this column")
