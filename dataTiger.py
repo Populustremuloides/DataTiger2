@@ -95,10 +95,12 @@ class Ui_DataTiger(object):
             for index in range(self.filesList.count()):
                 items.append(self.filesList.item(index))
 
+            i = 0
             for item in items:
+                i = i + 1
                 path = item.text()
                 # try:
-                result = self.db.uploadFile(path)
+                result = "\n\n=================================================================\n" + f"UPLOAD NUMBER: {i}" + "\n\n" + f"{self.db.uploadFile(path)}SENSOR: {self.db.file_type}" + "\n=================================================================\n\n"
                 # except:
                 #     result = "ERROR: unable to upload file.\n\n"
                 #     result = result + self.easterEgg.pickRandomCondolence(self.horizontalSlider.value())

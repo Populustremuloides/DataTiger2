@@ -1,4 +1,6 @@
 import csv
+import traceback
+
 from Readers.ReadHanna import *
 from CustomErrors import *
 
@@ -157,7 +159,6 @@ class SenseFileOrigin():
                 with open(filePath) as csvFile:
 
                     reader = csv.reader(csvFile, delimiter=",")
-
                     try:
 
                         firstRow = next(reader)
@@ -209,8 +210,59 @@ class SenseFileOrigin():
                         else:
                             return "unrecognized"
                     except:
-                        # the file was empty (raised an error trying to access it)
-                        return "no_data"
+                        try:
+
+                            df = pd.read_csv(filePath, header=None)
+
+                            firstRow = df.iloc[0].tolist()
+                            secondRow = df.iloc[1].tolist()
+                            thirdRow = df.iloc[2].tolist()
+
+                            if len(secondRow) == 0:
+                                secondRow = thirdRow
+
+                            if "Inj" in firstRow[0] and "Inj" in firstRow[1] and "Type" in firstRow[2]:
+                                return "ic_new"
+
+                            if firstRow[0].endswith(".LOG"):
+                                return "field_eureka"
+                            elif "Operator" in firstRow[0]:
+                                return "aqualog"
+                            elif "project" in secondRow[0].lower():
+                                if "device" in secondRow[1].lower():
+                                    if "date" in secondRow[2].lower():
+                                        return "sampleID"
+                            elif "Eureka" in secondRow[0]:
+                                return "field_eureka"
+                            elif "Plot Title" in firstRow[0] or "Serial Num" in firstRow[0]:
+                                # parse which type of hobo
+                                sRow = ",".join(secondRow)
+                                sRow = sRow.lower()
+                                if "intensity" in sRow:
+                                    return "light_hobo"
+                                elif "cm" in sRow and ("range" in sRow or 'conductivity' in sRow):
+                                    return "conductivity_hobo"
+                                elif "do" in sRow and "mg" in sRow and "conc" in sRow:
+                                    return "dissolved_oxygen_hobo"
+                                else:
+                                    return "field_hobo.csv"
+                            elif "stamp" in firstRow[0]:
+                                if filePath.endswith("_log.csv"):
+                                    return "unrecognized"
+                                else:
+                                    return "scan.par"
+                            elif "sep" in firstRow[0]:
+                                return "elementar"
+                            elif "Eureka" in thirdRow[0]:
+                                return "field_eureka"
+                            elif "Chem #" in str(firstRow[0]):
+                                return 'masterScan'
+                            else:
+                                return "unrecognized"
+                        except:
+                            # the file was empty (raised an error trying to access it)
+                            print(traceback.format_exc())
+                            return "no_data"
 
             elif filePath.endswith('.hobo'):
                 return "field_hobo.hobo"

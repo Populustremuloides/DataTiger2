@@ -1,4 +1,6 @@
 from CustomErrors import *
+import pandas as pd
+import re
 
 class ReadICP:
     def __init__(self, filePath):
@@ -7,6 +9,9 @@ class ReadICP:
         cleanPath = cleanPath.replace("//", "/")
         pathList = cleanPath.split("/")
         self.fileName = pathList[-1]
+
+        self.sortChemIndex = None
+        self.sortChem = None
 
         self.aluminumIndex = None
         self.arsenicIndex = None
@@ -122,7 +127,7 @@ class ReadICP:
                 print(column)
                 break
 
-            if ("sort" in column and "chem" in column) or ("lab" in column and "#" in column) or ("sample" in column and "id" in column):
+            if self.sortChemIndex is None and (("sort" in column and "chem" in column) or ("lab" in column and "#" in column) or ("sample" in column and "id" in column)):
                 self.sortChemIndex = index
             # elif ("al" in column) and (not "ppm" in column) and (index > 0):
             elif column == "al":
@@ -237,55 +242,130 @@ class ReadICP:
         self.clearValues()
 
         if self.sortChemIndex != None:
-            self.sortChem = row[self.sortChemIndex]
-        if self.aluminumIndex != None:
-            self.aluminum = row[self.aluminumIndex]
-        if self.arsenicIndex != None:
-            self.arsenic = row[self.arsenicIndex]
-        if self.boronIndex != None:
-            self.boron = row[self.boronIndex]
-        if self.bariumIndex != None:
-            self.barium = row[self.bariumIndex]
-        if self.calciumIndex != None:
-            self.calcium= row[self.calciumIndex]
-        if self.cadmiumIndex != None:
-            self.cadmium = row[self.cadmiumIndex]
-        if self.cobaltIndex != None:
-            self.cobalt = row[self.cobaltIndex]
-        if self.chromiumIndex != None:
-            self.chromium = row[self.chromiumIndex]
-        if self.copperIndex != None:
-            self.copper = row[self.copperIndex]
-        if self.ironIndex != None:
-            self.iron = row[self.ironIndex]
-        if self.potassiumIndex != None:
-            self.potassium = row[self.potassiumIndex]
-        if self.magnesiumIndex != None:
-            self.magnesium = row[self.magnesiumIndex]
-        if self.manganeseIndex != None:
-            self.manganese = row[self.manganeseIndex]
-        if self.molybdenumIndex != None:
-            self.molybdenum = row[self.molybdenumIndex]
-        if self.sodiumIndex != None:
-            self.sodium = row[self.sodiumIndex]
-        if self.nickelIndex != None:
-            self.nickel = row[self.nickelIndex]
-        if self.phosphorusIndex != None:
-            self.phosphorus = row[self.phosphorusIndex]
-        if self.leadIndex != None:
-            self.lead = row[self.leadIndex]
-        if self.sulfurIndex != None:
-            self.sulfur = row[self.sulfurIndex]
-        if self.seleniumIndex != None:
-            self.selenium = row[self.seleniumIndex]
-        if self.siliconIndex != None:
-            self.silicon = row[self.siliconIndex]
-        if self.strontiumIndex != None:
-            self.strontium = row[self.strontiumIndex]
-        if self.titaniumIndex != None:
-            self.titanium = row[self.titaniumIndex]
-        if self.vanadiumIndex != None:
-            self.vanadium = row[self.vanadiumIndex]
-        if self.zincIndex != None:
-            self.zinc = row[self.zincIndex]
+            sortchem = re.sub(r".*(\d{4}-\d{4}).*", r"\1", row[self.sortChemIndex])
+            self.sortChem = sortchem
 
+        if not pd.isna(row["Al"]):
+            self.aluminum = row["Al"]
+        elif self.aluminumIndex != None:
+            self.aluminum = row[self.aluminumIndex]
+
+        if not pd.isna(row["As"]):
+            self.arsenic = row['As']
+        elif self.arsenicIndex != None:
+            self.arsenic = row[self.arsenicIndex]
+
+        if not pd.isna(row["B"]):
+            self.boron = row["B"]
+        elif self.boronIndex != None:
+            self.boron = row[self.boronIndex]
+
+        if not pd.isna(row["Ba"]):
+            self.barium = row["Ba"]
+        elif self.bariumIndex != None:
+            self.barium = row[self.bariumIndex]
+
+        if not pd.isna(row["Ca"]):
+            self.calcium = row["Ca"]
+        elif self.calciumIndex != None:
+            self.calcium= row[self.calciumIndex]
+
+        if not pd.isna(row["Cd"]):
+            self.cadmium = row["Cd"]
+        elif self.cadmiumIndex != None:
+            self.cadmium = row[self.cadmiumIndex]
+
+        if not pd.isna(row["Co"]):
+            self.cobalt = row["Co"]
+        elif self.cobaltIndex != None:
+            self.cobalt = row[self.cobaltIndex]
+
+        if not pd.isna(row["Cr"]):
+            self.chromium = row["Cr"]
+        elif self.chromiumIndex != None:
+            self.chromium = row[self.chromiumIndex]
+
+        if not pd.isna(row["Cu"]):
+            self.copper = row["Cu"]
+        elif self.copperIndex != None:
+            self.copper = row[self.copperIndex]
+
+        if not pd.isna(row["Fe"]):
+            self.iron = row["Fe"]
+        elif self.ironIndex != None:
+            self.iron = row[self.ironIndex]
+
+        if not pd.isna(row["K"]):
+            self.potassium = row["K"]
+        elif self.potassiumIndex != None:
+            self.potassium = row[self.potassiumIndex]
+
+        if not pd.isna(row["Mg"]):
+            self.magnesium = row["Mg"]
+        elif self.magnesiumIndex != None:
+            self.magnesium = row[self.magnesiumIndex]
+
+        if not pd.isna(row["Mn"]):
+            self.manganese = row["Mn"]
+        elif self.manganeseIndex != None:
+            self.manganese = row[self.manganeseIndex]
+
+        if not pd.isna(row["Mo"]):
+            self.molybdenum = row["Mo"]
+        elif self.molybdenumIndex != None:
+            self.molybdenum = row[self.molybdenumIndex]
+
+        if not pd.isna(row["Na"]):
+            self.sodium = row["Na"]
+        elif self.sodiumIndex != None:
+            self.sodium = row[self.sodiumIndex]
+
+        if not pd.isna(row["Ni"]):
+            self.nickel = row["Ni"]
+        elif self.nickelIndex != None:
+            self.nickel = row[self.nickelIndex]
+
+        if not pd.isna(row["P"]):
+            self.phosphorus = row["P"]
+        elif self.phosphorusIndex != None:
+            self.phosphorus = row[self.phosphorusIndex]
+
+        if not pd.isna(row["Pb"]):
+            self.lead = row["Pb"]
+        elif self.leadIndex != None:
+            self.lead = row[self.leadIndex]
+
+        if not pd.isna(row["S"]):
+            self.sulfur = row["S"]
+        elif self.sulfurIndex != None:
+            self.sulfur = row[self.sulfurIndex]
+
+        if not pd.isna(row["Se"]):
+            self.selenium = row["Se"]
+        elif self.seleniumIndex != None:
+            self.selenium = row[self.seleniumIndex]
+
+        if not pd.isna(row["Si"]):
+            self.silicon = row["Si"]
+        elif self.siliconIndex != None:
+            self.silicon = row[self.siliconIndex]
+
+        if not pd.isna(row["Sr"]):
+            self.strontium = row["Sr"]
+        elif self.strontiumIndex != None:
+            self.strontium = row[self.strontiumIndex]
+
+        if not pd.isna(row["Ti"]):
+            self.titanium = row["Ti"]
+        elif self.titaniumIndex != None:
+            self.titanium = row[self.titaniumIndex]
+
+        if not pd.isna(row["V"]):
+            self.vanadium = row["V"]
+        elif self.vanadiumIndex != None:
+            self.vanadium = row[self.vanadiumIndex]
+
+        if not pd.isna(row["Zn"]):
+            self.zinc = row["Zn"]
+        elif self.zincIndex != None:
+            self.zinc = row[self.zincIndex]

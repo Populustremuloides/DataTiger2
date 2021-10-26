@@ -368,11 +368,15 @@ class ReadSampleId:
         elif event == "none":
             return 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         else:
+            print(event)
             return None, None, None, None, None, None, None, None, None, None, None, None
             
 
     def readRow(self, row):
         self.resetValues()
+
+        if row[self.siteIndex] == "BSL" and (row[self.dateIndex] == '4/30/21' or row[self.dateIndex] == '4/30/2021'):
+            print("HERE")
 
         # make sure there are enough
         if len(row) < 16:
@@ -402,6 +406,25 @@ class ReadSampleId:
                     if len(num) == 1:
                         num = "0" + num
                     self.site = "NBS." + num
+                elif "ul" in self.site.lower() and "." in self.site.lower():
+                    self.site = self.site.replace(".", "")
+                elif "wwtp" in self.site.lower():
+                    if "pay" in self.site.lower():
+                        self.site = "PaysonWWTP"
+                    elif "sal" in self.site.lower():
+                        self.site = "SalemWWTP"
+                    elif "span" in self.site.lower():
+                        self.site = "SpanishForkWWTP"
+                    elif "prov" in self.site.lower():
+                        self.site = "ProvoWWTP"
+                    elif "timp" in self.site.lower():
+                        self.site = "TimpanogosWWTP"
+                    elif "spring" in self.site.lower():
+                        self.site = "SpringvilleWWTP"
+                    elif "orem" in self.site.lower():
+                        self.site = "OremWWTP"
+                    else:
+                        print("ERROR")
             except:
                 self.site = None
         if self.timeIndex is not None:
@@ -445,6 +468,8 @@ class ReadSampleId:
         if self.eventTypeIndex is not None:
             self.eventType = row[self.eventTypeIndex].lower()
             self.aqualog, self.doc, self.elementar, self.scan, self.ic, self.icp, self.lachat, self.no3, self.srp, self.water, self.tss, self.ignore = self.assignTestValues(self.eventType)      # if self.aqualogIndex is not None:
+        else:
+            print("HERE")
         #     self.aqualog = row[self.aqualogIndex]
         # if self.docIndex is not None:
         #     self.doc = row[self.docIndex]

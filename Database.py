@@ -102,7 +102,9 @@ class Database:
         return self.projectId
 
     def senseFileOrigin(self, path):
-        return self.sensor.senseFileOrigin(path)
+        file_type = self.sensor.senseFileOrigin(path)
+        self.file_type = file_type
+        return file_type
 
 
     def changeDBFile(self, dbFile):
