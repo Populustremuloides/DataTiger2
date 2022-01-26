@@ -369,10 +369,10 @@ class ReadHanna():
             #     return [1, errorProcessingHannaData]
 
             try:
-                if not row[5] == '----' and not isnan(row[5]): # check to see if this is the bottom of the table
-                    self.assignRowValues(row)
-                    self.cleanRowValues()
-                    return [0]
+                # if not row[5] == '----' and not isnan(row[5]): # check to see if this is the bottom of the table
+                self.assignRowValues(row)
+                self.cleanRowValues()
+                return [0]
             except:
                 print(traceback.format_exc())
 

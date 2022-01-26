@@ -1,4 +1,5 @@
 import csv
+import openpyxl
 import traceback
 
 from Readers.ReadHanna import *
@@ -100,7 +101,37 @@ class SenseFileOrigin():
                     if "lab" in value and "#" in value and "Water" in sheetNames and not 'date' in str(df.iloc[i,0]).lower():
                         # If any instance of 'icp' exists in the line above "Lab #," return 'icp'. Else, return 'srp_new'
                         preheader = df.iloc[i-1].values.tolist()
-                        if any(['icp' in str(x).lower() for x in preheader]):
+
+                        # this checks for hidden/non hidden columns
+                        workbook = openpyxl.load_workbook(filename=filePath)
+                        lookhere = workbook.active.column_dimensions.items()
+
+                        hidden_cols = []
+                        unhidden_cols = []
+
+                        # the following code converts Excel column names ('A', 'B', ... 'AB', 'AC', ...) to indices that are used to access the preheaders of df
+                        for column, col_dimension in workbook.active.column_dimensions.items():
+                            if col_dimension.hidden:
+                                letter_list = [ord(x) - 97 for x in column.lower()]
+                                number = (26 * (len(letter_list) - 1)) + letter_list[-1]
+
+                                try:
+                                    hidden_cols.append(df.iloc[i - 1, number])
+                                except:
+                                    print(traceback.format_exc())
+                                    hidden_cols.append(None)
+
+                            else:
+                                letter_list = [ord(x) - 97 for x in column.lower()]
+                                number = (26 * (len(letter_list) - 1)) + letter_list[-1]
+
+                                try:
+                                    unhidden_cols.append(df.iloc[i - 1, number])
+                                except:
+                                    print(traceback.format_exc())
+                                    unhidden_cols.append(None)
+
+                        if any(['icp' in str(x).lower() for x in unhidden_cols]):
                             return 'icp'
                         else:
                             return "srp_new"
@@ -168,8 +199,8 @@ class SenseFileOrigin():
                         if len(secondRow) == 0:
                             secondRow = thirdRow
 
-                        print("FIRST RoW:")
-                        print(firstRow)
+                        if 'analog0' in secondRow and 'analog1' in secondRow and 'analog2' in secondRow and 'analog3' in secondRow:
+                            return 'smartrock'
                         
                         if "Inj" in firstRow[0] and "Inj" in firstRow[1] and "Type" in firstRow[2]:
                             return "ic_new"

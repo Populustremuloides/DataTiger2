@@ -23,6 +23,7 @@ from Uploaders.UploadSites import *
 from Uploaders.UploadYSI import *
 from Uploaders.UploadICNew import *
 from Uploaders.UploadNewSrp import *
+from Uploaders.upload_smartrock import *
 
 from Readers.ReadICP import *
 from Readers.ReadIC import *
@@ -43,6 +44,7 @@ from Readers.ReadSites import *
 from Readers.ReadYSI import *
 from Readers.ReadICNew import *
 from Readers.ReadNewSrp import *
+from Readers.read_smartrock import *
 
 class Uploader:
     def __init__(self, database):
@@ -234,6 +236,12 @@ class Uploader:
 
                 self.newSrpUploader.uploadBatch()
                 self.newSrpUploader.uploadReads()
+            if fileOrigin == "smartrock":
+                self.smartrock_reader = read_smartrock(filePath)
+                self.smartrock_uploader = upload_smartrock(cursor, self, self.smartrock_reader)
+
+                self.smartrock_uploader.uploadBatch()
+                self.smartrock_uploader.uploadReads()
 
         # except sqlite3.OperationalError: # FIXME: PUT THIS BACK
         #     raise DatabaseLocked()
