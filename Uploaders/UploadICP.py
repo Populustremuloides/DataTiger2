@@ -80,6 +80,8 @@ class UploadICP:
     def uploadReads(self):
         problemRows = []
         for index, row in self.df.iterrows():
+            temp = row
+            print(temp)
             self.icpReader.readRow(row)
 
             sqlRow = "INSERT INTO icp_reads_1 (icp_batch_id, sort_chem, aluminum, arsenic, barium, boron, calcium, cadmium, cobalt, chromium, copper, " \

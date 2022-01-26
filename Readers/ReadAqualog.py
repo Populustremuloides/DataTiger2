@@ -208,7 +208,6 @@ class ReadAqualog:
     def rowMissingValues(self):
         if self.sortChem == None:
             return True
-
         if self.fi370 == None:
             return True
         if self.fi310 == None:

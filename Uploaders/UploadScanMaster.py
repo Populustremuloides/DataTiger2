@@ -85,11 +85,14 @@ class UploadScanMaster:
             return self.scanMasterReader.error
 
         elif (len(batches) > 0) and self.uploader.allowDuplicates:
+            sqlRowValues = "INSERT INTO scan_master_reads (scan_master_batch_id, sort_chem, datetime_run, turbidity, no3, toc, doc) VALUES (?,?,?,?,?,?,?);"
+            rowTupleValues = (self.currentBatch, self.scanMasterReader.sortChem, self.scanMasterReader.timestamp, self.scanMasterReader.turbidity, self.scanMasterReader.no3, self.scanMasterReader.toc, self.scanMasterReader.doc)
 
             sqlUpdate = "UPDATE sort_chems_to_datetime_run SET datetime_run = ?, scan_master_batch_id = ? WHERE sort_chem = ?;"
             updateTuple = (str(self.scanMasterReader.timestamp), self.currentBatch, self.scanMasterReader.sortChem)
             # try:
-            self.cursor.execute(sqlUpdate, updateTuple)
+            # self.cursor.execute(sqlUpdate, updateTuple)
+            self.cursor.execute(sqlRowValues, rowTupleValues)
             # except:
             #     print("update error")
             #     print(self.scanMasterReader.sortChem)
@@ -105,8 +108,12 @@ class UploadScanMaster:
             # upload the row
             sqlRow = "INSERT INTO sort_chems_to_datetime_run (sort_chem, datetime_run, scan_master_batch_id) VALUES (?,?,?);"
             rowTuple = (self.scanMasterReader.sortChem, str(self.scanMasterReader.timestamp), self.currentBatch)
+
+            sqlRowValues = "INSERT INTO scan_master_reads (scan_master_batch_id, sort_chem, datetime_run, turbidity, no3, toc, doc) VALUES (?,?,?,?,?,?,?);"
+            rowTupleValues = (self.currentBatch, self.scanMasterReader.sortChem, self.scanMasterReader.timestamp, self.scanMasterReader.turbidity, self.scanMasterReader.no3, self.scanMasterReader.toc, self.scanMasterReader.doc)
             try:
                 self.cursor.execute(sqlRow, rowTuple)
+                self.cursor.execute(sqlRowValues, rowTupleValues)
             except:
                 print("insert error")
                 return self.scanMasterReader.error

@@ -1,5 +1,7 @@
 import re
 import csv
+import traceback
+
 from CustomErrors import NoDataToParse, HoboSerialNumUnparsable, HoboIncorrectlyFormated, HoboMissingData, SiteNotInFileName
 from UnitConversions import *
 import numpy as np
@@ -105,7 +107,11 @@ class ReadHobo():
         #
         #     # SOMETIMES IT IS YEAR MONTH DAY
         #     # go through other hobo files to see if this ever happens
-        return month + "-" + day + "-" + year
+        try:
+            return_date = month + "-" + day + "-" + year
+        except:
+            print(traceback.format_exc())
+        return return_date
 
     def getDateAndTime(self, string):
         stringList = string.split(" ")
@@ -277,10 +283,6 @@ class ReadHobo():
                 if self.letterToTypeDict[letter] == "":
                     self.letterToTypeDict[letter] = "month"
 
-        # minimum range and > 12: year
-        # maximum range: day
-        # medium range: month
-        # A, B, C
         print(self.letterToTypeDict)
 
     def readBatch(self):

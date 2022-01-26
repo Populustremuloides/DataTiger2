@@ -94,7 +94,7 @@ class Ui_DataTiger(object):
         self.dragAndDropFilesLabel_2.setAlignment(QtCore.Qt.AlignCenter)
         self.dragAndDropFilesLabel_2.setObjectName("dragAndDropFilesLabel_2")
         self.downloadTimeSeriesButton = QtWidgets.QPushButton(self.tab)
-        self.downloadTimeSeriesButton.setGeometry(QtCore.QRect(10, 690, 181, 28))
+        self.downloadTimeSeriesButton.setGeometry(QtCore.QRect(10, 600, 91, 28))
         self.downloadTimeSeriesButton.setObjectName("downloadTimeSeriesButton")
         self.IncludeSynopticCheck = QtWidgets.QCheckBox(self.tab)
         self.IncludeSynopticCheck.setGeometry(QtCore.QRect(10, 620, 171, 20))

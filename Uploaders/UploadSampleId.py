@@ -42,8 +42,8 @@ class UploadSampleId:
 
     # check if a site already exists on the database
     def rowIsUnique(self):
-        sqlUnique = "SELECT * FROM sites WHERE site_id = ?;"
-        uniqueTuple = (self.sampleIdReader.site,)
+        sqlUnique = "SELECT sort_chem FROM sort_chems WHERE sort_chem = ?;"
+        uniqueTuple = (self.sampleIdReader.sortChem,)
 
         self.cursor.execute(sqlUnique, uniqueTuple)
         result = self.cursor.fetchall()

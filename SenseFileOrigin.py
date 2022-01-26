@@ -1,4 +1,7 @@
 import csv
+import openpyxl
+import traceback
+
 from Readers.ReadHanna import *
 from CustomErrors import *
 
@@ -96,7 +99,42 @@ class SenseFileOrigin():
                     if "selected" in value and "peak" in value:
                         return "ic"
                     if "lab" in value and "#" in value and "Water" in sheetNames and not 'date' in str(df.iloc[i,0]).lower():
-                        return "srp_new"
+                        # If any instance of 'icp' exists in the line above "Lab #," return 'icp'. Else, return 'srp_new'
+                        preheader = df.iloc[i-1].values.tolist()
+
+                        # this checks for hidden/non hidden columns
+                        workbook = openpyxl.load_workbook(filename=filePath)
+                        lookhere = workbook.active.column_dimensions.items()
+
+                        hidden_cols = []
+                        unhidden_cols = []
+
+                        # the following code converts Excel column names ('A', 'B', ... 'AB', 'AC', ...) to indices that are used to access the preheaders of df
+                        for column, col_dimension in workbook.active.column_dimensions.items():
+                            if col_dimension.hidden:
+                                letter_list = [ord(x) - 97 for x in column.lower()]
+                                number = (26 * (len(letter_list) - 1)) + letter_list[-1]
+
+                                try:
+                                    hidden_cols.append(df.iloc[i - 1, number])
+                                except:
+                                    print(traceback.format_exc())
+                                    hidden_cols.append(None)
+
+                            else:
+                                letter_list = [ord(x) - 97 for x in column.lower()]
+                                number = (26 * (len(letter_list) - 1)) + letter_list[-1]
+
+                                try:
+                                    unhidden_cols.append(df.iloc[i - 1, number])
+                                except:
+                                    print(traceback.format_exc())
+                                    unhidden_cols.append(None)
+
+                        if any(['icp' in str(x).lower() for x in unhidden_cols]):
+                            return 'icp'
+                        else:
+                            return "srp_new"
                     elif "lab" in value and "#" in value and "Water" in sheetNames and 'date' in str(df.iloc[i,0]).lower():
                         return "icp"
 
@@ -152,7 +190,6 @@ class SenseFileOrigin():
                 with open(filePath) as csvFile:
 
                     reader = csv.reader(csvFile, delimiter=",")
-
                     try:
 
                         firstRow = next(reader)
@@ -162,8 +199,8 @@ class SenseFileOrigin():
                         if len(secondRow) == 0:
                             secondRow = thirdRow
 
-                        print("FIRST RoW:")
-                        print(firstRow)
+                        if 'analog0' in secondRow and 'analog1' in secondRow and 'analog2' in secondRow and 'analog3' in secondRow:
+                            return 'smartrock'
                         
                         if "Inj" in firstRow[0] and "Inj" in firstRow[1] and "Type" in firstRow[2]:
                             return "ic_new"
@@ -184,7 +221,7 @@ class SenseFileOrigin():
                             sRow = sRow.lower()
                             if "intensity" in sRow:
                                 return "light_hobo"
-                            elif "range" in sRow and "cm" in sRow:
+                            elif "cm" in sRow and ("range" in sRow or 'conductivity' in sRow):
                                 return "conductivity_hobo"
                             elif "do" in sRow and "mg" in sRow and "conc" in sRow:
                                 return "dissolved_oxygen_hobo"
@@ -204,8 +241,59 @@ class SenseFileOrigin():
                         else:
                             return "unrecognized"
                     except:
-                        # the file was empty (raised an error trying to access it)
-                        return "no_data"
+                        try:
+
+                            df = pd.read_csv(filePath, header=None)
+
+                            firstRow = df.iloc[0].tolist()
+                            secondRow = df.iloc[1].tolist()
+                            thirdRow = df.iloc[2].tolist()
+
+                            if len(secondRow) == 0:
+                                secondRow = thirdRow
+
+                            if "Inj" in firstRow[0] and "Inj" in firstRow[1] and "Type" in firstRow[2]:
+                                return "ic_new"
+
+                            if firstRow[0].endswith(".LOG"):
+                                return "field_eureka"
+                            elif "Operator" in firstRow[0]:
+                                return "aqualog"
+                            elif "project" in secondRow[0].lower():
+                                if "device" in secondRow[1].lower():
+                                    if "date" in secondRow[2].lower():
+                                        return "sampleID"
+                            elif "Eureka" in secondRow[0]:
+                                return "field_eureka"
+                            elif "Plot Title" in firstRow[0] or "Serial Num" in firstRow[0]:
+                                # parse which type of hobo
+                                sRow = ",".join(secondRow)
+                                sRow = sRow.lower()
+                                if "intensity" in sRow:
+                                    return "light_hobo"
+                                elif "cm" in sRow and ("range" in sRow or 'conductivity' in sRow):
+                                    return "conductivity_hobo"
+                                elif "do" in sRow and "mg" in sRow and "conc" in sRow:
+                                    return "dissolved_oxygen_hobo"
+                                else:
+                                    return "field_hobo.csv"
+                            elif "stamp" in firstRow[0]:
+                                if filePath.endswith("_log.csv"):
+                                    return "unrecognized"
+                                else:
+                                    return "scan.par"
+                            elif "sep" in firstRow[0]:
+                                return "elementar"
+                            elif "Eureka" in thirdRow[0]:
+                                return "field_eureka"
+                            elif "Chem #" in str(firstRow[0]):
+                                return 'masterScan'
+                            else:
+                                return "unrecognized"
+                        except:
+                            # the file was empty (raised an error trying to access it)
+                            print(traceback.format_exc())
+                            return "no_data"
 
             elif filePath.endswith('.hobo'):
                 return "field_hobo.hobo"

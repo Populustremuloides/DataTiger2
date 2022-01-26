@@ -6,6 +6,8 @@ from QueryAnalyses import *
 from DownloadData.DownloadTimeSeries import downloadStandardCurve
 from DownloadData.DownloadTimeSeries import downloadTimeSeries
 from DownloadData.DownloadTimeSeries import downloadLoggerGapsReport
+from DownloadData.DownloadPointSamples import downloadAllPointSamples
+from DownloadData.DownloadPointSamples import downloadUVUPointSamples
 import datetime
 import os
 
@@ -102,7 +104,9 @@ class Database:
         return self.projectId
 
     def senseFileOrigin(self, path):
-        return self.sensor.senseFileOrigin(path)
+        file_type = self.sensor.senseFileOrigin(path)
+        self.file_type = file_type
+        return file_type
 
 
     def changeDBFile(self, dbFile):
@@ -414,7 +418,21 @@ class Database:
         return downloadTimeSeries(path, testDict, optionsDict, self.cursor)
         #except:
         #    return "unable to download time series report"
-    
+
+    def writeAllPointSamplesReport(self, path):
+        ROOT = os.path.split(self.defaultDBFile)[0]
+        if path == "":
+            return "no path selected. point samples report not downloaded.\n"
+        
+        return downloadAllPointSamples(path, ROOT, self.conn)
+
+    def writeUVUSamplesReport(self, path):
+        ROOT = os.path.split(self.defaultDBFile)[0]
+        if path == "":
+            return "no path selected. point samples report not downloaded.\n"
+
+        return downloadUVUPointSamples(path, ROOT, self.conn)
+
     def writeLoggerGapsReport(self, path, testDict, optionsDict):
         if path == "":
             return "no path selected. Logger gaps report not downloaded.\n"

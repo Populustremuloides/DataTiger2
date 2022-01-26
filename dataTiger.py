@@ -5,6 +5,7 @@
 # > scipy
 # > matplotLib
 # > xlrd
+import traceback
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 from Database import *
@@ -95,10 +96,12 @@ class Ui_DataTiger(object):
             for index in range(self.filesList.count()):
                 items.append(self.filesList.item(index))
 
+            i = 0
             for item in items:
+                i = i + 1
                 path = item.text()
                 # try:
-                result = self.db.uploadFile(path)
+                result = "\n\n=================================================================\n" + f"UPLOAD NUMBER: {i}" + "\n\n" + f"{self.db.uploadFile(path)}SENSOR: {self.db.file_type}" + "\n=================================================================\n\n"
                 # except:
                 #     result = "ERROR: unable to upload file.\n\n"
                 #     result = result + self.easterEgg.pickRandomCondolence(self.horizontalSlider.value())
@@ -175,63 +178,23 @@ class Ui_DataTiger(object):
         else:
             self.statusUpdateText.append("Unable to download missing analyzer tests. Invalid database.\n\n")
 
-    def sendToUVU(self):
+    def downloadAllPointSamples(self):
         # FIXME! edit which files are to be sent to UVU
         # get the folder to save to
         if self.db.databaseOpen:
             fileName = str(QtWidgets.QFileDialog.getExistingDirectory(self.mainWindow, "Select A Directory"))
+            result = self.db.writeAllPointSamplesReport(fileName)
 
-            # get the truth value of check buttons
-            fieldSheetInfo = self.FieldSheetCheck.isChecked()
-            measuredDischarge = self.MeasuredDischargeCheck.isChecked()
-            hoboPressure = self.HoboPressureCheck.isChecked()
-            hoboConductivity = self.HoboConductivityCheck.isChecked()
-            hoboLight = self.HoboLightCheck.isChecked()
-            hoboOxygen = self.HoboOxygenCheck.isChecked()
-            eureka = self.EurekaCheck.isChecked()
-            hanna = self.HannaCheck.isChecked()
-            scanCalculated = self.ScanCaclulatedCheck.isChecked()
-            scanRaw = self.ScanRawCheck.isChecked()
-            elementar = self.ElementarCheck.isChecked()
-            ic = self.ICCheck.isChecked()
-            icp = self.ICPCheck.isChecked()
-            aqualog = self.AqualogCheck.isChecked()
-            invertibrates = self.InvertibratesCheck.isChecked()
-            eDNA = self.eDNADiversityCheck.isChecked()
+            self.statusUpdateText.append(result)
+        else:
+            self.statusUpdateText.append("Unable to download missing analyzer tests. Invalid database.\n\n")
 
-            calculateDischarge = self.CalculateDischargeAndConcentrationsCheck.isChecked()
-            includeSynoptic = self.IncludeSynopticCheck.isChecked()
-            linearlyInterpolate = self.LinearInterpolateCheck.isChecked()
-            frequencyInterpolate = self.FrequencyInterpolateCheck.isChecked()
-
-            self.testDict["fieldSheetInfo"] = fieldSheetInfo
-            self.testDict["measuredDischarge"] = measuredDischarge
-            self.testDict["hoboPressure"] = hoboPressure
-            self.testDict["hoboConductivity"] = hoboConductivity
-            self.testDict["hoboLight"] = hoboLight
-            self.testDict["hoboOxygen"] = hoboOxygen
-            self.testDict["eureka"] = eureka
-            self.testDict["hanna"] = hanna
-            self.testDict["scanCalculated"] = scanCalculated
-            self.testDict["scanRaw"] = scanRaw
-            self.testDict["elementar"] = elementar
-            self.testDict["ic"] = ic
-            self.testDict["icp"] = icp
-            self.testDict["aqualog"] = aqualog
-            self.testDict["invertibrates"] = invertibrates
-            self.testDict["eDNA"] = eDNA
-
-            self.optionsDict = {
-                "calculateStandardCurve": False,
-                "calculateDischarge": calculateDischarge,
-                "includeSynoptic": includeSynoptic,
-                "interpolate": linearlyInterpolate,
-                "interpolateFrequency": frequencyInterpolate,
-                "include_batch_id": False,
-                "correct_values": False,
-            }
-
-            result = self.db.writeTimeSeriesReport(fileName, self.testDict, self.optionsDict)
+    def downloadUVUData(self):
+        # FIXME! edit which files are to be sent to UVU
+        # get the folder to save to
+        if self.db.databaseOpen:
+            fileName = str(QtWidgets.QFileDialog.getExistingDirectory(self.mainWindow, "Select A Directory"))
+            result = self.db.writeUVUSamplesReport(fileName)
 
             self.statusUpdateText.append(result)
         else:
@@ -242,23 +205,45 @@ class Ui_DataTiger(object):
         if self.db.databaseOpen:
             fileName = str(QtWidgets.QFileDialog.getExistingDirectory(self.mainWindow, "Select A Directory"))
 
-            # get the truth value of check buttons
-            fieldSheetInfo = self.FieldSheetCheck.isChecked()
-            measuredDischarge = self.MeasuredDischargeCheck.isChecked()
-            hoboPressure = self.HoboPressureCheck.isChecked()
-            hoboConductivity = self.HoboConductivityCheck.isChecked()
-            hoboLight = self.HoboLightCheck.isChecked()
-            hoboOxygen = self.HoboOxygenCheck.isChecked()
-            eureka = self.EurekaCheck.isChecked()
-            hanna = self.HannaCheck.isChecked()
-            scanCalculated = self.ScanCaclulatedCheck.isChecked()
-            scanRaw = self.ScanRawCheck.isChecked()
-            elementar = self.ElementarCheck.isChecked()
-            ic = self.ICCheck.isChecked()
-            icp = self.ICPCheck.isChecked()
-            aqualog = self.AqualogCheck.isChecked()
-            invertibrates = self.InvertibratesCheck.isChecked()
-            eDNA = self.eDNADiversityCheck.isChecked()
+            # # get the truth value of check buttons
+            # fieldSheetInfo = self.FieldSheetCheck.isChecked()
+            # measuredDischarge = self.MeasuredDischargeCheck.isChecked()
+            # hoboPressure = self.HoboPressureCheck.isChecked()
+            # hoboConductivity = self.HoboConductivityCheck.isChecked()
+            # hoboLight = self.HoboLightCheck.isChecked()
+            # hoboOxygen = self.HoboOxygenCheck.isChecked()
+            # eureka = self.EurekaCheck.isChecked()
+            # hanna = self.HannaCheck.isChecked()
+            # scanCalculated = self.ScanCaclulatedCheck.isChecked()
+            # scanRaw = self.ScanRawCheck.isChecked()
+            # elementar = self.ElementarCheck.isChecked()
+            # ic = self.ICCheck.isChecked()
+            # icp = self.ICPCheck.isChecked()
+            # aqualog = self.AqualogCheck.isChecked()
+            # invertibrates = self.InvertibratesCheck.isChecked()
+            # eDNA = self.eDNADiversityCheck.isChecked()
+
+            fieldSheetInfo = True
+            measuredDischarge = True
+            hoboPressure = True
+            hoboConductivity = True
+            hoboLight = True
+            hoboOxygen = True
+            eureka = True
+            hanna = True
+            scanCalculated = True
+            scanRaw = True
+            elementar = True
+            ic = True
+            icp = True
+            aqualog = True
+            invertibrates = True
+            eDNA = True
+
+            calculateDischarge = True
+            includeSynoptic = True
+            linearlyInterpolate = True
+            frequencyInterpolate = True
 
             calculateDischarge = self.CalculateDischargeAndConcentrationsCheck.isChecked()
             includeSynoptic = self.IncludeSynopticCheck.isChecked()
@@ -582,13 +567,18 @@ class Ui_DataTiger(object):
         self.AqualogCheck.setGeometry(QtCore.QRect(10, 530, 95, 20))
         self.AqualogCheck.setObjectName("AqualogCheck")
 
+        self.downloadAllPointSamplesButton = QtWidgets.QPushButton(self.tab)
+        self.downloadAllPointSamplesButton.setGeometry(QtCore.QRect(10, 770, 181, 28))
+        self.downloadAllPointSamplesButton.clicked.connect(self.downloadAllPointSamples)
+        self.downloadAllPointSamplesButton.setObjectName("downloadAllPointSamplesButton")
+
         self.sendToUVUButton = QtWidgets.QPushButton(self.tab)
-        self.sendToUVUButton.setGeometry(QtCore.QRect(10, 770, 181, 28))
-        self.sendToUVUButton.clicked.connect(self.sendToUVU)
+        self.sendToUVUButton.setGeometry(QtCore.QRect(10, 745, 181, 28))
+        self.sendToUVUButton.clicked.connect(self.downloadUVUData)
         self.sendToUVUButton.setObjectName("sendToUVUButton")
 
         self.calculateStandardCurveButton = QtWidgets.QPushButton(self.tab)
-        self.calculateStandardCurveButton.setGeometry(QtCore.QRect(10, 730, 181, 28))
+        self.calculateStandardCurveButton.setGeometry(QtCore.QRect(10, 720, 181, 28))
         self.calculateStandardCurveButton.clicked.connect(self.downloadStandardCurveReport)
         self.calculateStandardCurveButton.setObjectName("calculateStandardCurveButton")
 
@@ -689,7 +679,8 @@ class Ui_DataTiger(object):
             _translate("DataTiger", "Select the default \"Project\" the files belong to."))
         self.selectProjectDropdown.setItemText(0, _translate("DataTiger", "MegaFire"))
         self.dragAndDropFilesLabel.setText(_translate("DataTiger", "Drag and drop the files here."))
-        self.sendToUVUButton.setText(_translate("DataTiger", "Send to UVU"))
+        self.sendToUVUButton.setText(_translate("DataTiger", "Download UVU data"))
+        self.downloadAllPointSamplesButton.setText(_translate("DataTiger", "Download all point samples"))
         self.allowDuplicatesRadio.setText(
             _translate("DataTiger", "Allow Duplicate Files (in the case of data-correction)"))
         self.removeSelectedButton.setText(_translate("DataTiger", "remove selected"))
@@ -754,10 +745,13 @@ class Ui_DataTiger(object):
 if __name__ == "__main__":
     import sys
 
-    app = QtWidgets.QApplication(sys.argv)
-    DataTiger = QtWidgets.QMainWindow()
-    ui = Ui_DataTiger()
-    db = Database()
-    ui.setupUi(DataTiger, db)
-    DataTiger.show()
-    sys.exit(app.exec_())
+    try:
+        app = QtWidgets.QApplication(sys.argv)
+        DataTiger = QtWidgets.QMainWindow()
+        ui = Ui_DataTiger()
+        db = Database()
+        ui.setupUi(DataTiger, db)
+        DataTiger.show()
+        sys.exit(app.exec_())
+    except:
+        print(traceback.format_exc())
