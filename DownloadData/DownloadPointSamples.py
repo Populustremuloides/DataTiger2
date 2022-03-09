@@ -12,7 +12,7 @@ def downloadAllPointSamples(outputPath, ROOT, conn):
     today = datetime.date.today()
     today_string = today.strftime("%y%m%d")
     export_file_name = os.path.join(outputPath, f"all_point_samples_{today_string}.xlsx")
-    
+
     # Get site information from Master Site List
     site_df = pd.read_csv(os.path.join(ROOT, "MasterSiteListDescription.csv"))
     id_code_to_site_id = site_df[~site_df['id_code'].isna()]
@@ -330,8 +330,9 @@ def downloadUVUPointSamples(outputPath, ROOT, conn):
 
         # FILTER BY UVU SITES
 
+        # this is where somethign goes wrong, because of read_csv, I added encoding='mac-roman', which I believe has to do with the pandas function not knowing what some characters were because the file was from a mac and it shouldn't have been or it wasn't when it should
         # Get all sites that UVU is interested in from masterfieldbook
-        df = pd.read_csv(os.path.join(ROOT, "Data/Fieldsheets/MasterFieldbook210831.csv"), skiprows=1)
+        df = pd.read_csv(os.path.join(ROOT, "Data/Fieldsheets/MasterFieldbook210831.csv"), encoding='mac-roman', skiprows=1)
 
         uvu = ['uvu', 'UVU', 'Uvu']
         uvu = df.loc[df['Event type (Synoptic/UVU/Baseline)'].str.lower().isin(uvu)]

@@ -7,7 +7,8 @@
 # > xlrd
 import traceback
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
 from Database import *
 from EasterEggs import *
 import time
@@ -368,7 +369,7 @@ class Ui_DataTiger(object):
         self.tab.setObjectName("tab")
 
         self.DownloadSortChems = QtWidgets.QPushButton(self.tab)
-        self.DownloadSortChems.setGeometry(QtCore.QRect(230, 750, 151, 28))
+        self.DownloadSortChems.setGeometry(QtCore.QRect(230, 750, 165, 28))#--,--,151->165,--
         self.DownloadSortChems.clicked.connect(self.downloadSortChems)
         self.DownloadSortChems.setObjectName("DownloadSortChems")
 
@@ -376,6 +377,7 @@ class Ui_DataTiger(object):
         self.enterHowMany.setGeometry(QtCore.QRect(240, 710, 141, 31))
         self.enterHowMany.setObjectName("enterHowMany")
 
+        self.howManyLabel = QtWidgets.QLabel(self.tab)
         self.howManyLabel = QtWidgets.QLabel(self.tab)
         self.howManyLabel.setGeometry(QtCore.QRect(230, 670, 161, 31))
         self.howManyLabel.setObjectName("howManyLabel")
@@ -385,7 +387,7 @@ class Ui_DataTiger(object):
         self.sortChemMakerLabel.setObjectName("sortChemMakerLabel")
 
         self.downloadMissingTestsButton = QtWidgets.QPushButton(self.tab)
-        self.downloadMissingTestsButton.setGeometry(QtCore.QRect(10, 70, 121, 28))
+        self.downloadMissingTestsButton.setGeometry(QtCore.QRect(10, 70, 151, 28))#--,--,121->151,--
         self.downloadMissingTestsButton.clicked.connect(self.downloadMissingTestsReport)
         self.downloadMissingTestsButton.setObjectName("downloadMissingTestsButton")
 
@@ -474,7 +476,7 @@ class Ui_DataTiger(object):
         self.dragAndDropFilesLabel_2.setObjectName("dragAndDropFilesLabel_2")
 
         self.downloadTimeSeriesButton = QtWidgets.QPushButton(self.tab)
-        self.downloadTimeSeriesButton.setGeometry(QtCore.QRect(10, 690, 181, 28))
+        self.downloadTimeSeriesButton.setGeometry(QtCore.QRect(10, 690, 205, 28))#--,--,181->205,--
         self.downloadTimeSeriesButton.clicked.connect(self.downloadTimeSeriesReport)
         self.downloadTimeSeriesButton.setObjectName("downloadTimeSeriesButton")
 
@@ -483,7 +485,7 @@ class Ui_DataTiger(object):
         self.ExportGapsLabel.setObjectName("ExportGapsLabel")
 
         self.downloadGapsButton = QtWidgets.QPushButton(self.tab)
-        self.downloadGapsButton.setGeometry(QtCore.QRect(10, 160, 121, 28))
+        self.downloadGapsButton.setGeometry(QtCore.QRect(10, 160, 151, 28))#--,--,121->151,--
         self.downloadGapsButton.clicked.connect(self.downloadLoggerGapsReport)
         self.downloadGapsButton.setObjectName("downloadGapsButton")
 
@@ -568,17 +570,17 @@ class Ui_DataTiger(object):
         self.AqualogCheck.setObjectName("AqualogCheck")
 
         self.downloadAllPointSamplesButton = QtWidgets.QPushButton(self.tab)
-        self.downloadAllPointSamplesButton.setGeometry(QtCore.QRect(10, 770, 181, 28))
+        self.downloadAllPointSamplesButton.setGeometry(QtCore.QRect(10, 770, 205, 28)) #--,--,181->205,--
         self.downloadAllPointSamplesButton.clicked.connect(self.downloadAllPointSamples)
         self.downloadAllPointSamplesButton.setObjectName("downloadAllPointSamplesButton")
 
         self.sendToUVUButton = QtWidgets.QPushButton(self.tab)
-        self.sendToUVUButton.setGeometry(QtCore.QRect(10, 745, 181, 28))
+        self.sendToUVUButton.setGeometry(QtCore.QRect(10, 745, 205, 28))#--,--,181->205,--
         self.sendToUVUButton.clicked.connect(self.downloadUVUData)
         self.sendToUVUButton.setObjectName("sendToUVUButton")
 
         self.calculateStandardCurveButton = QtWidgets.QPushButton(self.tab)
-        self.calculateStandardCurveButton.setGeometry(QtCore.QRect(10, 720, 181, 28))
+        self.calculateStandardCurveButton.setGeometry(QtCore.QRect(10, 720, 205, 28))#--,--,181->205,--
         self.calculateStandardCurveButton.clicked.connect(self.downloadStandardCurveReport)
         self.calculateStandardCurveButton.setObjectName("calculateStandardCurveButton")
 
@@ -721,7 +723,7 @@ class Ui_DataTiger(object):
         self.AqualogCheck.setText(_translate("DataTiger", "Aqualog"))
         self.FrequencyInterpolateCheck.setText(_translate("DataTiger", "Frequency Interpolation"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("DataTiger", "Tools"))
-        self.calculateStandardCurveButton.setText(_translate("DataTiger", "re-calculate Standard Curves"))
+        self.calculateStandardCurveButton.setText(_translate("DataTiger", "Re-calculate Standard Curves"))
         self.changeSQLlabel.setText(_translate("DataTiger", "Drag and drop the database file here"))
         self.changeDBButton.setText(_translate("DataTiger", "Change Database"))
         self.changeSQLfile.setHtml(_translate("DataTiger",
@@ -748,10 +750,36 @@ if __name__ == "__main__":
     try:
         app = QtWidgets.QApplication(sys.argv)
         DataTiger = QtWidgets.QMainWindow()
+        #setting icon in dock
+        app.setWindowIcon(QIcon('tiger.png'))
         ui = Ui_DataTiger()
         db = Database()
         ui.setupUi(DataTiger, db)
         DataTiger.show()
+        ############
+        icon = QIcon("tiger3.png")
+        # Adding item on the menu bar
+        tray = QSystemTrayIcon()
+        tray.setIcon(icon)
+        tray.setVisible(True)
+
+        # Creating the options
+        menu = QMenu()
+        option1 = QAction("Option One")
+        option2 = QAction("Option Two")
+        menu.addAction(option1)
+        menu.addAction(option2)
+
+        # To quit the app
+        quit = QAction("Quit")
+        quit.triggered.connect(app.quit)
+        menu.addAction(quit)
+
+        # Adding options to the System Tray
+        tray.setContextMenu(menu)
+
+        ###########
+
         sys.exit(app.exec_())
     except:
         print(traceback.format_exc())

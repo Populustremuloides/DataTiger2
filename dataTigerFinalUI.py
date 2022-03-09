@@ -10,6 +10,11 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_DataTiger(object):
     def setupUi(self, DataTiger):
+        #####added
+
+
+
+        #####
         DataTiger.setObjectName("DataTiger")
         DataTiger.resize(1063, 865)
         self.centralwidget = QtWidgets.QWidget(DataTiger)
@@ -151,7 +156,7 @@ class Ui_DataTiger(object):
         self.ScanRawCheck.setGeometry(QtCore.QRect(10, 450, 95, 20))
         self.ScanRawCheck.setObjectName("ScanRawCheck")
         self.InvertibratesCheck = QtWidgets.QCheckBox(self.tab)
-        self.InvertibratesCheck.setGeometry(QtCore.QRect(10, 550, 101, 20))
+        self.InvertibratesCheck.setGeometry(QtCore.QRect(10, 550, 101, 20))#00
         self.InvertibratesCheck.setObjectName("InvertibratesCheck")
         self.eDNADiversityCheck = QtWidgets.QCheckBox(self.tab)
         self.eDNADiversityCheck.setGeometry(QtCore.QRect(10, 570, 111, 20))

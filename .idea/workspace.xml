@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="1974e55b-2c7a-4819-86d7-7225486f5696" name="Default Changelist" comment="add environment.yaml">
-      <change afterPath="$PROJECT_DIR$/Readers/read_smartrock.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/USGS_downloaders/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Uploaders/upload_smartrock.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/LabbottDatabase.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/LabbottDatabase.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Database.py" beforeDir="false" afterPath="$PROJECT_DIR$/Database.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DatabaseName.txt" beforeDir="false" afterPath="$PROJECT_DIR$/DatabaseName.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DownloadData/DownloadPointSamples.py" beforeDir="false" afterPath="$PROJECT_DIR$/DownloadData/DownloadPointSamples.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py" beforeDir="false" afterPath="$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Readers/ReadHanna.py" beforeDir="false" afterPath="$PROJECT_DIR$/Readers/ReadHanna.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SenseFileOrigin.py" beforeDir="false" afterPath="$PROJECT_DIR$/SenseFileOrigin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Uploader.py" beforeDir="false" afterPath="$PROJECT_DIR$/Uploader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dataTiger.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataTiger.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataTigerFinalUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataTigerFinalUI.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,6 +42,9 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectId" id="1s2MZ64G5CFVKpJ5uyHMEd9XMXW" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -56,7 +57,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="tsv" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/Readers" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -69,7 +70,7 @@
       <recent name="$PROJECT_DIR$/DownloadData/ResidualCorrections" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.scratch">
+  <component name="RunManager" selected="Python.dataTiger">
     <configuration name="dataTiger" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="LabbottDatabase" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -77,7 +78,7 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="$USER_HOME$/opt/anaconda3/envs/new_dt/bin/python" />
+      <option name="SDK_HOME" value="$PROJECT_DIR$/../.conda/envs/work/bin/python" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -99,11 +100,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$USER_HOME$/PycharmProjects/fillFieldsheet" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../PycharmProjects/fillFieldsheet" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$USER_HOME$/PycharmProjects/fillFieldsheet/main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../PycharmProjects/fillFieldsheet/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -133,7 +134,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="tokenize" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="LabbottDatabase" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -141,11 +142,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/DownloadData/ResidualCorrections" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../opt/anaconda3/envs/workEnv/lib/python3.9" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/DownloadData/ResidualCorrections/test.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../opt/anaconda3/envs/workEnv/lib/python3.9/tokenize.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -161,12 +162,12 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="$USER_HOME$/.conda/envs/pythonProject3/bin/python" />
-      <option name="WORKING_DIRECTORY" value="$USER_HOME$/script/twitter/front_end" />
+      <option name="SDK_HOME" value="$PROJECT_DIR$/../.conda/envs/pythonProject3/bin/python" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../script/twitter/front_end" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$USER_HOME$/script/twitter/front_end/webserver.command" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../script/twitter/front_end/webserver.command" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -179,16 +180,16 @@
       <item itemvalue="Python.dataTiger" />
       <item itemvalue="Python.main" />
       <item itemvalue="Python.scratch" />
-      <item itemvalue="Python.test" />
       <item itemvalue="Python.webserver.command" />
+      <item itemvalue="Python.tokenize" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.scratch" />
         <item itemvalue="Python.dataTiger" />
-        <item itemvalue="Python.webserver.command" />
+        <item itemvalue="Python.tokenize" />
+        <item itemvalue="Python.scratch" />
         <item itemvalue="Python.main" />
-        <item itemvalue="Python.test" />
+        <item itemvalue="Python.webserver.command" />
       </list>
     </recent_temporary>
   </component>
@@ -320,7 +321,6 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Aqualog fix and added TSS functionality" />
@@ -662,16 +662,6 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/DownloadData/DownloadPointSamples.py</url>
-          <line>125</line>
-          <option name="timeStamp" value="1024" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadPointSamples.py</url>
-          <line>85</line>
-          <option name="timeStamp" value="1026" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadPointSamples.py</url>
           <line>508</line>
           <option name="timeStamp" value="1028" />
         </line-breakpoint>
@@ -721,12 +711,12 @@
           <option name="timeStamp" value="1073" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$USER_HOME$/script/twitter/front_end/webserver.command</url>
+          <url>file://$PROJECT_DIR$/../script/twitter/front_end/webserver.command</url>
           <line>39</line>
           <option name="timeStamp" value="1075" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$USER_HOME$/script/twitter/front_end/webserver.command</url>
+          <url>file://$PROJECT_DIR$/../script/twitter/front_end/webserver.command</url>
           <line>89</line>
           <option name="timeStamp" value="1076" />
         </line-breakpoint>

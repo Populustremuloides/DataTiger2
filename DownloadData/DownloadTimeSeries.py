@@ -1285,7 +1285,7 @@ def getSlopeIntercept(datetime, siteID, keyDict, siteDict):
         endIndex = vec[keyDict["endIndex"]]
 
         # if
-        #     return slope, intercept # FIXME not sure wher eintercept is coming from
+        #     return slope, intercept # FIXME not sure where intercept is coming from
 
     print("WARNING getSlopeIntercept not implemented")
     return 1, 1

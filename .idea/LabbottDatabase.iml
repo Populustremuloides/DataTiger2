@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module version="4">
   <component name="NewModuleRootManager">
-    <orderEntry type="jdk" jdkName="Python 3.7 (new_dt)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.9 (work)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="R User Library" level="project" />
     <orderEntry type="library" name="R Skeletons" level="application" />
