@@ -4,15 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1974e55b-2c7a-4819-86d7-7225486f5696" name="Default Changelist" comment="add environment.yaml">
-      <change beforePath="$PROJECT_DIR$/.idea/LabbottDatabase.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/LabbottDatabase.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+    <list default="true" id="1974e55b-2c7a-4819-86d7-7225486f5696" name="Default Changelist" comment="Robby's">
+      <change afterPath="$PROJECT_DIR$/functionPathways.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DatabaseName.txt" beforeDir="false" afterPath="$PROJECT_DIR$/DatabaseName.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DownloadData/DownloadPointSamples.py" beforeDir="false" afterPath="$PROJECT_DIR$/DownloadData/DownloadPointSamples.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py" beforeDir="false" afterPath="$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dataTiger.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataTiger.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dataTigerFinalUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataTigerFinalUI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/USGS_downloaders/calculate_dist.py" beforeDir="false" afterPath="$PROJECT_DIR$/USGS_downloaders/calculate_dist.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +54,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="tsv" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -308,7 +304,14 @@
       <option name="project" value="LOCAL" />
       <updated>1643218135336</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Robby's">
+      <created>1646858447692</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1646858447692</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -330,485 +333,301 @@
     <MESSAGE value="calibration corrections" />
     <MESSAGE value="save progress" />
     <MESSAGE value="add environment.yaml" />
-    <option name="LAST_COMMIT_MESSAGE" value="add environment.yaml" />
+    <MESSAGE value="Robby's" />
+    <option name="LAST_COMMIT_MESSAGE" value="Robby's" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadYSI.py</url>
           <line>43</line>
           <option name="timeStamp" value="31" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadNewSrp.py</url>
           <line>60</line>
           <option name="timeStamp" value="69" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadICP.py</url>
           <line>43</line>
           <option name="timeStamp" value="76" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/DownloadData/DateToIndex.py</url>
           <line>297</line>
           <option name="timeStamp" value="111" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>828</line>
-          <option name="timeStamp" value="342" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>1804</line>
-          <option name="timeStamp" value="351" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/DownloadData/ResidualCorrections/residualCorrections.py</url>
           <line>90</line>
           <option name="timeStamp" value="406" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/DownloadData/ResidualCorrections/residualCorrections.py</url>
           <line>86</line>
           <option name="timeStamp" value="424" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
           <line>382</line>
           <option name="timeStamp" value="506" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
           <line>164</line>
           <option name="timeStamp" value="535" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
           <line>471</line>
           <option name="timeStamp" value="575" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
           <line>502</line>
           <option name="timeStamp" value="577" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
           <line>505</line>
           <option name="timeStamp" value="579" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
           <line>508</line>
           <option name="timeStamp" value="580" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
           <line>511</line>
           <option name="timeStamp" value="581" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
           <line>514</line>
           <option name="timeStamp" value="582" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
           <line>517</line>
           <option name="timeStamp" value="583" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
           <line>523</line>
           <option name="timeStamp" value="587" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
           <line>526</line>
           <option name="timeStamp" value="588" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
           <line>529</line>
           <option name="timeStamp" value="589" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
           <line>366</line>
           <option name="timeStamp" value="591" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/DownloadData/SQLQueries.py</url>
           <line>303</line>
           <option name="timeStamp" value="609" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/DownloadData/SQLQueries.py</url>
           <line>304</line>
           <option name="timeStamp" value="610" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/DownloadData/SQLQueries.py</url>
           <line>305</line>
           <option name="timeStamp" value="611" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadHanna.py</url>
           <line>376</line>
           <option name="timeStamp" value="622" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadEureka.py</url>
           <line>95</line>
           <option name="timeStamp" value="623" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>1621</line>
-          <option name="timeStamp" value="630" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>775</line>
-          <option name="timeStamp" value="685" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Uploaders/UploadHobo.py</url>
-          <line>130</line>
-          <option name="timeStamp" value="698" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>692</line>
-          <option name="timeStamp" value="714" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>700</line>
-          <option name="timeStamp" value="715" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>710</line>
-          <option name="timeStamp" value="716" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>719</line>
-          <option name="timeStamp" value="724" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadAqualog.py</url>
           <line>115</line>
           <option name="timeStamp" value="730" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadAqualog.py</url>
           <line>100</line>
           <option name="timeStamp" value="731" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadAqualog.py</url>
           <line>57</line>
           <option name="timeStamp" value="732" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadAqualog.py</url>
           <line>99</line>
           <option name="timeStamp" value="734" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadNewSrp.py</url>
           <line>55</line>
           <option name="timeStamp" value="752" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
           <line>82</line>
           <option name="timeStamp" value="760" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>778</line>
-          <option name="timeStamp" value="845" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadICP.py</url>
           <line>250</line>
           <option name="timeStamp" value="872" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadICP.py</url>
           <line>249</line>
           <option name="timeStamp" value="873" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
           <line>155</line>
           <option name="timeStamp" value="893" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
           <line>157</line>
           <option name="timeStamp" value="894" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
           <line>159</line>
           <option name="timeStamp" value="895" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadICP.py</url>
           <line>69</line>
           <option name="timeStamp" value="897" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadHobo.py</url>
           <line>112</line>
           <option name="timeStamp" value="899" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
           <line>255</line>
           <option name="timeStamp" value="910" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
           <line>257</line>
           <option name="timeStamp" value="911" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Readers/ReadICNew.py</url>
-          <line>88</line>
-          <option name="timeStamp" value="912" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>556</line>
-          <option name="timeStamp" value="956" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>1257</line>
-          <option name="timeStamp" value="960" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>1058</line>
-          <option name="timeStamp" value="963" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>1272</line>
-          <option name="timeStamp" value="964" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
           <line>426</line>
           <option name="timeStamp" value="967" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
           <line>520</line>
           <option name="timeStamp" value="971" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
           <line>496</line>
           <option name="timeStamp" value="972" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
           <line>185</line>
           <option name="timeStamp" value="991" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
           <line>52</line>
           <option name="timeStamp" value="993" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
           <line>56</line>
           <option name="timeStamp" value="995" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
           <line>86</line>
           <option name="timeStamp" value="996" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
-          <line>183</line>
-          <option name="timeStamp" value="997" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>1264</line>
-          <option name="timeStamp" value="1003" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
-          <line>278</line>
-          <option name="timeStamp" value="1008" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadPointSamples.py</url>
-          <line>192</line>
-          <option name="timeStamp" value="1021" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadPointSamples.py</url>
-          <line>508</line>
-          <option name="timeStamp" value="1028" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadPointSamples.py</url>
-          <line>320</line>
-          <option name="timeStamp" value="1029" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadPointSamples.py</url>
-          <line>365</line>
-          <option name="timeStamp" value="1030" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadHanna.py</url>
           <line>371</line>
           <option name="timeStamp" value="1038" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
           <line>74</line>
           <option name="timeStamp" value="1040" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
           <line>133</line>
           <option name="timeStamp" value="1057" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
           <line>128</line>
           <option name="timeStamp" value="1069" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
           <line>131</line>
           <option name="timeStamp" value="1070" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>501</line>
-          <option name="timeStamp" value="1072" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>721</line>
-          <option name="timeStamp" value="1073" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/../script/twitter/front_end/webserver.command</url>
           <line>39</line>
           <option name="timeStamp" value="1075" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/../script/twitter/front_end/webserver.command</url>
           <line>89</line>
           <option name="timeStamp" value="1076" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Readers/read_smartrock.py</url>
-          <line>138</line>
-          <option name="timeStamp" value="1102" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Uploaders/upload_smartrock.py</url>
-          <line>98</line>
-          <option name="timeStamp" value="1111" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>1150</line>
-          <option name="timeStamp" value="1143" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>1152</line>
-          <option name="timeStamp" value="1144" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>1145</line>
-          <option name="timeStamp" value="1145" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/USGS_downloaders/scrape_usgs_catchments.py</url>
-          <line>100</line>
-          <option name="timeStamp" value="1151" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/USGS_downloaders/scrape_usgs_catchments.py</url>
-          <line>48</line>
-          <option name="timeStamp" value="1183" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/USGS_downloaders/scrape_usgs_catchments.py</url>
-          <line>190</line>
-          <option name="timeStamp" value="1194" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>755</line>
-          <option name="timeStamp" value="1195" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/USGS_downloaders/scrape_usgs_catchments.py</url>
-          <line>191</line>
-          <option name="timeStamp" value="1208" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>906</line>
-          <option name="timeStamp" value="1240" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>896</line>
-          <option name="timeStamp" value="1241" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>841</line>
-          <option name="timeStamp" value="1243" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>752</line>
-          <option name="timeStamp" value="1244" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>738</line>
-          <option name="timeStamp" value="1248" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>1233</line>
-          <option name="timeStamp" value="1257" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>1231</line>
-          <option name="timeStamp" value="1258" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py</url>
           <line>8</line>
           <option name="timeStamp" value="1259" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
+          <line>1634</line>
+          <option name="timeStamp" value="1286" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
+          <line>493</line>
+          <option name="timeStamp" value="1298" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
+          <line>491</line>
+          <option name="timeStamp" value="1299" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
+          <line>525</line>
+          <option name="timeStamp" value="1300" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

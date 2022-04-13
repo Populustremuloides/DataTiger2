@@ -1,0 +1,13 @@
+For downloading standard curves:
+downloadStandardCurveReport in dataTiger.py ->
+writeStandardCurveReport in Database.py ->
+downloadStandardCurve in DownloadTimeSeries.py ->
+processDFStandardCurve in DownloadTimeSeries.py
+    [get_usgs_discharge_sites in DownloadTimeSeries.py]
+    [makeSiteDF in DownloadTimeSeries.py]
+    [format_df_datetime in DownloadTimeSeries.py]
+    [correct_sensor_gaps in DownloadTimeSeries.py]
+    [segment_df_by_continuity in DownloadTimeSeries.py]
+    [plotRatingCurve]
+
+

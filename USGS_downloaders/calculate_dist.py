@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 def get_closest_usgs_sites(usgs):
-    sites = pd.read_csv("/Users/zacheliason/Library/CloudStorage/Box-Box/AbbottLab/MasterSiteListDescription.csv")
+    sites = pd.read_csv("/Users/Work/Library/CloudStorage/Box-Box/AbbottLab/MasterSiteListDescription.csv")
 
     usgs_names = np.asarray(list(usgs["STAID"]))
     usgs = usgs[["LAT_GAGE","LNG_GAGE"]].dropna().to_numpy()
