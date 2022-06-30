@@ -81,7 +81,13 @@ class UploadSampleId:
             self.sampleIdReader.srp, self.sampleIdReader.water, self.sampleIdReader.tss, self.sampleIdReader.ignore,
             self.sampleIdReader.datetimeUploaded, self.sampleIdReader.filePath, self.sampleIdReader.sortChem)
 
+        if self.sampleIdReader.sortChem == "2022-0035":
+            print("HEERRREE")
+
+        print(self.sampleIdReader.sortChem)
+
         self.cursor.execute(sqlUpdate, updateTuple)
+
     def uploadRow(self):
 
         sqlInsert = "INSERT INTO sort_chems (project_id, device, date_sampled," \
