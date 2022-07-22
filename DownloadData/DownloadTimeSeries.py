@@ -509,6 +509,8 @@ def get_discharge_to_pressure(df, siteID, pdf, cursor, output_path, start_date, 
         ndf = df.merge(pdf, on='index')
 
         if f"{siteID}_barometricPressure_hanna" in df.columns:
+            # error checking
+            print("we did have the barometric Pressure hanna column")
             print("Yes")
             # making corrected column by subtracting atmospeheric pressure from hobo pressure, this gets us just water pressure
             ndf['corrected'] = ndf['pressure_hobo'] - ndf[f"{siteID}_barometricPressure_hanna"]
@@ -745,173 +747,185 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
         plt.plot(group['index'], group.corrected_values, lw=.4, zorder=4, )
 
     plt.title(siteID)
-    usgs_site = sites_dict[siteID]
+    try:
 
-    # catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date > start_datetime]
-    normalized_usgs = (catchments_df[usgs_site].flows - catchments_df[usgs_site].flows.mean()) / (catchments_df[usgs_site].flows.std())
+        usgs_site = sites_dict[siteID]
 
-    plt.plot(catchments_df[usgs_site]['indices'], normalized_usgs, lw=.2, c="tomato", zorder=2, label=f"{usgs_site} discharge")
-    # plt.plot(df.datetime, df['pressure_hobo'], lw=.2, c="grey", zorder=2, linestyle='dotted', label=f"original values")
-    plt.legend()
+        # catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date > start_datetime]
+        normalized_usgs = (catchments_df[usgs_site].flows - catchments_df[usgs_site].flows.mean()) / (catchments_df[usgs_site].flows.std())
 
-    plt.show()
-    # plt.savefig(f"{outputPath}/{siteID}/{siteID}_corrected_pressure_data.png", dpi=300)
-
-    # proceed = input('looks good? y/n \n')
-    #
-    # if proceed == 'y':
-    #     print("okay")
-    # elif proceed == 'n':
-    #     print("not okay")
-
-    plt.clf()
-    plt.close()
-
-    siteDF['pressure_hobo'] = siteDF['corrected_values']
-
-    # -------------------------------------
-    # Separate DF into continuous segments
-    # -------------------------------------
-
-    list_df, list_pdf, pairings = segment_df_by_continuity(siteDF, calculated_pdf)
-
-    #graphing pressure by time ?
-    if list_df is not None:
-        plt.figure(figsize=(17, 7))
-        plt.style.use('ggplot')
-        plt.ylabel("Pressure")
-        plt.xlabel("Time")
-
-        z = 0
-        for d in list_df:
-            z = z + 1
-            plt.plot(d["index"], d["pressure_hobo"], lw=.3, zorder=2, label=f"{z}")
-
-
-        df_filtered_by_discharge = siteDF[~siteDF["discharge_measured"].isna()]
-        plt.scatter(df_filtered_by_discharge["index"], df_filtered_by_discharge["pressure_hobo"], s=10, c='tomato', zorder=10, label="discharge measurements")
-
-        plt.text(0.95, 0.01, f'{str(len(df_filtered_by_discharge["index"].values.tolist()))} discharge measurements at this site.', verticalalignment='bottom', horizontalalignment='right', fontsize=15)
-        plt.title(f"{siteID} Segmented by Chunk of Workable Continuous Pressure Data (gaps < 3 hrs)")
+        plt.plot(catchments_df[usgs_site]['indices'], normalized_usgs, lw=.2, c="tomato", zorder=2, label=f"{usgs_site} discharge")
+        # plt.plot(df.datetime, df['pressure_hobo'], lw=.2, c="grey", zorder=2, linestyle='dotted', label=f"original values")
         plt.legend()
-        plt.savefig(f"{outputPath}/{siteID}/{siteID}_segmented_by_chunk.png", dpi=300)
+
+
+        #don't need it to show every figure for now
+        #plt.show()
+
+
+
+        # plt.savefig(f"{outputPath}/{siteID}/{siteID}_corrected_pressure_data.png", dpi=300)
+
+        # proceed = input('looks good? y/n \n')
+        #
+        # if proceed == 'y':
+        #     print("okay")
+        # elif proceed == 'n':
+        #     print("not okay")
+
         plt.clf()
         plt.close()
 
-        for i in range(len(list_df)):
-            # getting start data and end date for continuous line segments
-            start_date = pd.to_datetime(siteDF.loc[(siteDF["index"] == pairings[i][0])]['datetime'].values.tolist()[0]).strftime("%B %d, %Y")
-            end_date = pd.to_datetime(siteDF.loc[(siteDF["index"] == pairings[i][1])]['datetime'].values.tolist()[0]).strftime("%B %d, %Y")
+        siteDF['pressure_hobo'] = siteDF['corrected_values']
 
-            #returns empty dfs for now if there isn't a barametric pressure site
-            df1, df2 = get_discharge_to_pressure(list_df[i], siteID, list_pdf[i], cursor, outputPath, start_date, end_date)
+        # -------------------------------------
+        # Separate DF into continuous segments
+        # -------------------------------------
 
-            if df1.empty & df2.empty:
-                print("empty")
-            else:
+        list_df, list_pdf, pairings = segment_df_by_continuity(siteDF, calculated_pdf)
 
-                #list_df hobo pressure
-                #list_pdf_barometric pressure
+        #graphing pressure by time ?
+        if list_df is not None:
+            print("list df is not none")
+            plt.figure(figsize=(17, 7))
+            plt.style.use('ggplot')
+            plt.ylabel("Pressure")
+            plt.xlabel("Time")
 
-                # commented out for simplicity
-                # plt.figure(figsize=(50, 7))
-                # plt.style.use('ggplot')
-                # plt.ylabel("Pressure")
-                # plt.xlabel("Time")
-                # plt.title(f"Discounted Pressure")
-                #
-                # plt.plot(df1['index'], df2['corrected'], lw=.4, zorder=4, )
+            z = 0
+            for d in list_df:
+                z = z + 1
+                plt.plot(d["index"], d["pressure_hobo"], lw=.3, zorder=2, label=f"{z}")
 
-                usgs_site = sites_dict[siteID]
 
-                # commented out for simplicty
-                # plt.plot(catchments_df[usgs_site]['indices'], normalized_usgs, lw=.2, c="tomato", zorder=2, label=f"{usgs_site} discharge")
-                # # plt.plot(df.datetime, df['pressure_hobo'], lw=.2, c="grey", zorder=2, linestyle='dotted', label=f"original values")
-                # plt.legend()
-                # plt.show()
+            df_filtered_by_discharge = siteDF[~siteDF["discharge_measured"].isna()]
+            plt.scatter(df_filtered_by_discharge["index"], df_filtered_by_discharge["pressure_hobo"], s=10, c='tomato', zorder=10, label="discharge measurements")
 
-                # commented out for simplicity
-                # plt.figure(figsize=(50, 7))
-                # plt.style.use('ggplot')
-                # plt.ylabel("Pressure")
-                # plt.xlabel("Time")
-                # plt.title(f"Full Range of Pressure + Corrected Data at {siteID}")
+            plt.text(0.95, 0.01, f'{str(len(df_filtered_by_discharge["index"].values.tolist()))} discharge measurements at this site.', verticalalignment='bottom', horizontalalignment='right', fontsize=15)
+            plt.title(f"{siteID} Segmented by Chunk of Workable Continuous Pressure Data (gaps < 3 hrs)")
+            plt.legend()
+            plt.savefig(f"{outputPath}/{siteID}/{siteID}_segmented_by_chunk.png", dpi=300) #this figure is what is ending up in the export folders
+            plt.clf()
+            plt.close()
 
-                usgs_site = sites_dict[siteID]
+            for i in range(len(list_df)):
+                # getting start data and end date for continuous line segments
+                start_date = pd.to_datetime(siteDF.loc[(siteDF["index"] == pairings[i][0])]['datetime'].values.tolist()[0]).strftime("%B %d, %Y")
+                end_date = pd.to_datetime(siteDF.loc[(siteDF["index"] == pairings[i][1])]['datetime'].values.tolist()[0]).strftime("%B %d, %Y")
 
-                start_datetime = df2['datetime_x'].iloc[0]
-                end_datetime = df2['datetime_x'].iloc[-1]
+                #returns empty dfs for now if there isn't a barametric pressure site
+                df1, df2 = get_discharge_to_pressure(list_df[i], siteID, list_pdf[i], cursor, outputPath, start_date, end_date)
 
-                catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date > start_datetime]
-                catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date < end_datetime]
+                if df1.empty & df2.empty:
+                    print("df1 and df2 are empty")
+                else:
 
-                normalized_usgs = (catchments_df[usgs_site].flows - catchments_df[usgs_site].flows.mean()) / (catchments_df[usgs_site].flows.std())
+                    #list_df hobo pressure
+                    #list_pdf_barometric pressure
 
-                #commented out for simplicity
-                #plt.plot(catchments_df[usgs_site]['date'], normalized_usgs, lw=.2, c="tomato", zorder=2, label=f"{usgs_site} discharge")
-                #plt.plot(df2['datetime_x'], df2['corrected'], lw=.2, c="grey", zorder=2, linestyle='dotted', label=f"corrected pressure")
-                #plt.legend()
+                    # commented out for simplicity
+                    # plt.figure(figsize=(50, 7))
+                    # plt.style.use('ggplot')
+                    # plt.ylabel("Pressure")
+                    # plt.xlabel("Time")
+                    # plt.title(f"Discounted Pressure")
+                    #
+                    # plt.plot(df1['index'], df2['corrected'], lw=.4, zorder=4, )
 
-                noDischargeData = (df1['discharge_measured'].isnull().all()) #this is true if all entries for discharge measured are na
-                if df1 is not None and df2 is not None and len(df1.index) != 0 and len(df2.index) != 0 and not(noDischargeData):
+                    #usgs_site = sites_dict[siteID]
+
+                    # commented out for simplicty
+                    # plt.plot(catchments_df[usgs_site]['indices'], normalized_usgs, lw=.2, c="tomato", zorder=2, label=f"{usgs_site} discharge")
+                    # # plt.plot(df.datetime, df['pressure_hobo'], lw=.2, c="grey", zorder=2, linestyle='dotted', label=f"original values")
+                    # plt.legend()
+                    # plt.show()
+
+                    # commented out for simplicity
+                    # plt.figure(figsize=(50, 7))
+                    # plt.style.use('ggplot')
+                    # plt.ylabel("Pressure")
+                    # plt.xlabel("Time")
+                    # plt.title(f"Full Range of Pressure + Corrected Data at {siteID}")
+
+                    usgs_site = sites_dict[siteID]
+
+                    start_datetime = df2['datetime_x'].iloc[0]
+                    end_datetime = df2['datetime_x'].iloc[-1]
+
+                    catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date > start_datetime]
+                    catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date < end_datetime]
+
+                    normalized_usgs = (catchments_df[usgs_site].flows - catchments_df[usgs_site].flows.mean()) / (catchments_df[usgs_site].flows.std())
+
+                    #commented out for simplicity
+                    #plt.plot(catchments_df[usgs_site]['date'], normalized_usgs, lw=.2, c="tomato", zorder=2, label=f"{usgs_site} discharge")
+                    #plt.plot(df2['datetime_x'], df2['corrected'], lw=.2, c="grey", zorder=2, linestyle='dotted', label=f"corrected pressure")
+                    #plt.legend()
+
+                    # noDischargeData = (df1['discharge_measured'].isnull().all()) #this is true if all entries for discharge measured are na, I don't think it's ever making it here
+                    # if df1 is not None and df2 is not None and len(df1.index) != 0 and len(df2.index) != 0 and not(noDischargeData):
+                    print("going to plotRatingCurve")
                     plotRatingCurve(df1, outputPath, siteID, start_date, end_date,i)
 
-                    # df1.to_csv(f"{outputPath}/{siteID}/pressure_to_discharge_no_null_{start_date}_to_{end_date}.csv")
-                    # df2.to_csv(f"{outputPath}/{siteID}/pressure_and_barometric_full_{start_date}_to_{end_date}.csv")
-                else:
-                    print(f"{siteID} empty from {start_date} to {end_date}")
+                    df1.to_csv(f"{outputPath}/{siteID}/pressure_to_discharge_no_null_{start_date}_to_{end_date}.csv")
+                    df2.to_csv(f"{outputPath}/{siteID}/pressure_and_barometric_full_{start_date}_to_{end_date}.csv")
+                    # else:
+                    #     print(f"{siteID} empty from {start_date} to {end_date}")
+        else:
+            print("list df is none")
+        # download the df
+        # download the picture
+        # generate the figure
+        # download the figure
+        # download the csv # date, pressure, discharge,
+        # save the slopes onto the database
+    except:
+        print("Exception: ",siteID," was not found in the sites dict")
 
-    # download the df
-    # download the picture
-    # generate the figure
-    # download the figure
-    # download the csv # date, pressure, discharge,
-    # save the slopes onto the database
+    def plotRatingCurve(df, outputPath, siteID, start_date, end_date,iteration):
+        iteration=iteration+1
 
-def plotRatingCurve(df, outputPath, siteID, start_date, end_date,iteration):
-    iteration=iteration+1
+        filteredDF = df.loc[(~df.discharge_measured.isna()) & (~df.corrected_pressure_hobo.isna())]
+        x = df['discharge_measured'].values.tolist()
+        y = df['corrected_pressure_hobo'].values.tolist()
 
-    filteredDF = df.loc[(~df.discharge_measured.isna()) & (~df.corrected_pressure_hobo.isna())]
-    x = df['discharge_measured'].values.tolist()
-    y = df['corrected_pressure_hobo'].values.tolist()
+        x_as_array = np.asarray(filteredDF['discharge_measured'].values).reshape((-1, 1))
+        y_as_array = np.asarray(filteredDF['corrected_pressure_hobo'].values)
+        #not currently using this, the sets are really small
+        x_train, x_test, y_train, y_test = train_test_split(x_as_array, y_as_array, train_size=0.7, test_size=0.3, random_state=100)
 
-    x_as_array = np.asarray(filteredDF['discharge_measured'].values).reshape((-1, 1))
-    y_as_array = np.asarray(filteredDF['corrected_pressure_hobo'].values)
-    #not currently using this, the sets are really small
-    x_train, x_test, y_train, y_test = train_test_split(x_as_array, y_as_array, train_size=0.7, test_size=0.3, random_state=100)
+        model = LinearRegression()
+        model.fit(x_as_array, y_as_array)
 
-    model = LinearRegression()
-    model.fit(x_as_array, y_as_array)
+        intercept = model.intercept_
+        slope = model.coef_
+        range = np.linspace(min(x_as_array), max(x_as_array), 10)
 
-    intercept = model.intercept_
-    slope = model.coef_
-    range = np.linspace(min(x_as_array), max(x_as_array), 10)
+        plt.figure(figsize=(17, 7))
+        plt.style.use('ggplot')
+        plt.scatter(x, y, c="blue")
+        plt.plot(range, intercept + slope * range)
+        plt.ylabel("Water Pressure ")
+        plt.xlabel("Discharge")
+        plt.title(f"{siteID} Section {iteration} Rating Curve")
+        plt.legend()
+        plt.show()
 
-    plt.figure(figsize=(17, 7))
-    plt.style.use('ggplot')
-    plt.scatter(x, y, c="blue")
-    plt.plot(range, intercept + slope * range)
-    plt.ylabel("Water Pressure ")
-    plt.xlabel("Discharge")
-    plt.title(f"{siteID} Section {iteration} Rating Curve")
-    plt.legend()
-    plt.show()
+        #attempt at linear regression  plot
+        #try:
+            # res = stats.linregress(df["corrected_pressure_hobo"], df["discharge_measured"])
+            # plt.plot(df["corrected_pressure_hobo"], res.intercept + res.slope * df["corrected_pressure_hobo"], 'r', c='blue', label='fitted line',title='LOOK AT ME')
+        # except:
+        #     print(traceback.format_exc())
 
-    #attempt at linear regression  plot
-    #try:
-        # res = stats.linregress(df["corrected_pressure_hobo"], df["discharge_measured"])
-        # plt.plot(df["corrected_pressure_hobo"], res.intercept + res.slope * df["corrected_pressure_hobo"], 'r', c='blue', label='fitted line',title='LOOK AT ME')
-    # except:
-    #     print(traceback.format_exc())
+        # plt.xlabel("Barometric Discounted Pressure")
+        # plt.ylabel("Discharge")
 
-    # plt.xlabel("Barometric Discounted Pressure")
-    # plt.ylabel("Discharge")
-
-    # plt.scatter(df["corrected_pressure_hobo"], df["discharge_measured"], s=6, c="tomato", zorder=4, label=f"discharge")
-    # plt.legend()
-    # plt.savefig(f"{outputPath}/{siteID}/{siteID}_{start_date}_to_{end_date}_rating_curve.png", dpi=300)
-    # plt.clf()
-    # plt.close()
+        # plt.scatter(df["corrected_pressure_hobo"], df["discharge_measured"], s=6, c="tomato", zorder=4, label=f"discharge")
+        # plt.legend()
+        # plt.savefig(f"{outputPath}/{siteID}/{siteID}_{start_date}_to_{end_date}_rating_curve.png", dpi=300)
+        # plt.clf()
+        # plt.close()
 
 def getSlopeIntercept(datetime, siteID, keyDict, siteDict):
     date, time = datetimes.split(" ")
@@ -1209,7 +1223,7 @@ def downloadStandardCurve(outputPath, testsDict, optionsDict, cursor):
 
         nbsNum = nbsNum.split(".")[1]
 
-        #only continues for sites that aren't BSL
+        #only continues for sites that aren't BSL?
         # if siteID != 'BSL':
         #     continue
 
