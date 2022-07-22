@@ -154,8 +154,9 @@ def get_usgs_discharge_sites():
         catchment = catchments[j]
         try:
             rowData, df = linkDataToString(link, catchment, startYear, days)
+            #print(f"catchment {catchment} did return valid data")
         except:
-            print(f"catchment {catchment} did not return any valid data")
+            #print(f"catchment {catchment} did not return any valid data")
             continue
 
         sites = list(set(df.sites.values.tolist()))

@@ -197,9 +197,9 @@ class ReadSampleId:
 
         return False
 
+    # gets the indices of the headers
     def readBatch(self, headers):
 
-        # get the indices of the headers
         i = 0
         for header in headers:
             header = header.lower()
@@ -272,11 +272,13 @@ class ReadSampleId:
             # elif "ignore" in header:
             #     self.ignoreIndex = i
 
+
             i = i + 1
 
         if self.nullIndexPresent():
             raise MissingColumn(self.fileName)
 
+    #Cchecking if the character argument is 0 or 1, if not it prints what it is, it's type and if it is equal to "1"
     def isnt1or0(self, character):
         if character != "0" and character != "1" and character != 0 and character != 1:
             print(character)
@@ -286,6 +288,7 @@ class ReadSampleId:
         else:
             return False
 
+    #fixes date, checks if it's seprated by - or / and splits it up, then returns it as year-month-day
     def fixDate(self, date):
         try:
             if "/" in date:
@@ -300,6 +303,7 @@ class ReadSampleId:
         except:
             return "error parsing date"
 
+    #returns none if string is empty, otherwise it returns the string
     def blankForNull(self, string):
         string = str(string)
         if string == "" or string.isspace():
@@ -307,6 +311,7 @@ class ReadSampleId:
         else:
             return string
 
+    #checks if critcial cells: site and sortChem are none, returns true if at least one is, returns false if neither are
     def criticalNullPresent(self):
         if self.site == None:
             return True
@@ -316,6 +321,7 @@ class ReadSampleId:
             return True
         return False
 
+    #calling blankForNull for each variable to replace blanks with none
     def replaceWhiteSpace(self):
         self.project = self.blankForNull(self.project)
         self.device = self.blankForNull(self.device)
@@ -353,20 +359,29 @@ class ReadSampleId:
         self.tss = self.blankForNull(self.tss)
         self.ignore = self.blankForNull(self.ignore)
 
+    #filling in anaylzyer feidls with boolean 1 or 0 for if that type of event would use that analyzer.
+    #It goes through the different types of events, then some error cases
     def assignTestValues(self, event):
+
+        #if the event is for ______, return this order of bools to show what analyzers would be used
         if event == "uvu":
             return 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0
-        elif event == "synoptic":
+        elif event == "synoptic" or "synoptic ":
             return 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0
         elif event == "baseline":
             return 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0
+
+        #special cases
+        #if there are a 1 and a 0 in the event cell, then maybe it is the 1s and 0s for anzylzers, trys to slpit them up and return them
         elif "0" in event and "1" in event:
             try:
                 return event.strip().split(",")
             except:
                 return None, None, None, None, None, None, None, None, None, None, None, None
+        #if the event is none then return all 0s
         elif event == "none":
             return 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        #final case, prints event and returns nones
         else:
             print(event)
             return None, None, None, None, None, None, None, None, None, None, None, None
@@ -424,15 +439,16 @@ class ReadSampleId:
                     elif "orem" in self.site.lower():
                         self.site = "OremWWTP"
                     else:
-                        print("ERROR")
+                        print("ERROR with this sortchem's site name:")
+                        print(self.sortChem)
+                        print("The incorrect site name:")
+                        print(self.site.lower)
             except:
                 self.site = None
         if self.timeIndex is not None:
             self.time = row[self.timeIndex]
         if self.sortChemIndex is not None:
             self.sortChem = row[self.sortChemIndex]
-            if self.sortChem == "2021-0301":
-                print("stop here!!!")
         if self.tempIndex is not None:
             self.temp = row[self.tempIndex]
         if self.pressIndex is not None:
@@ -469,7 +485,9 @@ class ReadSampleId:
             self.eventType = row[self.eventTypeIndex].lower()
             self.aqualog, self.doc, self.elementar, self.scan, self.ic, self.icp, self.lachat, self.no3, self.srp, self.water, self.tss, self.ignore = self.assignTestValues(self.eventType)      # if self.aqualogIndex is not None:
         else:
-            print("HERE")
+            print("This sortchem doesn't have an event type:")
+            print(self.sortChem)
+        # if self.aqualogIndex is not None:
         #     self.aqualog = row[self.aqualogIndex]
         # if self.docIndex is not None:
         #     self.doc = row[self.docIndex]
@@ -492,11 +510,14 @@ class ReadSampleId:
         # if self.ignoreIndex is not None:
         #     self.ignore = row[self.ignoreIndex]
 
+
+
         # make sure there were 0's and 1's
         if self.aqualog == "":
             print("look here")
         if self.isnt1or0(self.aqualog):
             print('aqualog')
+            print(self.sortChem)
             return self.noZeroOrOne
         if self.isnt1or0(self.doc):
             print("doc")
@@ -529,6 +550,7 @@ class ReadSampleId:
             print("ignore")
             return self.noZeroOrOne
 
+        #print("Made it to end of readRow()")
         self.replaceWhiteSpace()
 
         if self.criticalNullPresent():

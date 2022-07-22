@@ -121,7 +121,7 @@ class UploadICP:
             #     problemRows.append(index)
 
         if len(problemRows) > 0:
-            message = "ERROR: The following rows were not uploaeded because they were missing critical values: " + str(problemRows)
+            message = "ERROR: The following rows were not uploaded because they were missing critical values: " + str(problemRows)
             raise Warnings(message, self.icpReader.fileName)
 
 

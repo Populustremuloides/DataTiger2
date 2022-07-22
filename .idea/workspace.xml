@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1974e55b-2c7a-4819-86d7-7225486f5696" name="Default Changelist" comment="Robby's">
-      <change afterPath="$PROJECT_DIR$/functionPathways.txt" afterDir="false" />
+    <list default="true" id="1974e55b-2c7a-4819-86d7-7225486f5696" name="Default Changelist" comment="Commenting and cleaning up replaced functions">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py" beforeDir="false" afterPath="$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/USGS_downloaders/calculate_dist.py" beforeDir="false" afterPath="$PROJECT_DIR$/USGS_downloaders/calculate_dist.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/USGS_downloaders/scrape_usgs_catchments.py" beforeDir="false" afterPath="$PROJECT_DIR$/USGS_downloaders/scrape_usgs_catchments.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -311,7 +310,28 @@
       <option name="project" value="LOCAL" />
       <updated>1646858447692</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Robby's">
+      <created>1649879782764</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1649879782764</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Robby's">
+      <created>1655418708955</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1655418708955</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Commenting and cleaning up replaced functions">
+      <created>1656605587024</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1656605587024</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -334,7 +354,8 @@
     <MESSAGE value="save progress" />
     <MESSAGE value="add environment.yaml" />
     <MESSAGE value="Robby's" />
-    <option name="LAST_COMMIT_MESSAGE" value="Robby's" />
+    <MESSAGE value="Commenting and cleaning up replaced functions" />
+    <option name="LAST_COMMIT_MESSAGE" value="Commenting and cleaning up replaced functions" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -371,67 +392,67 @@
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
-          <line>382</line>
+          <line>397</line>
           <option name="timeStamp" value="506" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
-          <line>164</line>
+          <line>170</line>
           <option name="timeStamp" value="535" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
-          <line>471</line>
+          <line>487</line>
           <option name="timeStamp" value="575" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
-          <line>502</line>
+          <line>523</line>
           <option name="timeStamp" value="577" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
-          <line>505</line>
+          <line>526</line>
           <option name="timeStamp" value="579" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
-          <line>508</line>
+          <line>529</line>
           <option name="timeStamp" value="580" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
-          <line>511</line>
+          <line>532</line>
           <option name="timeStamp" value="581" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
-          <line>514</line>
+          <line>535</line>
           <option name="timeStamp" value="582" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
-          <line>517</line>
+          <line>538</line>
           <option name="timeStamp" value="583" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
-          <line>523</line>
+          <line>544</line>
           <option name="timeStamp" value="587" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
-          <line>526</line>
+          <line>547</line>
           <option name="timeStamp" value="588" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
-          <line>529</line>
+          <line>550</line>
           <option name="timeStamp" value="589" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
-          <line>366</line>
+          <line>379</line>
           <option name="timeStamp" value="591" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
@@ -536,22 +557,22 @@
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
-          <line>426</line>
+          <line>441</line>
           <option name="timeStamp" value="967" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
-          <line>520</line>
+          <line>541</line>
           <option name="timeStamp" value="971" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
-          <line>496</line>
+          <line>516</line>
           <option name="timeStamp" value="972" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
-          <line>185</line>
+          <line>191</line>
           <option name="timeStamp" value="991" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
@@ -561,12 +582,7 @@
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
-          <line>56</line>
-          <option name="timeStamp" value="995" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
-          <line>86</line>
+          <line>92</line>
           <option name="timeStamp" value="996" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
@@ -610,24 +626,24 @@
           <option name="timeStamp" value="1259" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>1634</line>
-          <option name="timeStamp" value="1286" />
+          <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
+          <line>56</line>
+          <option name="timeStamp" value="1262" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>493</line>
-          <option name="timeStamp" value="1298" />
+          <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
+          <line>84</line>
+          <option name="timeStamp" value="1263" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>491</line>
-          <option name="timeStamp" value="1299" />
+          <url>file://$PROJECT_DIR$/Uploader.py</url>
+          <line>164</line>
+          <option name="timeStamp" value="1264" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
-          <line>525</line>
-          <option name="timeStamp" value="1300" />
+          <url>file://$PROJECT_DIR$/DownloadData/DownloadPointSamples.py</url>
+          <line>309</line>
+          <option name="timeStamp" value="1269" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
