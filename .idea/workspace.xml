@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1974e55b-2c7a-4819-86d7-7225486f5696" name="Default Changelist" comment="Robby's">
+    <list default="true" id="1974e55b-2c7a-4819-86d7-7225486f5696" name="Default Changelist" comment="Commenting and cleaning up replaced functions">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Database.spec" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DownloadData/DownloadPointSamples.py" beforeDir="false" afterPath="$PROJECT_DIR$/DownloadData/DownloadPointSamples.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Readers/ReadSampleId.py" beforeDir="false" afterPath="$PROJECT_DIR$/Readers/ReadSampleId.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Uploaders/UploadSampleId.py" beforeDir="false" afterPath="$PROJECT_DIR$/Uploaders/UploadSampleId.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py" beforeDir="false" afterPath="$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/USGS_downloaders/scrape_usgs_catchments.py" beforeDir="false" afterPath="$PROJECT_DIR$/USGS_downloaders/scrape_usgs_catchments.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -326,7 +324,14 @@
       <option name="project" value="LOCAL" />
       <updated>1655418708955</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Commenting and cleaning up replaced functions">
+      <created>1656605587024</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1656605587024</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -349,7 +354,8 @@
     <MESSAGE value="save progress" />
     <MESSAGE value="add environment.yaml" />
     <MESSAGE value="Robby's" />
-    <option name="LAST_COMMIT_MESSAGE" value="Robby's" />
+    <MESSAGE value="Commenting and cleaning up replaced functions" />
+    <option name="LAST_COMMIT_MESSAGE" value="Commenting and cleaning up replaced functions" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
