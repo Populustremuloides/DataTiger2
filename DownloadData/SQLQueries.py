@@ -155,7 +155,7 @@ def getSlopeInterceptDicts(cursor, siteID):
         ehour, eminute, esecond = startDate.split(":")
 
         startIndex = datetimeToIndex(syear, smonth, sday, shour, sminute, ssecond)
-        endIndex = datetimeToIndex(reyear, emonth, eday, ehour, eminute, esecond)
+        endIndex = datetimeToIndex(eyear, emonth, eday, ehour, eminute, esecond)
         # FIXME: allow multiple entries per site
         # FIXME: do as a dataframe
 

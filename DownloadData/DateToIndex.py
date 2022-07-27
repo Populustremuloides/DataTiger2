@@ -219,6 +219,7 @@ startIndex = datetimeToIndex(str(startYear), "10", "01", "00", "00", "00")
 startIndex = round(startIndex / dayToIndexRatio) * dayToIndexRatio
 
 def getDaysInYear(year):
+    #sees if it's a leap year or not
     if year % 4 == 0:
         daysInYear = 366
     else:
