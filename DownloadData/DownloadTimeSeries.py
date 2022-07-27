@@ -483,8 +483,6 @@ def getBarometricPressureColumnNoCorrections(siteID, pdf, stationToPriority):
         barometricData[mask] = siteBarometricData[mask]
         mask = np.asarray(barometricData.isna())
 
-    #should I be calling something like getClosestStationsDict() here? looks like it is skipping over all the missing values but not replacing them
-
     barometricData = pd.Series(barometricData)
     return barometricData
 
@@ -499,35 +497,40 @@ def replaceBlankWithNone(array):
     return array
 
 ##############################################################################
-def get_discharge_to_pressure(df, siteID, pdf, cursor, output_path, start_date, end_date):
+def get_discharge_to_pressure(siteHoboPressureDF, siteID, siteBaroPressureDF, cursor, output_path, start_date, end_date,stationToPriority):
 
     # list_df hobo pressure
     # list_pdf_barometric pressure
     #correcting or discounting barometric pressure
     try:
         #merging dataframe with pressure_hobo data column with _barometricPressure_hanna dataframe on index
-        ndf = df.merge(pdf, on='index')
+        siteCorrectedPressureDF = siteHoboPressureDF.merge(siteBaroPressureDF, on='index')
 
-        if f"{siteID}_barometricPressure_hanna" in df.columns:
-            # error checking
-            print("we did have the barometric Pressure hanna column")
-            print("Yes")
-            # making corrected column by subtracting atmospeheric pressure from hobo pressure, this gets us just water pressure
-            ndf['corrected'] = ndf['pressure_hobo'] - ndf[f"{siteID}_barometricPressure_hanna"]
-            # ISSUE: some sites don't have {siteID}_barometricPressure_hanna, need to replace that with one nearest to it (use pre-existing function)
+        #while the next site in stationToPriority does not have barometric pressure, increment to the next one
+        i = 0
+        while not(f"{stationToPriority[siteID][i]}_barometricPressure_hanna" in siteCorrectedPressureDF.columns):
+            i = i + 1
 
-            edf = df.reset_index()
+        #setting a reference site ID to the closest site to our original site with a barometric pressure column
+        refSiteID = stationToPriority[siteID][i]
 
-            ndf['corrected'] = (ndf['corrected'] - ndf['corrected'].mean()) / (ndf['corrected'].std())
+        # ISSUE: some sites don't have {siteID}_barometricPressure_hanna, need to replace that with one nearest to it (use pre-existing function), stationtopriority from get closest stations too
+        # making corrected column by subtracting atmospeheric pressure from hobo pressure, this gets us just water pressure
+        siteCorrectedPressureDF['corrected'] = siteCorrectedPressureDF['pressure_hobo'] - siteCorrectedPressureDF[f"{refSiteID}_barometricPressure_hanna"]
 
-            edf['corrected_pressure_hobo'] = ndf['corrected']
+        edf = siteHoboPressureDF.reset_index()
 
-            return edf, ndf
-        else:
-            return pd.DataFrame(), pd.DataFrame()
+        siteCorrectedPressureDF['corrected'] = (siteCorrectedPressureDF['corrected'] - siteCorrectedPressureDF['corrected'].mean()) / (siteCorrectedPressureDF['corrected'].std())
+
+        #creating corrected pressure column
+        edf['corrected_pressure_hobo'] = siteCorrectedPressureDF['corrected']
+
+        return edf, siteCorrectedPressureDF
+
     except:
         print(traceback.format_exc())
         print('oaky')
+        return pd.DataFrame(), pd.DataFrame()
 
 def interpolate(df):
     print("interpolation not functional yet")
@@ -696,8 +699,54 @@ def format_df_datetime(df, name_of_datetime):
     df[name_of_datetime] = pd.to_datetime(df.datetime, format='%y-%m-%d %H:%M:%S')
     return df
 
+
+def plotRatingCurve(df, outputPath, siteID, start_date, end_date,iteration):
+    iteration=iteration+1
+
+    filteredDF = df.loc[(~df.discharge_measured.isna()) & (~df.corrected_pressure_hobo.isna())]
+    x = df['discharge_measured'].values.tolist()
+    y = df['corrected_pressure_hobo'].values.tolist()
+
+    x_as_array = np.asarray(filteredDF['discharge_measured'].values).reshape((-1, 1))
+    y_as_array = np.asarray(filteredDF['corrected_pressure_hobo'].values)
+    #not currently using this, the sets are really small
+    x_train, x_test, y_train, y_test = train_test_split(x_as_array, y_as_array, train_size=0.7, test_size=0.3, random_state=100)
+
+    model = LinearRegression()
+    model.fit(x_as_array, y_as_array)
+
+    intercept = model.intercept_
+    slope = model.coef_
+    range = np.linspace(min(x_as_array), max(x_as_array), 10)
+
+    plt.figure(figsize=(17, 7))
+    plt.style.use('ggplot')
+    plt.scatter(x, y, c="blue")
+    plt.plot(range, intercept + slope * range)
+    plt.ylabel("Water Pressure ")
+    plt.xlabel("Discharge")
+    plt.title(f"{siteID} Section {iteration} Rating Curve")
+    plt.legend()
+    plt.show()
+
+    #attempt at linear regression  plot
+    #try:
+        # res = stats.linregress(df["corrected_pressure_hobo"], df["discharge_measured"])
+        # plt.plot(df["corrected_pressure_hobo"], res.intercept + res.slope * df["corrected_pressure_hobo"], 'r', c='blue', label='fitted line',title='LOOK AT ME')
+    # except:
+    #     print(traceback.format_exc())
+
+    # plt.xlabel("Barometric Discounted Pressure")
+    # plt.ylabel("Discharge")
+
+    # plt.scatter(df["corrected_pressure_hobo"], df["discharge_measured"], s=6, c="tomato", zorder=4, label=f"discharge")
+    # plt.legend()
+    # plt.savefig(f"{outputPath}/{siteID}/{siteID}_{start_date}_to_{end_date}_rating_curve.png", dpi=300)
+    # plt.clf()
+    # plt.close()
+
 ######################################################################################################################
-def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputPath, calculated_pdf):
+def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputPath, calculated_pdf, stationToPriority):
 
     #Web scraping discharge data from USGS website
     # NOTE: not all of the catchments have data going up until 2021 (this is corroborated across the usgs website)
@@ -814,7 +863,7 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
                 end_date = pd.to_datetime(siteDF.loc[(siteDF["index"] == pairings[i][1])]['datetime'].values.tolist()[0]).strftime("%B %d, %Y")
 
                 #returns empty dfs for now if there isn't a barametric pressure site
-                df1, df2 = get_discharge_to_pressure(list_df[i], siteID, list_pdf[i], cursor, outputPath, start_date, end_date)
+                df1, df2 = get_discharge_to_pressure(list_df[i], siteID, list_pdf[i], cursor, outputPath, start_date, end_date, stationToPriority)
 
                 if df1.empty & df2.empty:
                     print("df1 and df2 are empty")
@@ -864,68 +913,23 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
 
                     # noDischargeData = (df1['discharge_measured'].isnull().all()) #this is true if all entries for discharge measured are na, I don't think it's ever making it here
                     # if df1 is not None and df2 is not None and len(df1.index) != 0 and len(df2.index) != 0 and not(noDischargeData):
-                    print("going to plotRatingCurve")
-                    plotRatingCurve(df1, outputPath, siteID, start_date, end_date,i)
+                    #plotRatingCurve(df1, outputPath, siteID, start_date, end_date,i)
 
                     df1.to_csv(f"{outputPath}/{siteID}/pressure_to_discharge_no_null_{start_date}_to_{end_date}.csv")
                     df2.to_csv(f"{outputPath}/{siteID}/pressure_and_barometric_full_{start_date}_to_{end_date}.csv")
-                    # else:
-                    #     print(f"{siteID} empty from {start_date} to {end_date}")
+                # else:
+                #      print(f"{siteID} empty from {start_date} to {end_date}")
         else:
             print("list df is none")
-        # download the df
-        # download the picture
-        # generate the figure
-        # download the figure
-        # download the csv # date, pressure, discharge,
-        # save the slopes onto the database
+    # download the df
+    # download the picture
+    # generate the figure
+    # download the figure
+    # download the csv # date, pressure, discharge,
+    # save the slopes onto the database
     except:
         print("Exception: ",siteID," was not found in the sites dict")
 
-    def plotRatingCurve(df, outputPath, siteID, start_date, end_date,iteration):
-        iteration=iteration+1
-
-        filteredDF = df.loc[(~df.discharge_measured.isna()) & (~df.corrected_pressure_hobo.isna())]
-        x = df['discharge_measured'].values.tolist()
-        y = df['corrected_pressure_hobo'].values.tolist()
-
-        x_as_array = np.asarray(filteredDF['discharge_measured'].values).reshape((-1, 1))
-        y_as_array = np.asarray(filteredDF['corrected_pressure_hobo'].values)
-        #not currently using this, the sets are really small
-        x_train, x_test, y_train, y_test = train_test_split(x_as_array, y_as_array, train_size=0.7, test_size=0.3, random_state=100)
-
-        model = LinearRegression()
-        model.fit(x_as_array, y_as_array)
-
-        intercept = model.intercept_
-        slope = model.coef_
-        range = np.linspace(min(x_as_array), max(x_as_array), 10)
-
-        plt.figure(figsize=(17, 7))
-        plt.style.use('ggplot')
-        plt.scatter(x, y, c="blue")
-        plt.plot(range, intercept + slope * range)
-        plt.ylabel("Water Pressure ")
-        plt.xlabel("Discharge")
-        plt.title(f"{siteID} Section {iteration} Rating Curve")
-        plt.legend()
-        plt.show()
-
-        #attempt at linear regression  plot
-        #try:
-            # res = stats.linregress(df["corrected_pressure_hobo"], df["discharge_measured"])
-            # plt.plot(df["corrected_pressure_hobo"], res.intercept + res.slope * df["corrected_pressure_hobo"], 'r', c='blue', label='fitted line',title='LOOK AT ME')
-        # except:
-        #     print(traceback.format_exc())
-
-        # plt.xlabel("Barometric Discounted Pressure")
-        # plt.ylabel("Discharge")
-
-        # plt.scatter(df["corrected_pressure_hobo"], df["discharge_measured"], s=6, c="tomato", zorder=4, label=f"discharge")
-        # plt.legend()
-        # plt.savefig(f"{outputPath}/{siteID}/{siteID}_{start_date}_to_{end_date}_rating_curve.png", dpi=300)
-        # plt.clf()
-        # plt.close()
 
 def getSlopeIntercept(datetime, siteID, keyDict, siteDict):
     date, time = datetimes.split(" ")
@@ -1174,7 +1178,7 @@ def downloadStandardCurve(outputPath, testsDict, optionsDict, cursor):
 
     pdf_sites = pdf.drop(['waterYear', 'index', 'indexInWaterYear', 'datetime'], axis=1)
 
-    # remove values under 100 torr (arbitrarily, happy to change it but I feel relatively safe it wouldn't be below 100)
+    # remove values for pressure under 100 torr (arbitrarily, happy to change it but I feel relatively safe it wouldn't be below 100)
     for col in pdf_sites:
         pdf_sites[col] = pdf_sites[col].where(pdf_sites[col] > 100, None)
 
@@ -1232,7 +1236,7 @@ def downloadStandardCurve(outputPath, testsDict, optionsDict, cursor):
             if not os.path.isdir(os.path.join(outputPath, siteID)):
                 os.mkdir(os.path.join(outputPath, siteID))
             outputPath = old_output_path
-            processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputPath, calculated_pdf)
+            processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputPath, calculated_pdf, stationToPriority)
             # processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputPath)
 
         progress_list.remove(siteID)
