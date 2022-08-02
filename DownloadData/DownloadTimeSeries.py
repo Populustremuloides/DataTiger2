@@ -23,6 +23,7 @@ from USGS_downloaders.scrape_usgs_catchments import *
 
 def getIndexList():
     # go from the start date to now
+    #gets today's datetime
     now = str(datetime.datetime.now())
     date, time = now.split(" ")
     year, month, day = date.split("-")
@@ -30,12 +31,15 @@ def getIndexList():
     hour, minute, second = time.split(":")
     second = second[:2]
 
+    #gives todays date a value, or endIndex number
     endIndex = datetimeToIndex(year, month, day, hour, minute, second)
     endIndex = round(endIndex / dayToIndexRatio) * dayToIndexRatio
 
+    #calculates the number of entries (numIndices) since the project start date
     diff = endIndex - startIndex
     numIndices = diff / dayToIndexRatio
 
+    #creates the indexList by multiplying the ith entry by the dayToIndexRatio one by one and making the list.
     indexList = []
     for i in range(0,int(numIndices)):
         newVal = startIndex + (i * (dayToIndexRatio))
@@ -44,6 +48,7 @@ def getIndexList():
     return indexList
 
 def joinDictSite(dict1, fullDict, siteID):
+    #All in all, it adds the sites index, datetime, and barometric pressure values to the dataframe
     dataNames = dict1.keys()
     for name in dataNames:
         if name == "index" or name == "datetime":
@@ -69,7 +74,7 @@ def joinDictSite(dict1, fullDict, siteID):
     return fullDict
 
 def joinDict(dict1, fullDict):
-    
+    #Joins all of the cursor data to the ongoing dataframe sent in with it.
     dataNames = dict1.keys()
     for name in dataNames:
         if name == "index" or name == "datetime":
@@ -125,6 +130,7 @@ def joinDict(dict1, fullDict):
 
 def getDateList(indexList):
     dateList = []
+    #Takes indexList and applies a datetime to each of the index values, starts at 10/1/18(m:d:y) and adds on 15min intervals
     for index in indexList:
         year, month, day, hour, minute, second = indexToDatetime(index, startYear)
         datetime = str(year) + "-" + str(month) + "-" + str(day) + " " + str(hour) + ":" + str(minute) + ":" + str(second)
@@ -136,6 +142,7 @@ def getWaterYearFromDate(date):
     year, month, date = date.split("-")
     year = int(year)
     month = int(month)
+    #if I understand correctly, the water "year" restarts in October, so if the month comes back October or later, its a year more than the actual date.
     if month >= 10:
         year += 1
     return year
@@ -146,11 +153,14 @@ def getIndexInWaterYearList(dateList, indexList):
         waterYears = []
         previousWaterYear = getWaterYearFromDate(dateList[0])
         subractionValue = 0
+
+        #Gets date and index number from ith entry, then calculates water year in getWaterYearFromDate
         for i in range(len(indexList)):
             date = dateList[i]
             index = indexList[i]
             waterYear = getWaterYearFromDate(date)
 
+            #making sure it's not a leap year
             if waterYear != previousWaterYear:
                 if previousWaterYear % 4 == 0:
                     numDaysInYear = 366
@@ -158,6 +168,7 @@ def getIndexInWaterYearList(dateList, indexList):
                     numDaysInYear = 365
                 subractionValue += numDaysInYear
 
+            #Making new index that is based on the water year calculated above, index only goes to 365 or 366 days for the year
             indexInWaterYearList.append(index - subractionValue)
             waterYears.append(waterYear)
 
@@ -468,7 +479,7 @@ def expandIndex(targetIndex, allIndices):
 # calculate discharge
 
 
-#this function adds a barometric pressure column
+#this function creates a barometric pressure column, not yet added to data
 def getBarometricPressureColumnNoCorrections(siteID, pdf, stationToPriority):
     columnPostfix = "_barometricPressure_hanna"
     priorityList = stationToPriority[siteID]
@@ -500,7 +511,7 @@ def replaceBlankWithNone(array):
 def get_discharge_to_pressure(siteHoboPressureDF, siteID, siteBaroPressureDF, cursor, output_path, start_date, end_date,stationToPriority):
 
     # list_df hobo pressure
-    # list_pdf_barometric pressure
+    # list_pdf barometric pressure
     #correcting or discounting barometric pressure
     try:
         #merging dataframe with pressure_hobo data column with _barometricPressure_hanna dataframe on index
@@ -949,13 +960,14 @@ def getSlopeIntercept(datetime, siteID, keyDict, siteDict):
 
 def addCalculatedDischarge(df, siteID, pdf, stationToPriority, cursor):
     barometricData = getBarometricPressureColumnNoCorrections(siteID, pdf, stationToPriority)
-    absoluteData = df["pressure_hobo"]
+    pressureData = df["pressure_hobo"]
     dates = df["datetime"]
     print(len(barometricData))
-    print(len(absoluteData))
+    print(len(pressureData))
 
+    #trying to see if there are entries at the same times
     mask1 = np.asarray(~barometricData.isna())
-    mask2 = np.asarray(~absoluteData.isna())
+    mask2 = np.asarray(~pressureData.isna())
     mask = np.logical_and(mask1, mask2)
 
     barometricData = np.asarray(barometricData)
@@ -971,11 +983,11 @@ def addCalculatedDischarge(df, siteID, pdf, stationToPriority, cursor):
 
     keyDict, siteDict = getSlopeInterceptDicts(cursor, siteID)
 
-    for i in range(len(pressureData[mask])):
+    for i in range(len(correctedPressureData[mask])):
         date = dates[mask][i]
         slope, intercept = getSlopeIntercept(date, siteID, cursor, keyDict, siteDict)
 
-        pressure = pressureData[mask][i]
+        pressure = correctedPressureData[mask][i]
         discharge = pressure * slope + intercept
         dischargePoints[mask][i] = discharge
 
@@ -988,6 +1000,7 @@ def processDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputP
     if optionsDict["calculateDischarge"] == True:
         testsDict["hoboPressure"] = True
 
+    #makes df by running cursor on database of all of the tests done at the site
     df = makeSiteDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict)
 
     # calculate discharge 
@@ -1016,6 +1029,7 @@ def processDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputP
     else:
         saveDF(df, outputPath, siteID, nbsNum)
 
+    return df
 def objective(x, a, b, c, d, e, f, g, h):
     return (a * x) + (b * x ** 2) + (c * x ** 3) + (d * x ** 4) + (e * x ** 5) + (f * x ** 6) + (g * x ** 7) + h
 

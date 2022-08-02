@@ -3,11 +3,12 @@ import numpy as np
 import pandas as pd
 
 def get_closest_usgs_sites(usgs):
-    sites = pd.read_csv("/Users/Work/Library/CloudStorage/Box-Box/AbbottLab/MasterSiteListDescription.csv")
+    sites = pd.read_csv("/Users/ethanmcquhae/Box/AbbottLab/MasterSiteListDescription.csv")
 
     usgs_names = np.asarray(list(usgs["STAID"]))
     usgs = usgs[["LAT_GAGE","LNG_GAGE"]].dropna().to_numpy()
 
+    #pulls sites 3 letter code
     sites = sites[~sites["id_code"].isna()].reset_index()
     siteNames = sites["id_code"]
     sites = sites[["y", "x"]].dropna().to_numpy()
@@ -35,6 +36,7 @@ def get_closest_usgs_sites(usgs):
         closest_site = usgs_names[index]
         sites_dict[str(siteNames[i])] = str(closest_site)
 
+        #the specified site and the next 2 closest 3LetterSites and their USGS site
         sites_dict_verbose[str(siteNames[i])] = closest_sites
 
     # sites = [int(x) for x in list(sites_dict.values())]

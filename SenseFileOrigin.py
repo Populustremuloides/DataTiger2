@@ -1,6 +1,5 @@
 import csv
 import openpyxl
-import traceback
 
 from Readers.ReadHanna import *
 from CustomErrors import *

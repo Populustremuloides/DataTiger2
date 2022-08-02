@@ -1,3 +1,4 @@
+import traceback
 
 
 class ComputeQ:
@@ -131,6 +132,7 @@ class ComputeQ:
                 self.remarksToQList[remarks].append(discharge)
 
             except:
+                print(traceback.format_exc())
                 print("PROBLEM Q: " + remarks)
                 self.problemQs.append(remarks)
 
