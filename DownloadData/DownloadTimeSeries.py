@@ -347,7 +347,7 @@ def saveFigure(df, figPath, target_list, sensors, figTitle, device):
             plt.axvline(x=945, c="tomato", zorder=7, label="Stopped calibrating May 3, 2021")
             plt.title(f"{figTitle} {target}")
             plt.legend()
-            plt.savefig(f"{figPath}_{target}.png", dpi=300)
+            #plt.savefig(f"{figPath}_{target}.png", dpi=300)
             plt.clf()
             plt.close()
         except:
@@ -527,14 +527,15 @@ def get_discharge_to_pressure(siteHoboPressureDF, siteID, siteBaroPressureDF, cu
 
         # ISSUE: some sites don't have {siteID}_barometricPressure_hanna, need to replace that with one nearest to it (use pre-existing function), stationtopriority from get closest stations too
         # making corrected column by subtracting atmospeheric pressure from hobo pressure, this gets us just water pressure
-        siteCorrectedPressureDF['corrected'] = siteCorrectedPressureDF['pressure_hobo'] - siteCorrectedPressureDF[f"{refSiteID}_barometricPressure_hanna"]
+        siteCorrectedPressureDF['water_pressure'] = siteCorrectedPressureDF['pressure_hobo'] - siteCorrectedPressureDF[f"{refSiteID}_barometricPressure_hanna"]
 
         edf = siteHoboPressureDF.reset_index()
 
-        siteCorrectedPressureDF['corrected'] = (siteCorrectedPressureDF['corrected'] - siteCorrectedPressureDF['corrected'].mean()) / (siteCorrectedPressureDF['corrected'].std())
+        siteCorrectedPressureDF['standardized_water_pressure'] = (siteCorrectedPressureDF['water_pressure'] - siteCorrectedPressureDF['water_pressure'].mean()) / (siteCorrectedPressureDF['water_pressure'].std())
 
-        #creating corrected pressure column
-        edf['corrected_pressure_hobo'] = siteCorrectedPressureDF['corrected']
+        #creating corrected pressure columns
+        edf['standardized_water_pressure'] = siteCorrectedPressureDF['standardized_water_pressure']
+        edf['water_pressure'] = siteCorrectedPressureDF['water_pressure']
 
         return edf, siteCorrectedPressureDF
 
@@ -721,7 +722,7 @@ def plotRatingCurve(df, outputPath, siteID, start_date, end_date,iteration):
     x_as_array = np.asarray(filteredDF['discharge_measured'].values).reshape((-1, 1))
     y_as_array = np.asarray(filteredDF['corrected_pressure_hobo'].values)
     #not currently using this, the sets are really small
-    x_train, x_test, y_train, y_test = train_test_split(x_as_array, y_as_array, train_size=0.7, test_size=0.3, random_state=100)
+    #x_train, x_test, y_train, y_test = train_test_split(x_as_array, y_as_array, train_size=0.7, test_size=0.3, random_state=100)
 
     model = LinearRegression()
     model.fit(x_as_array, y_as_array)
@@ -738,7 +739,8 @@ def plotRatingCurve(df, outputPath, siteID, start_date, end_date,iteration):
     plt.xlabel("Discharge")
     plt.title(f"{siteID} Section {iteration} Rating Curve")
     plt.legend()
-    plt.show()
+    #plt.savefig(f"{outputPath}/{siteID}/{siteID}_{start_date}_to_{end_date}_rating_curve.png", dpi=300)
+    plt.close()
 
     #attempt at linear regression  plot
     #try:
@@ -809,14 +811,14 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
     plt.title(siteID)
     try:
 
-        usgs_site = sites_dict[siteID]
-
+        #usgs_site = sites_dict[siteID]
+        #
         # catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date > start_datetime]
-        normalized_usgs = (catchments_df[usgs_site].flows - catchments_df[usgs_site].flows.mean()) / (catchments_df[usgs_site].flows.std())
-
-        plt.plot(catchments_df[usgs_site]['indices'], normalized_usgs, lw=.2, c="tomato", zorder=2, label=f"{usgs_site} discharge")
+        #normalized_usgs = (catchments_df[usgs_site].flows - catchments_df[usgs_site].flows.mean()) / (catchments_df[usgs_site].flows.std())
+        #
+        #plt.plot(catchments_df[usgs_site]['indices'], normalized_usgs, lw=.2, c="tomato", zorder=2, label=f"{usgs_site} discharge")
         # plt.plot(df.datetime, df['pressure_hobo'], lw=.2, c="grey", zorder=2, linestyle='dotted', label=f"original values")
-        plt.legend()
+        #plt.legend()
 
 
         #don't need it to show every figure for now
@@ -833,8 +835,8 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
         # elif proceed == 'n':
         #     print("not okay")
 
-        plt.clf()
-        plt.close()
+        #plt.clf()
+        #plt.close()
 
         siteDF['pressure_hobo'] = siteDF['corrected_values']
 
@@ -864,7 +866,7 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
             plt.text(0.95, 0.01, f'{str(len(df_filtered_by_discharge["index"].values.tolist()))} discharge measurements at this site.', verticalalignment='bottom', horizontalalignment='right', fontsize=15)
             plt.title(f"{siteID} Segmented by Chunk of Workable Continuous Pressure Data (gaps < 3 hrs)")
             plt.legend()
-            plt.savefig(f"{outputPath}/{siteID}/{siteID}_segmented_by_chunk.png", dpi=300) #this figure is what is ending up in the export folders
+            #plt.savefig(f"{outputPath}/{siteID}/{siteID}_segmented_by_chunk.png", dpi=300) #this figure is what is ending up in the export folders
             plt.clf()
             plt.close()
 
@@ -879,7 +881,7 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
                 if df1.empty & df2.empty:
                     print("df1 and df2 are empty")
                 else:
-
+                    print("df1 and df2 NOT are empty")
                     #list_df hobo pressure
                     #list_pdf_barometric pressure
 
@@ -889,7 +891,7 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
                     # plt.ylabel("Pressure")
                     # plt.xlabel("Time")
                     # plt.title(f"Discounted Pressure")
-                    #
+
                     # plt.plot(df1['index'], df2['corrected'], lw=.4, zorder=4, )
 
                     #usgs_site = sites_dict[siteID]
@@ -1243,10 +1245,6 @@ def downloadStandardCurve(outputPath, testsDict, optionsDict, cursor):
         citSciNum = line[4]
 
         nbsNum = nbsNum.split(".")[1]
-
-        #only continues for sites that aren't BSL?
-        # if siteID != 'BSL':
-        #     continue
 
         if siteID != "":
             old_output_path = copy.copy(outputPath)
