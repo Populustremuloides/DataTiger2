@@ -881,7 +881,7 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
                 if df1.empty & df2.empty:
                     print("df1 and df2 are empty")
                 else:
-                    print("df1 and df2 NOT are empty")
+                    print("df1 and df2 are NOT empty")
                     #list_df hobo pressure
                     #list_pdf_barometric pressure
 
@@ -909,15 +909,15 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
                     # plt.xlabel("Time")
                     # plt.title(f"Full Range of Pressure + Corrected Data at {siteID}")
 
-                    usgs_site = sites_dict[siteID]
+                    #usgs_site = sites_dict[siteID]
 
-                    start_datetime = df2['datetime_x'].iloc[0]
-                    end_datetime = df2['datetime_x'].iloc[-1]
+                    #start_datetime = df2['datetime_x'].iloc[0]
+                    #end_datetime = df2['datetime_x'].iloc[-1]
 
-                    catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date > start_datetime]
-                    catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date < end_datetime]
+                    #catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date > start_datetime]
+                    #catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date < end_datetime]
 
-                    normalized_usgs = (catchments_df[usgs_site].flows - catchments_df[usgs_site].flows.mean()) / (catchments_df[usgs_site].flows.std())
+                    #normalized_usgs = (catchments_df[usgs_site].flows - catchments_df[usgs_site].flows.mean()) / (catchments_df[usgs_site].flows.std())
 
                     #commented out for simplicity
                     #plt.plot(catchments_df[usgs_site]['date'], normalized_usgs, lw=.2, c="tomato", zorder=2, label=f"{usgs_site} discharge")
@@ -929,7 +929,7 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
                     #plotRatingCurve(df1, outputPath, siteID, start_date, end_date,i)
 
                     df1.to_csv(f"{outputPath}/{siteID}/pressure_to_discharge_no_null_{start_date}_to_{end_date}.csv")
-                    df2.to_csv(f"{outputPath}/{siteID}/pressure_and_barometric_full_{start_date}_to_{end_date}.csv")
+                    #df2.to_csv(f"{outputPath}/{siteID}/pressure_and_barometric_full_{start_date}_to_{end_date}.csv")
                 # else:
                 #      print(f"{siteID} empty from {start_date} to {end_date}")
         else:
