@@ -817,6 +817,8 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
         plt.plot(catchments_df[usgs_site]['indices'], normalized_usgs, lw=.2, c="tomato", zorder=2, label=f"{usgs_site} discharge")
         # plt.plot(df.datetime, df['pressure_hobo'], lw=.2, c="grey", zorder=2, linestyle='dotted', label=f"original values")
         plt.legend()
+
+
         #don't need it to show every figure for now
         #plt.show()
 
@@ -841,6 +843,7 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
         # -------------------------------------
 
         list_df, list_pdf, pairings = segment_df_by_continuity(siteDF, calculated_pdf)
+
         #graphing pressure by time ?
         if list_df is not None:
             print("list df is not none")
@@ -857,6 +860,7 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
 
             df_filtered_by_discharge = siteDF[~siteDF["discharge_measured"].isna()]
             plt.scatter(df_filtered_by_discharge["index"], df_filtered_by_discharge["pressure_hobo"], s=10, c='tomato', zorder=10, label="discharge measurements")
+
             plt.text(0.95, 0.01, f'{str(len(df_filtered_by_discharge["index"].values.tolist()))} discharge measurements at this site.', verticalalignment='bottom', horizontalalignment='right', fontsize=15)
             plt.title(f"{siteID} Segmented by Chunk of Workable Continuous Pressure Data (gaps < 3 hrs)")
             plt.legend()
@@ -928,10 +932,12 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
                 #      print(f"{siteID} empty from {start_date} to {end_date}")
         else:
             print("list df is none")
-
-        df_filtered_by_discharge.to_csv(f"{outputPath}/{siteID}/all_discharge_measured.csv")
-        print("downloaded all discharge")
-
+    # download the df
+    # download the picture
+    # generate the figure
+    # download the figure
+    # download the csv # date, pressure, discharge,
+    # save the slopes onto the database
     except:
         print("Exception: ",siteID," was not found in the sites dict")
 
