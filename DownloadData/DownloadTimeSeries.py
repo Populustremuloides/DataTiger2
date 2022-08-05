@@ -941,6 +941,7 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
     except:
         print("Exception: ",siteID," was not found in the sites dict")
 
+
     df_filtered_by_discharge.to_csv(f"{outputPath}/{siteID}/all_discharge.csv")
     print("downloaded")
 
