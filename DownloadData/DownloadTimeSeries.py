@@ -754,6 +754,7 @@ def plotRatingCurve(df, outputPath, siteID, start_date, end_date,iteration):
 
     # plt.scatter(df["corrected_pressure_hobo"], df["discharge_measured"], s=6, c="tomato", zorder=4, label=f"discharge")
     # plt.legend()
+    # plt.savefig(f"{outputPath}/{siteID}/{siteID}_{start_date}_to_{end_date}_rating_curve.png", dpi=300)
     # plt.clf()
     # plt.close()
 
@@ -810,14 +811,14 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
     plt.title(siteID)
     try:
 
-        # usgs_site = sites_dict[siteID]
+        #usgs_site = sites_dict[siteID]
         #
-        # # catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date > start_datetime]
-        # normalized_usgs = (catchments_df[usgs_site].flows - catchments_df[usgs_site].flows.mean()) / (catchments_df[usgs_site].flows.std())
+        # catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date > start_datetime]
+        #normalized_usgs = (catchments_df[usgs_site].flows - catchments_df[usgs_site].flows.mean()) / (catchments_df[usgs_site].flows.std())
         #
-        # plt.plot(catchments_df[usgs_site]['indices'], normalized_usgs, lw=.2, c="tomato", zorder=2, label=f"{usgs_site} discharge")
-        # # plt.plot(df.datetime, df['pressure_hobo'], lw=.2, c="grey", zorder=2, linestyle='dotted', label=f"original values")
-        # plt.legend()
+        #plt.plot(catchments_df[usgs_site]['indices'], normalized_usgs, lw=.2, c="tomato", zorder=2, label=f"{usgs_site} discharge")
+        # plt.plot(df.datetime, df['pressure_hobo'], lw=.2, c="grey", zorder=2, linestyle='dotted', label=f"original values")
+        #plt.legend()
 
 
         #don't need it to show every figure for now
@@ -834,8 +835,8 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
         # elif proceed == 'n':
         #     print("not okay")
 
-        # plt.clf()
-        # plt.close()
+        #plt.clf()
+        #plt.close()
 
         siteDF['pressure_hobo'] = siteDF['corrected_values']
 
@@ -908,15 +909,15 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
                     # plt.xlabel("Time")
                     # plt.title(f"Full Range of Pressure + Corrected Data at {siteID}")
 
-                    # usgs_site = sites_dict[siteID]
-                    #
-                    # start_datetime = df2['datetime_x'].iloc[0]
-                    # end_datetime = df2['datetime_x'].iloc[-1]
-                    #
-                    # catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date > start_datetime]
-                    # catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date < end_datetime]
-                    #
-                    # normalized_usgs = (catchments_df[usgs_site].flows - catchments_df[usgs_site].flows.mean()) / (catchments_df[usgs_site].flows.std())
+                    #usgs_site = sites_dict[siteID]
+
+                    #start_datetime = df2['datetime_x'].iloc[0]
+                    #end_datetime = df2['datetime_x'].iloc[-1]
+
+                    #catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date > start_datetime]
+                    #catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date < end_datetime]
+
+                    #normalized_usgs = (catchments_df[usgs_site].flows - catchments_df[usgs_site].flows.mean()) / (catchments_df[usgs_site].flows.std())
 
                     #commented out for simplicity
                     #plt.plot(catchments_df[usgs_site]['date'], normalized_usgs, lw=.2, c="tomato", zorder=2, label=f"{usgs_site} discharge")
@@ -925,7 +926,7 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
 
                     # noDischargeData = (df1['discharge_measured'].isnull().all()) #this is true if all entries for discharge measured are na, I don't think it's ever making it here
                     # if df1 is not None and df2 is not None and len(df1.index) != 0 and len(df2.index) != 0 and not(noDischargeData):
-                    #     plotRatingCurve(df1, outputPath, siteID, start_date, end_date,i)
+                    #plotRatingCurve(df1, outputPath, siteID, start_date, end_date,i)
 
                     df1.to_csv(f"{outputPath}/{siteID}/pressure_to_discharge_no_null_{start_date}_to_{end_date}.csv")
                     #df2.to_csv(f"{outputPath}/{siteID}/pressure_and_barometric_full_{start_date}_to_{end_date}.csv")
@@ -942,6 +943,9 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
     except:
         print("Exception: ",siteID," was not found in the sites dict")
 
+
+    df_filtered_by_discharge.to_csv(f"{outputPath}/{siteID}/all_discharge.csv")
+    print("downloaded")
 
 def getSlopeIntercept(datetime, siteID, keyDict, siteDict):
     date, time = datetimes.split(" ")
@@ -975,11 +979,7 @@ def addCalculatedDischarge(df, siteID, pdf, stationToPriority, cursor):
     absoluteData = np.asarray(absoluteData)
     pressureData = absoluteData
 
-    allpressure = np.array(pressureData,barometricData)
-
-    maskedPressure = allpressure[:,mask]
-
-    pressureData[correctedPressure] = float(absoluteData) - float(barometricData)
+    pressureData[mask] = float(absoluteData[mask]) - float(barometricData[mask])
     pressureData[~mask] = None
     # print(pressureData)
     # print(pressureData[mask])
