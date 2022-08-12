@@ -20,7 +20,8 @@ import os
 
 from USGS_downloaders.scrape_usgs_catchments import *
 
-
+###Creates value using today's date and giving it a numerical value based on the start date of the project###
+###Creates *indexList*, a list of values corresponding to a specific date throughout the project, ending today###
 def getIndexList():
     # go from the start date to now
     #gets today's datetime
@@ -47,7 +48,9 @@ def getIndexList():
 
     return indexList
 
-def joinDictSite(dict1, fullDict, siteID):
+###Joins *index*, *datetime*, site *bp* to create *hannaPressuresDfDict*###
+###site barometric pressure is left as a vector of 'NONE', until added later###
+def joinDictSite(dict1, hannaPressuresDfDict, siteID):
     #All in all, it adds the sites index, datetime, and barometric pressure values to the dataframe
     dataNames = dict1.keys()
     for name in dataNames:
@@ -58,7 +61,8 @@ def joinDictSite(dict1, fullDict, siteID):
             dataList = dict1[name]
             indices = dict1["index"]
 
-            newData = [None] * len(fullDict["index"])
+            #Creates vector the length of the index with values of "None" which will be replaced with barometric pressure reads
+            newData = [None] * len(hannaPressuresDfDict["index"])
 
             for i in range(len(indices)):
                 index = indices[i]
@@ -70,52 +74,27 @@ def joinDictSite(dict1, fullDict, siteID):
                 newData[listIndex] = data
 
             newName = siteID + "_" + name
-            fullDict[newName] = newData
-    return fullDict
+            hannaPressuresDfDict[newName] = newData
+    return hannaPressuresDfDict
 
-def joinDict(dict1, fullDict):
+###Joins cursor data to *dischargeDfDict* in order to make site df###
+def joinDict(dict1, dischargeDfDict):
     #Joins all of the cursor data to the ongoing dataframe sent in with it.
     dataNames = dict1.keys()
     for name in dataNames:
         if name == "index" or name == "datetime":
             pass
 
-        elif name == "batch_id" and "batch_id" in fullDict.keys() and len(fullDict["batch_id"]) == len(fullDict["index"]):
+        elif name == "batch_id" and "batch_id" in dischargeDfDict.keys() and len(dischargeDfDict["batch_id"]) == len(dischargeDfDict["index"]):
             pass
-            # dataList = dict1[name]
-            # indices = dict1["index"]
-            #
-            # for i in range(len(indices)):
-            #
-            #     batch_id = dataList[i]
-            #     index = indices[i]
-            #     # listIndex = int(index / dayToIndexRatio) - int(startIndex / dayToIndexRatio)
-            #     listIndex = round(index * indexToDayRatio)
-            #
-            #     fullDict["batch_id"][listIndex] = batch_id
+
         else:
             dataList = dict1[name]
             indices = dict1["index"]
             dtime = dict1["datetime"]
-
-            # if len(indices) > 0:
-            #     if max(indices) > 646.6:
-            #         for i in range(len(indices)):
-            #             if indices[i] > 646.6:
-            #                 print("*******************************************************************************")
-            #             print(indices[i])
-            #             print(dtime[i])
-
-            newData = [None] * len(fullDict["index"])
+            newData = [None] * len(dischargeDfDict["index"])
             # print(fullDict["datetime"][-5:])
             for i in range(len(indices)):
-               # print(dtime[i])
-               # print(index)
-               # print(indexToDayRatio)
-               # print((indexToDayRatio * indices[-1]) - (indexToDayRatio * indices[0]))
-               # print(index / dayToIndexRatio)
-               # print(index * dayToIndexRatio)
-                #print(len(newData))
 
                 index = indices[i]
                 #listIndex = int(index / dayToIndexRatio) - int(startIndex / dayToIndexRatio)
@@ -125,9 +104,11 @@ def joinDict(dict1, fullDict):
                 dt = dtime[i]
                 newData[listIndex] = data
 
-            fullDict[name] = newData
-    return fullDict
+            dischargeDfDict[name] = newData
+    return dischargeDfDict
 
+###Takes *indexList* and applies datetime to each of the indicies###
+###Starts 10/1/18(m:d:y) at midnight and makes entries on 15 minute intervals###
 def getDateList(indexList):
     dateList = []
     #Takes indexList and applies a datetime to each of the index values, starts at 10/1/18(m:d:y) and adds on 15min intervals
@@ -137,6 +118,7 @@ def getDateList(indexList):
         dateList.append(datetime)
     return dateList
 
+###Water year starts as 19, and moves to next water year every october###
 def getWaterYearFromDate(date):
     date, time = date.split(" ")
     year, month, date = date.split("-")
@@ -145,8 +127,10 @@ def getWaterYearFromDate(date):
     #if I understand correctly, the water "year" restarts in October, so if the month comes back October or later, its a year more than the actual date.
     if month >= 10:
         year += 1
-    return year
+    waterYear = year
+    return waterYear
 
+###Creates *indexInWaterYearList*, a new index that is based on water year and only goes to 365 (or 366 on leap year)###
 def getIndexInWaterYearList(dateList, indexList):
     if len(dateList) > 0:
         indexInWaterYearList = []
@@ -175,143 +159,157 @@ def getIndexInWaterYearList(dateList, indexList):
             previousWaterYear = waterYear
     return indexInWaterYearList, waterYears
 
+###Adds all tests onto *dischargeDfDict* with cursors, then creates sites *df*###
 def makeSiteDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict):
     indexList = getIndexList()
     dateList = getDateList(indexList)
     indexInWaterYear, waterYear = getIndexInWaterYearList(dateList, indexList)
 
-    # print("dates")
-    # print(dateList[-50:])
-    # print("indices")
-    # print(indexList[-50:])
-    fullDict = {
+    dischargeDfDict = {
         "index": indexList,
         "indexInWaterYear":indexInWaterYear,
         "waterYear":waterYear,
         "datetime": dateList
     }
-    # fullDf = pd.DataFrame.from_dict(fullDict)
-    # fullDf.to_csv("lookatme.csv")
 
     if testsDict["fieldSheetInfo"]:
         # try:
             fieldSheetDict = getFieldSheetInfo(cursor, siteID, nbsNum, citSciNum)
-            fullDict = joinDict(fieldSheetDict, fullDict)
+            dischargeDfDict = joinDict(fieldSheetDict, dischargeDfDict)
         # except:
         #     print("ERROR")
     if testsDict["hoboPressure"] or optionsDict["calculateDischarge"]:
         # try:
             pDict = getP(cursor, siteID)
-            fullDict = joinDict(pDict, fullDict)
+            dischargeDfDict = joinDict(pDict, dischargeDfDict)
         # except:
         #     print("ERROR")
     if testsDict["hoboLight"]:
         # try:
             lightDict = getLightHobo(cursor, siteID)
-            fullDict = joinDict(lightDict, fullDict)
+            dischargeDfDict = joinDict(lightDict, dischargeDfDict)
         # except:
         #     print("error")
     if testsDict["hoboConductivity"]:
         # try:
             condDict = getConductivityHobo(cursor, siteID)
-            fullDict = joinDict(condDict, fullDict)
+            dischargeDfDict = joinDict(condDict, dischargeDfDict)
         # except:
         #     print("error")
     if testsDict["hoboOxygen"]:
         # try:
             oxygenDict = getOxygenHobo(cursor, siteID)
-            fullDict = joinDict(oxygenDict, fullDict)
+            dischargeDfDict = joinDict(oxygenDict, dischargeDfDict)
         # except:
         #     print("error")
     if testsDict["measuredDischarge"]:
         # try:
             qDict = getQ(cursor, siteID)
-            fullDict = joinDict(qDict, fullDict)
+            dischargeDfDict = joinDict(qDict, dischargeDfDict)
         # except:
         #     print("error")
     if testsDict["hanna"]:
         try:
             hannaDict = getHanna(cursor, siteID)
-            fullDict = joinDict(hannaDict, fullDict)
+            dischargeDfDict = joinDict(hannaDict, dischargeDfDict)
         except:
             print("error")
     if testsDict["eureka"]:
         # try:
             eurekaDict = getEureka(cursor, siteID)
-            fullDict = joinDict(eurekaDict, fullDict)
+            dischargeDfDict = joinDict(eurekaDict, dischargeDfDict)
         # except:
         #     print("error")
     if testsDict["elementar"]:
         # try:
             elementarDict = getElementar(cursor, siteID, nbsNum, citSciNum)
-            fullDict = joinDict(elementarDict, fullDict)
+            dischargeDfDict = joinDict(elementarDict, dischargeDfDict)
         # except:
         #     print("error")
     if testsDict["scanCalculated"]:
         # try:
             scanParDict = getScanPar(cursor, siteID, nbsNum, citSciNum)
-            fullDict = joinDict(scanParDict, fullDict)
+            dischargeDfDict = joinDict(scanParDict, dischargeDfDict)
         # except:
         #     print("error")
     if testsDict["scanRaw"]:
         # try:
             scanFPDict = getScanFp(cursor, siteID, nbsNum, citSciNum)
-            fullDict = joinDict(scanFPDict, fullDict)
+            dischargeDfDict = joinDict(scanFPDict, dischargeDfDict)
         # except:
         #     print("error")
     if testsDict["ic"]:
         # try:
             icCationDict = getICCation(cursor, siteID, nbsNum, citSciNum)
-            fullDict = joinDict(icCationDict, fullDict)
+            dischargeDfDict = joinDict(icCationDict, dischargeDfDict)
         # except:
         #     print("error")
     if testsDict["ic"]:
         # try:
             icAnionDict = getICAnion(cursor, siteID, nbsNum, citSciNum)
-            fullDict = joinDict(icAnionDict, fullDict)
+            dischargeDfDict = joinDict(icAnionDict, dischargeDfDict)
         # except:
         #     print("error")
     if testsDict["icp"]:
         # try:
             icpDict = getICP(cursor, siteID, nbsNum, citSciNum)
-            fullDict = joinDict(icpDict, fullDict)
+            dischargeDfDict = joinDict(icpDict, dischargeDfDict)
         # except:
         #     print("error")
         
-    df = pd.DataFrame.from_dict(fullDict)
+    dischargeDf = pd.DataFrame.from_dict(dischargeDfDict)
     if optionsDict["include_batch_id"]:
         pass
-    elif "batch_id" in df.columns:
-        df = df.drop("batch_id", axis=1)
+    elif "batch_id" in dischargeDf.columns:
+        dischargeDf = dischargeDf.drop("batch_id", axis=1)
         ###
-    return df
+    return dischargeDf
 
-def saveDF(df, outputPath, siteId, nbsNum, saveFig=False, corrections_df=None, target_list=None, sensors=None, device=None):
+###saves *df* as CSV for downloadTimeSeries()###
+def saveDF(timeSeriesDf, outputPath, siteID, nbsNum, saveFig=False, corrections_df=None, target_list=None, sensors=None, device=None):
+    # Checks for site name file/makes it, checks for TimeSeries file/makes it
+    timeSeriesPath = os.path.join(outputPath, siteID)
+    if siteID != "":
+        old_output_path = copy.copy(outputPath)
+        if not os.path.isdir(os.path.join(outputPath, siteID)):
+            os.mkdir(os.path.join(outputPath, siteID))
+            os.mkdir(os.path.join(timeSeriesPath, "TimeSeries"))
+    if os.path.exists(f"{timeSeriesPath}/TimeSeries") == True:
+        print("Time series folder present")
+    else:
+        os.mkdir(os.path.join(timeSeriesPath, "TimeSeries"))
+
+    outputPath = old_output_path
+    timeSeries = "timeSeries"
+    timeSeriesDf.to_csv(f"{outputPath}/{siteID}/{timeSeries}/timeSeriesReport_" + siteID + ".csv")
+
+    #Only need this section becuase SaveFig runs on this
     if platform.system() == "Windows":
         if siteID != "":
-            filePath = outputPath + "\\timeSeriesReport_" + siteId + ".csv"
-            figPath = outputPath + "\\timeSeriesCorrectionFigures\\" + siteId
-            figTitle = siteId
+            #filePath = outputPath + "\\timeSeriesReport_" + siteId + ".csv"
+            figPath = outputPath + "\\timeSeriesCorrectionFigures\\" + siteID
+            figTitle = siteID
         else:
-            filePath = outputPath + "\\timeSeriesReport_NBS" + nbsNum + ".csv"
+            #filePath = outputPath + "\\timeSeriesReport_NBS" + nbsNum + ".csv"
             figPath = outputPath + "\\timeSeriesCorrectionFigures_NBS\\" + nbsNum
             figTitle = f"NBS_{nbsNum}"
     else:
-        if siteId != "":
-            filePath = outputPath + "/timeSeriesReport_" + siteId + ".csv"
-            figPath = outputPath + "/timeSeriesCorrectionFigures/" + siteId
-            figTitle = siteId
+        if siteID != "":
+            #filePath = outputPath + "/timeSeriesReport_" + siteId + ".csv"
+            figPath = outputPath + "/timeSeriesCorrectionFigures/" + siteID
+            figTitle = siteID
         else:
-            filePath = outputPath + "/timeSeriesReport_NBS" + nbsNum + ".csv"
+            #filePath = outputPath + "/timeSeriesReport_NBS" + nbsNum + ".csv"
             figPath = outputPath + "/timeSeriesCorrectionFigures_NBS/" + nbsNum
             figTitle = f"NBS_{nbsNum}"
 
-    print(filePath)
-    df.to_csv(filePath, index=False)
+    #print(filePath)
+    #timeSeriesDf.to_csv(filePath, index=False)
     if saveFig:
         saveFigure(corrections_df, figPath, target_list, sensors, figTitle, device)
 
-def saveFigure(df, figPath, target_list, sensors, figTitle, device):
+###Saves figure (if saveFig) as PNG###
+def saveFigure(timeSeriesDf, figPath, target_list, sensors, figTitle, device):
    for target in target_list:
         try:
             # save figure
@@ -319,7 +317,7 @@ def saveFigure(df, figPath, target_list, sensors, figTitle, device):
             plt.style.use('ggplot')
             plt.xlabel("Days since 2018")
             plt.ylabel(f"{target}")
-            plt.scatter(df["index"], df[f"{target}_{device}"], c="grey", s=.5, zorder=1, label="raw data")
+            plt.scatter(timeSeriesDf["index"], timeSeriesDf[f"{target}_{device}"], c="grey", s=.5, zorder=1, label="raw data")
 
 
             # for point_sensor in sensors:
@@ -342,7 +340,7 @@ def saveFigure(df, figPath, target_list, sensors, figTitle, device):
             #             label=f"{target}_{device}_corrected")
             # plt.scatter(df["index"], df[f"{target}"], s=6, c="green", zorder=4,
             #             label=f"residual points")
-            plt.scatter(df["index"], df[f"{target}_fieldsheet"], s=6, c="tomato", zorder=4,
+            plt.scatter(timeSeriesDf["index"], timeSeriesDf[f"{target}_fieldsheet"], s=6, c="tomato", zorder=4,
                         label=f"{target}_YSI")
             plt.axvline(x=945, c="tomato", zorder=7, label="Stopped calibrating May 3, 2021")
             plt.title(f"{figTitle} {target}")
@@ -354,12 +352,13 @@ def saveFigure(df, figPath, target_list, sensors, figTitle, device):
             print(traceback.format_exc())
             print(f"PNG export for {figTitle} failed at target: {target}")
 
+###Creates *pdf* through cursor that pulls all barometric pressure readings from Hanna devices###
 def getAllHannaPressuresDF(cursor):
     indexList = getIndexList()
     dateList = getDateList(indexList)
     indexInWaterYear, waterYear = getIndexInWaterYearList(dateList, indexList)
 
-    fullDict = {
+    hannaPressuresDfDict = {
         "index": indexList,
         "indexInWaterYear": indexInWaterYear,
         "waterYear": waterYear,
@@ -388,28 +387,31 @@ def getAllHannaPressuresDF(cursor):
             keeperDict["index"] = index
             keeperDict["barometricPressure_hanna"] = bp
 
-            fullDict = joinDictSite(keeperDict, fullDict, siteID)
+            hannaPressuresDfDict = joinDictSite(keeperDict, hannaPressuresDfDict, siteID)
 
-    fullDF = pd.DataFrame.from_dict(fullDict)
-    return fullDF
+    pdf = pd.DataFrame.from_dict(hannaPressuresDfDict)
+    return pdf
 
+###Creates *xdict*, *ydict*, a x/y coordinate list for each site###
 def getSiteCoordinateDicts(cursor):
     siteListTable = "SELECT * FROM master_site"
     cursor.execute(siteListTable)
     result = cursor.fetchall()
 
-    siteToX = {}
-    siteToY = {}
+    xdict = {}
+    ydict = {}
     for line in result:
 
         siteID = line[3]
 
         if siteID != "":
-            siteToX[siteID] = line[8]
-            siteToY[siteID] = line[9]
+            xdict[siteID] = line[8]
+            ydict[siteID] = line[9]
 
-    return siteToX, siteToY
+    return xdict, ydict
 
+###Kinda weird function, but cool###
+###Creates *dist*, calculates distance of a site to the current site based on x/y coordinates###
 def getDistance(x1, x2, y1, y2):
     x1 = float(x1)
     x2 = float(x2)
@@ -424,6 +426,7 @@ def getDistance(x1, x2, y1, y2):
     dist = dist[0]
     return dist
 
+###Creates *stationToDistances*, takes x/y coordinates and creates list distances from current site to other sites###
 def getStationToDistanceDict(xdict, ydict):
     stationToDistances = {}
     for station in xdict.keys():
@@ -440,6 +443,8 @@ def getStationToDistanceDict(xdict, ydict):
 
     return stationToDistances
 
+###Creates *stationToClosest*, a sorted list, closest to farthest of each site to other sites###
+###There are a lot of other variables created here that I don't think are necessary but I will look at it later###
 def getClosestStationsDict(xdict, ydict):
     stationToClosest = {}
     stationToDistances = getStationToDistanceDict(xdict, ydict)
@@ -458,19 +463,20 @@ def getClosestStationsDict(xdict, ydict):
 
     return stationToClosest
 
-def expandIndex(targetIndex, allIndices):
-    newBools = []
-    found_newBool = False
-    for index in allIndices:
-        if abs(index - targetIndex) < 0.1:
-            newBools.append(True)
-            found_newBool = True
+######No idea why we have this######
+#def expandIndex(targetIndex, allIndices):
+    #newBools = []
+    #found_newBool = False
+    #for index in allIndices:
+        #if abs(index - targetIndex) < 0.1:
+            #newBools.append(True)
+            #found_newBool = True
         # if the first statement has been reached and passed, you can break the loop :)
         # elif found_newBool:
         #     break
-        else:
-            newBools.append(False)
-    return newBools
+        #else:
+            #newBools.append(False)
+    #return newBools
 
 # what is the right way to do this?
 # calculate a barometric pressure column that I can subtract from the pressure measurements
@@ -479,7 +485,7 @@ def expandIndex(targetIndex, allIndices):
 # calculate discharge
 
 
-#this function creates a barometric pressure column, not yet added to data
+###Creates a barometric pressure column, not yet added to data###
 def getBarometricPressureColumnNoCorrections(siteID, pdf, stationToPriority):
     columnPostfix = "_barometricPressure_hanna"
     priorityList = stationToPriority[siteID]
@@ -497,29 +503,32 @@ def getBarometricPressureColumnNoCorrections(siteID, pdf, stationToPriority):
     barometricData = pd.Series(barometricData)
     return barometricData
 
-def replaceBlankWithNone(array):
-    array = list(array)
-    for j in range(len(array)):
-        val = array[j]
-        val = str(val)
-        val.replace(" ","")
-        if val == "":
-            array[j] = None
-    return array
+######No idea why we have this######
+#def replaceBlankWithNone(array):
+    #array = list(array)
+    #for j in range(len(array)):
+        #val = array[j]
+        #val = str(val)
+        #val.replace(" ","")
+        #if val == "":
+            #array[j] = None
+    #return array
 
 ##############################################################################
-def get_discharge_to_pressure(siteHoboPressureDF, siteID, siteBaroPressureDF, cursor, output_path, start_date, end_date,stationToPriority):
+###Creates *combinedPressureDf* which includes every sites BaroPress and corrections###
+###Creates *correctedPressureDf* which includes water pressure and corrected pressure, baiscally more simplified than above variable###
+def get_discharge_to_pressure(siteHoboPressureDf, siteID, siteBaroPressureDf, cursor, output_path, start_date, end_date,stationToPriority):
 
     # list_df hobo pressure
     # list_pdf barometric pressure
     #correcting or discounting barometric pressure
     try:
         #merging dataframe with pressure_hobo data column with _barometricPressure_hanna dataframe on index
-        siteCorrectedPressureDF = siteHoboPressureDF.merge(siteBaroPressureDF, on='index')
+        combinedPressureDf = siteHoboPressureDf.merge(siteBaroPressureDf, on='index')
 
         #while the next site in stationToPriority does not have barometric pressure, increment to the next one
         i = 0
-        while not(f"{stationToPriority[siteID][i]}_barometricPressure_hanna" in siteCorrectedPressureDF.columns):
+        while not(f"{stationToPriority[siteID][i]}_barometricPressure_hanna" in combinedPressureDf.columns):
             i = i + 1
 
         #setting a reference site ID to the closest site to our original site with a barometric pressure column
@@ -527,27 +536,31 @@ def get_discharge_to_pressure(siteHoboPressureDF, siteID, siteBaroPressureDF, cu
 
         # ISSUE: some sites don't have {siteID}_barometricPressure_hanna, need to replace that with one nearest to it (use pre-existing function), stationtopriority from get closest stations too
         # making corrected column by subtracting atmospeheric pressure from hobo pressure, this gets us just water pressure
-        siteCorrectedPressureDF['water_pressure'] = siteCorrectedPressureDF['pressure_hobo'] - siteCorrectedPressureDF[f"{refSiteID}_barometricPressure_hanna"]
+        combinedPressureDf['water_pressure'] = combinedPressureDf['pressure_hobo'] - combinedPressureDf[f"{refSiteID}_barometricPressure_hanna"]
 
-        edf = siteHoboPressureDF.reset_index()
+        correctedPressureDf = siteHoboPressureDf.reset_index()
 
-        siteCorrectedPressureDF['standardized_water_pressure'] = (siteCorrectedPressureDF['water_pressure'] - siteCorrectedPressureDF['water_pressure'].mean()) / (siteCorrectedPressureDF['water_pressure'].std())
+        combinedPressureDf['standardized_water_pressure'] = (combinedPressureDf['water_pressure'] - combinedPressureDf['water_pressure'].mean()) / (combinedPressureDf['water_pressure'].std())
 
         #creating corrected pressure columns
-        edf['standardized_water_pressure'] = siteCorrectedPressureDF['standardized_water_pressure']
-        edf['water_pressure'] = siteCorrectedPressureDF['water_pressure']
+        correctedPressureDf['standardized_water_pressure'] = combinedPressureDf['standardized_water_pressure']
+        correctedPressureDf['water_pressure'] = combinedPressureDf['water_pressure']
 
-        return edf, siteCorrectedPressureDF
+        #Cleaning unneeded columns from correctedPressureDf
+        correctedPressureDf = correctedPressureDf.drop(columns=['level_0', 'batch_id', 'lock_corrections', 'corrections', 'corrected_values', 'temp_corrections'])
+        return correctedPressureDf, combinedPressureDf
 
     except:
         print(traceback.format_exc())
         print('oaky')
         return pd.DataFrame(), pd.DataFrame()
 
-def interpolate(df):
-    print("interpolation not functional yet")
-    return df
+######Not used rn######
+#def interpolate(df):
+    #print("interpolation not functional yet")
+    #return df
 
+###Helps *correct_sensor_gaps* to take out outliers from when sensors are pulled and log before turned off###
 def detect_outlier(data, indices):
     outliers = []
     outlier_indices = []
@@ -566,6 +579,7 @@ def detect_outlier(data, indices):
 
     return outliers, outlier_indices
 
+###Takes *df*, looks forward/backwards on batches, and cleans NA's and outliers###
 def correct_sensor_gaps(df):
     df["lock_corrections"] = [0] * len(df[df.columns[0]])
     df["corrections"] = [0] * len(df[df.columns[0]])
@@ -653,6 +667,8 @@ def correct_sensor_gaps(df):
 
     return df
 
+###Corrects indicies by taking out NA's and empty values###
+###Corrects *df*, *pdf*, and pairs them to new corrected indicies as *list_df*, *list_pdf*###
 def segment_df_by_continuity(df, pdf):
     # step is equal to the difference in index equivalent to 3 hrs (12 indices == 12 15 min intervals == 3 hrs).
     step = df['index'].diff().mean() * 12
@@ -700,10 +716,11 @@ def segment_df_by_continuity(df, pdf):
 
     # This line is obnoxiously obtuse but I don't have the bandwidth to simplify rn. Basically it takes the column ['index'] and uses it to find the actual indices from df
     # But it works!
-    list_df = [df[df.loc[df['index'] == pair[0]].index.tolist()[0]:df.loc[df['index'] == pair[1]].index.tolist()[0]] for pair in pairings]
-    list_pdf = [pdf[df.loc[df['index'] == pair[0]].index.tolist()[0]:df.loc[df['index'] == pair[1]].index.tolist()[0]] for pair in pairings]
-    return list_df, list_pdf, pairings
+    siteHoboPressureDf = [df[df.loc[df['index'] == pair[0]].index.tolist()[0]:df.loc[df['index'] == pair[1]].index.tolist()[0]] for pair in pairings]
+    siteBaroPressureDf = [pdf[df.loc[df['index'] == pair[0]].index.tolist()[0]:df.loc[df['index'] == pair[1]].index.tolist()[0]] for pair in pairings]
+    return siteHoboPressureDf, siteBaroPressureDf, pairings
 
+###Corrects *df* datetime, to '%y-%m-%d %H:%M:%S'###
 def format_df_datetime(df, name_of_datetime):
     df[name_of_datetime] = df[name_of_datetime].apply(lambda x: " ".join(
         ["-".join(list(map(lambda y: y.zfill(2), x.split(" ")[0].split("-")))),
@@ -711,36 +728,38 @@ def format_df_datetime(df, name_of_datetime):
     df[name_of_datetime] = pd.to_datetime(df.datetime, format='%y-%m-%d %H:%M:%S')
     return df
 
+######does not download/note being used######
+###Creates ggplot of [site]water pressure###
+###Discrepancies in dataframes used to make the graphs###
+#def plotRatingCurve(df, outputPath, siteID, start_date, end_date,iteration):
+    #iteration=iteration+1
 
-def plotRatingCurve(df, outputPath, siteID, start_date, end_date,iteration):
-    iteration=iteration+1
+    #filteredDF = df.loc[(~df.discharge_measured.isna()) & (~df.corrected_pressure_hobo.isna())]
+    #x = df['discharge_measured'].values.tolist()
+    #y = df['corrected_pressure_hobo'].values.tolist()
 
-    filteredDF = df.loc[(~df.discharge_measured.isna()) & (~df.corrected_pressure_hobo.isna())]
-    x = df['discharge_measured'].values.tolist()
-    y = df['corrected_pressure_hobo'].values.tolist()
-
-    x_as_array = np.asarray(filteredDF['discharge_measured'].values).reshape((-1, 1))
-    y_as_array = np.asarray(filteredDF['corrected_pressure_hobo'].values)
+    #x_as_array = np.asarray(filteredDF['discharge_measured'].values).reshape((-1, 1))
+    #y_as_array = np.asarray(filteredDF['corrected_pressure_hobo'].values)
     #not currently using this, the sets are really small
     #x_train, x_test, y_train, y_test = train_test_split(x_as_array, y_as_array, train_size=0.7, test_size=0.3, random_state=100)
 
-    model = LinearRegression()
-    model.fit(x_as_array, y_as_array)
+    #model = LinearRegression()
+    #model.fit(x_as_array, y_as_array)
 
-    intercept = model.intercept_
-    slope = model.coef_
-    range = np.linspace(min(x_as_array), max(x_as_array), 10)
+    #intercept = model.intercept_
+    #slope = model.coef_
+    #range = np.linspace(min(x_as_array), max(x_as_array), 10)
 
-    plt.figure(figsize=(17, 7))
-    plt.style.use('ggplot')
-    plt.scatter(x, y, c="blue")
-    plt.plot(range, intercept + slope * range)
-    plt.ylabel("Water Pressure ")
-    plt.xlabel("Discharge")
-    plt.title(f"{siteID} Section {iteration} Rating Curve")
-    plt.legend()
+    #plt.figure(figsize=(17, 7))
+    #plt.style.use('ggplot')
+    #plt.scatter(x, y, c="blue")
+    #plt.plot(range, intercept + slope * range)
+    #plt.ylabel("Water Pressure ")
+    #plt.xlabel("Discharge")
+    #plt.title(f"{siteID} Section {iteration} Rating Curve")
+    #plt.legend()
     #plt.savefig(f"{outputPath}/{siteID}/{siteID}_{start_date}_to_{end_date}_rating_curve.png", dpi=300)
-    plt.close()
+    #plt.close()
 
     #attempt at linear regression  plot
     #try:
@@ -759,6 +778,8 @@ def plotRatingCurve(df, outputPath, siteID, start_date, end_date,iteration):
     # plt.close()
 
 ######################################################################################################################
+###This does a lot of the computing/calls a lot for downloadStandardCurve()###
+###Needs to be vastly broken up and simplified###
 def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputPath, calculated_pdf, stationToPriority):
 
     #Web scraping discharge data from USGS website
@@ -772,22 +793,10 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
     ### update testsDict (options?) to grab batch # from database, when batch numbers switch,
     siteDF = makeSiteDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict)
 
-    # -------------------------------------
     # Format dates inside df into datetime objects
-    # -------------------------------------
-
     siteDF = format_df_datetime(siteDF, 'datetime')
 
-    # -----------------------------------
-    # uncomment out for faster testing
-    # -----------------------------------
-
-    # df = pd.read_csv("zach_df.csv")
-    # to spead up code uncomment
-    #df.to_csv("zach_df.csv", index=False)
-
     if optionsDict["include_batch_id"]:
-
 
         # NORMALIZE PRESSURE HOBO while making it numeric
         siteDF['pressure_hobo'] = pd.to_numeric(siteDF['pressure_hobo'], errors='coerce')
@@ -795,14 +804,6 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
 
         # following function will enforce continuity by aligning each of the beginning and lagging ends of each batch in the pressure data
         siteDF = correct_sensor_gaps(siteDF)
-
-    # Plotting data, commenting it out for simplicity for now
-    # df['pressure_hobo'] = df['pressure_hobo'].replace('', np.nan)
-    # plt.figure(figsize=(50, 7))
-    # plt.style.use('ggplot')
-    # plt.ylabel("Pressure")
-    # plt.xlabel("Time")
-    # plt.title(f"Full Range of Pressure + Corrected Data at {siteID}")
 
     groups = siteDF.groupby('batch_id')
     for name, group in groups:
@@ -812,102 +813,52 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
     try:
 
         #usgs_site = sites_dict[siteID]
-        #
+
         # catchments_df[usgs_site] = catchments_df[usgs_site][catchments_df[usgs_site].date > start_datetime]
         #normalized_usgs = (catchments_df[usgs_site].flows - catchments_df[usgs_site].flows.mean()) / (catchments_df[usgs_site].flows.std())
-        #
-        #plt.plot(catchments_df[usgs_site]['indices'], normalized_usgs, lw=.2, c="tomato", zorder=2, label=f"{usgs_site} discharge")
-        # plt.plot(df.datetime, df['pressure_hobo'], lw=.2, c="grey", zorder=2, linestyle='dotted', label=f"original values")
-        #plt.legend()
-
-
-        #don't need it to show every figure for now
-        #plt.show()
-
-
-
-        # plt.savefig(f"{outputPath}/{siteID}/{siteID}_corrected_pressure_data.png", dpi=300)
-
-        # proceed = input('looks good? y/n \n')
-        #
-        # if proceed == 'y':
-        #     print("okay")
-        # elif proceed == 'n':
-        #     print("not okay")
-
-        #plt.clf()
-        #plt.close()
 
         siteDF['pressure_hobo'] = siteDF['corrected_values']
-
-        # -------------------------------------
         # Separate DF into continuous segments
-        # -------------------------------------
-
-        list_df, list_pdf, pairings = segment_df_by_continuity(siteDF, calculated_pdf)
-
+        siteHoboPressureDf, siteBaroPressureDf, pairings = segment_df_by_continuity(siteDF, calculated_pdf)
         #graphing pressure by time ?
-        if list_df is not None:
-            print("list df is not none")
+        if siteHoboPressureDf is not None:
+            print("siteHoboPressureDf is not none")
             plt.figure(figsize=(17, 7))
             plt.style.use('ggplot')
             plt.ylabel("Pressure")
             plt.xlabel("Time")
 
             z = 0
-            for d in list_df:
+            for d in siteHoboPressureDf:
                 z = z + 1
                 plt.plot(d["index"], d["pressure_hobo"], lw=.3, zorder=2, label=f"{z}")
 
+            dfFilteredByDischarge = siteDF[~siteDF["discharge_measured"].isna()]
+            plt.scatter(dfFilteredByDischarge["index"], dfFilteredByDischarge["pressure_hobo"], s=10, c='tomato', zorder=10, label="discharge measurements")
 
-            df_filtered_by_discharge = siteDF[~siteDF["discharge_measured"].isna()]
-            plt.scatter(df_filtered_by_discharge["index"], df_filtered_by_discharge["pressure_hobo"], s=10, c='tomato', zorder=10, label="discharge measurements")
-
-            plt.text(0.95, 0.01, f'{str(len(df_filtered_by_discharge["index"].values.tolist()))} discharge measurements at this site.', verticalalignment='bottom', horizontalalignment='right', fontsize=15)
+            plt.text(0.95, 0.01, f'{str(len(dfFilteredByDischarge["index"].values.tolist()))} discharge measurements at this site.', verticalalignment='bottom', horizontalalignment='right', fontsize=15)
             plt.title(f"{siteID} Segmented by Chunk of Workable Continuous Pressure Data (gaps < 3 hrs)")
             plt.legend()
             #plt.savefig(f"{outputPath}/{siteID}/{siteID}_segmented_by_chunk.png", dpi=300) #this figure is what is ending up in the export folders
             plt.clf()
             plt.close()
 
-            for i in range(len(list_df)):
+            for i in range(len(siteHoboPressureDf)):
                 # getting start data and end date for continuous line segments
                 start_date = pd.to_datetime(siteDF.loc[(siteDF["index"] == pairings[i][0])]['datetime'].values.tolist()[0]).strftime("%B %d, %Y")
                 end_date = pd.to_datetime(siteDF.loc[(siteDF["index"] == pairings[i][1])]['datetime'].values.tolist()[0]).strftime("%B %d, %Y")
 
                 #returns empty dfs for now if there isn't a barametric pressure site
-                df1, df2 = get_discharge_to_pressure(list_df[i], siteID, list_pdf[i], cursor, outputPath, start_date, end_date, stationToPriority)
-
-                if df1.empty & df2.empty:
-                    print("df1 and df2 are empty")
+                correctedPressureDf, combinedPressureDf = get_discharge_to_pressure(siteHoboPressureDf[i], siteID, siteBaroPressureDf[i], cursor, outputPath, start_date, end_date, stationToPriority)
+                if correctedPressureDf.empty & combinedPressureDf.empty:
+                    print("correctedPressureDf and combinedPressureDf are empty")
                 else:
-                    print("df1 and df2 are NOT empty")
+                    print("correctedPressureDf and combinedPressureDf are NOT empty")
                     #list_df hobo pressure
                     #list_pdf_barometric pressure
 
-                    # commented out for simplicity
-                    # plt.figure(figsize=(50, 7))
-                    # plt.style.use('ggplot')
-                    # plt.ylabel("Pressure")
-                    # plt.xlabel("Time")
-                    # plt.title(f"Discounted Pressure")
-
-                    # plt.plot(df1['index'], df2['corrected'], lw=.4, zorder=4, )
 
                     #usgs_site = sites_dict[siteID]
-
-                    # commented out for simplicty
-                    # plt.plot(catchments_df[usgs_site]['indices'], normalized_usgs, lw=.2, c="tomato", zorder=2, label=f"{usgs_site} discharge")
-                    # # plt.plot(df.datetime, df['pressure_hobo'], lw=.2, c="grey", zorder=2, linestyle='dotted', label=f"original values")
-                    # plt.legend()
-                    # plt.show()
-
-                    # commented out for simplicity
-                    # plt.figure(figsize=(50, 7))
-                    # plt.style.use('ggplot')
-                    # plt.ylabel("Pressure")
-                    # plt.xlabel("Time")
-                    # plt.title(f"Full Range of Pressure + Corrected Data at {siteID}")
 
                     #usgs_site = sites_dict[siteID]
 
@@ -919,34 +870,28 @@ def processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, options
 
                     #normalized_usgs = (catchments_df[usgs_site].flows - catchments_df[usgs_site].flows.mean()) / (catchments_df[usgs_site].flows.std())
 
-                    #commented out for simplicity
-                    #plt.plot(catchments_df[usgs_site]['date'], normalized_usgs, lw=.2, c="tomato", zorder=2, label=f"{usgs_site} discharge")
-                    #plt.plot(df2['datetime_x'], df2['corrected'], lw=.2, c="grey", zorder=2, linestyle='dotted', label=f"corrected pressure")
-                    #plt.legend()
-
                     # noDischargeData = (df1['discharge_measured'].isnull().all()) #this is true if all entries for discharge measured are na, I don't think it's ever making it here
                     # if df1 is not None and df2 is not None and len(df1.index) != 0 and len(df2.index) != 0 and not(noDischargeData):
                     #plotRatingCurve(df1, outputPath, siteID, start_date, end_date,i)
+                    standardCurveFolder = "SegmentedPressureDischarge"
+                    correctedPressureDf.to_csv(f"{outputPath}/{siteID}/{standardCurveFolder}/pressure_to_discharge_no_null_{start_date}_to_{end_date}.csv")
+                    #combinedPressureDf.to_csv(f"{outputPath}/{siteID}/pressure_and_barometric_full_{start_date}_to_{end_date}.csv")
 
-                    df1.to_csv(f"{outputPath}/{siteID}/pressure_to_discharge_no_null_{start_date}_to_{end_date}.csv")
-                    #df2.to_csv(f"{outputPath}/{siteID}/pressure_and_barometric_full_{start_date}_to_{end_date}.csv")
-                # else:
-                #      print(f"{siteID} empty from {start_date} to {end_date}")
         else:
-            print("list df is none")
-    # download the df
-    # download the picture
-    # generate the figure
-    # download the figure
-    # download the csv # date, pressure, discharge,
-    # save the slopes onto the database
+            print("siteHoboPressureDf is none")
+
     except:
         print("Exception: ",siteID," was not found in the sites dict")
 
 
-    df_filtered_by_discharge.to_csv(f"{outputPath}/{siteID}/all_discharge.csv")
-    print("downloaded")
+    if siteHoboPressureDf is not None:
+        dfFilteredByDischarge.to_csv(f"{outputPath}/{siteID}/all_discharge.csv")
+        print("downloaded")
+    else:
+        print("not downloaded")
 
+###This calculates the equation for the discharge rating curve###
+###NOT WORKING###
 def getSlopeIntercept(datetime, siteID, keyDict, siteDict):
     date, time = datetimes.split(" ")
     year, month, day = date.split("/")
@@ -963,10 +908,12 @@ def getSlopeIntercept(datetime, siteID, keyDict, siteDict):
     print("WARNING getSlopeIntercept not implemented")
     return 1, 1
 
-def addCalculatedDischarge(df, siteID, pdf, stationToPriority, cursor):
+###This is trying to use rating curves to predict discharge. Doesn't work###
+###Consider taking this out as we are doing this in R, unless we want it calculated onto the spreadsheet###
+def addCalculatedDischarge(timeSeriesDf, siteID, pdf, stationToPriority, cursor):
     barometricData = getBarometricPressureColumnNoCorrections(siteID, pdf, stationToPriority)
-    pressureData = df["pressure_hobo"]
-    dates = df["datetime"]
+    pressureData = timeSeriesDf["pressure_hobo"]
+    dates = timeSeriesDf["datetime"]
     print(len(barometricData))
     print(len(pressureData))
 
@@ -981,8 +928,6 @@ def addCalculatedDischarge(df, siteID, pdf, stationToPriority, cursor):
 
     pressureData[mask] = float(absoluteData[mask]) - float(barometricData[mask])
     pressureData[~mask] = None
-    # print(pressureData)
-    # print(pressureData[mask])
 
     dischargePoints = [None] * len(pressureData)
 
@@ -996,9 +941,9 @@ def addCalculatedDischarge(df, siteID, pdf, stationToPriority, cursor):
         discharge = pressure * slope + intercept
         dischargePoints[mask][i] = discharge
 
-    df["calculated_discharge"] = dischargePoints
+    timeSeriesDf["calculated_discharge"] = dischargePoints
 
-    return df
+    return timeSeriesDf
 
 def processDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputPath, pdf, stationToPriority):
 
@@ -1006,20 +951,20 @@ def processDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputP
         testsDict["hoboPressure"] = True
 
     #makes df by running cursor on database of all of the tests done at the site
-    df = makeSiteDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict)
+    timeSeriesDf = makeSiteDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict)
 
     # calculate discharge 
     if optionsDict["calculateDischarge"] == True:
-        df = addCalculatedDischarge(df, siteID, pdf, stationToPriority, cursor)
+        timeSeriesDf = addCalculatedDischarge(timeSeriesDf, siteID, pdf, stationToPriority, cursor)
 
     # interpolate
-    if optionsDict["interpolate"] == True:
-        df = interpolate(df)
+    #if optionsDict["interpolate"] == True:
+        #df = interpolate(df)
 
     if optionsDict["correct_values"] == True:
         sensors = ["Hanna", "YSI"]
         target_list = ["electricalConductivity", "pH", "temperature", "orpMV", "dissolvedOxygen_mgL"]
-        corrections_df, device = correctValuesCurve(df, sensors, target_list)
+        corrections_df, device = correctValuesCurve(timeSeriesDf, sensors, target_list)
 
         if corrections_df is None:
             if siteID == "":
@@ -1028,45 +973,50 @@ def processDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputP
             else:
                 print(
                     f"Huge error! Corrections for {siteID} failed because no hobo/eureka/hanna data was found. Possibly it only has scan data?")
-            saveDF(df, outputPath, siteID, nbsNum)
+            saveDF(timeSeriesDf, outputPath, siteID, nbsNum)
         else:
-            saveDF(df, outputPath, siteID, nbsNum, True, corrections_df, target_list, sensors, device)
+            saveDF(timeSeriesDf, outputPath, siteID, nbsNum, True, corrections_df, target_list, sensors, device)
     else:
-        saveDF(df, outputPath, siteID, nbsNum)
+        saveDF(timeSeriesDf, outputPath, siteID, nbsNum)
 
-    return df
+    return timeSeriesDf
+
+###This equation is used a lot for the rating curve...###
 def objective(x, a, b, c, d, e, f, g, h):
     return (a * x) + (b * x ** 2) + (c * x ** 3) + (d * x ** 4) + (e * x ** 5) + (f * x ** 6) + (g * x ** 7) + h
 
+###No idea at all, expectially with the *objective* above###
 def rating_curve_objective(x, a, b):
     # return (a * x) + (b * x ** 2) + c
     return (a * x) + b
 
-def correctValuesCurve(df, sensors, target_list):
-    df = df.replace("", np.nan, regex=True)
-    df = df.fillna(value=np.nan)
+###No idea lol###
+###Seems like it is trying to correct YSI, Hanna, and hobo values based on equations, idk###
+def correctValuesCurve(timeSeriesDf, sensors, target_list):
+    timeSeriesDf = timeSeriesDf.replace("", np.nan, regex=True)
+    timeSeriesDf = timeSeriesDf.fillna(value=np.nan)
 
-    device = senseDeviceType(target_list, df)
+    device = senseDeviceType(target_list, timeSeriesDf)
     if device is None:
         return None, None
 
     # correct df names based on device type
     if device == "hobo":
-        df = df.rename(columns={"conductivity_hobo": "electricalConductivity_hobo", "dissolvedOxygen_mgl_hobo": "dissolvedOxygen_mgL_hobo"})
+        timeSeriesDf = timeSeriesDf.rename(columns={"conductivity_hobo": "electricalConductivity_hobo", "dissolvedOxygen_mgl_hobo": "dissolvedOxygen_mgL_hobo"})
         target_list.remove("orpMV")
         target_list.remove("pH")
     elif device == "eureka":
-        df = df.rename(columns={"orp_eureka": "orpMV_eureka"})
+        timeSeriesDf = timeSeriesDf.rename(columns={"orp_eureka": "orpMV_eureka"})
         target_list.remove("dissolvedOxygen_mgL")
     elif device == "hanna":
         target_list.append("dissolvedOxygenPercent")
     else:
         return None, None
 
-    return df, device # FIXME
+    return timeSeriesDf, device # FIXME
 
     for target in target_list:
-        filtered_df = df[~df[f"{target}_fieldsheet"].isna()]
+        filtered_df = timeSeriesDf[~timeSeriesDf[f"{target}_fieldsheet"].isna()]
         x = filtered_df["index"].tolist()
         y = filtered_df[f"{target}_fieldsheet"].tolist()
         minind = x[0]
@@ -1077,14 +1027,14 @@ def correctValuesCurve(df, sensors, target_list):
 
         popt, _ = curve_fit(objective, x, y)
 
-        df[f"YSI_curve_{target}"] = objective(df["index"], *popt)
+        timeSeriesDf[f"YSI_curve_{target}"] = objective(timeSeriesDf["index"], *popt)
 
         # cut off errant tails of curve
-        df[f"YSI_curve_{target}"] = df[f"YSI_curve_{target}"].where((df["index"] > minind), None)
-        df[f"YSI_curve_{target}"] = df[f"YSI_curve_{target}"].where((df["index"] < maxind), None)
+        timeSeriesDf[f"YSI_curve_{target}"] = timeSeriesDf[f"YSI_curve_{target}"].where((timeSeriesDf["index"] > minind), None)
+        timeSeriesDf[f"YSI_curve_{target}"] = timeSeriesDf[f"YSI_curve_{target}"].where((timeSeriesDf["index"] < maxind), None)
 
         # filter df for creating residuals between ysi curve and data points, find residual points
-        filtered_df = df[~df[f"{target}_fieldsheet"].isna()]
+        filtered_df = timeSeriesDf[~timeSeriesDf[f"{target}_fieldsheet"].isna()]
         filtered_df = filtered_df[~filtered_df[f"{target}_{device}"].isna()]
         filtered_df = filtered_df[~filtered_df[f"YSI_curve_{target}"].isna()]
 
@@ -1094,35 +1044,35 @@ def correctValuesCurve(df, sensors, target_list):
         asdf = copy.copy(filtered_df)
         asdf = asdf.rename(columns={f"residual_curve_{target}": f"{target}"})
         asdf = asdf[f"{target}"]
-        df = pd.concat([df, asdf], axis=1)
+        timeSeriesDf = pd.concat([timeSeriesDf, asdf], axis=1)
 
         res = filtered_df[f"residual_curve_{target}"].tolist()
         x = filtered_df["index"].tolist()
 
         # add residual points to df
         filtered_df = filtered_df[f"residual_curve_{target}"]
-        df = pd.concat([df, filtered_df], axis=1)
+        timeSeriesDf = pd.concat([timeSeriesDf, filtered_df], axis=1)
 
         # optimize curve for residual points
         popt, _ = curve_fit(objective, x, res)
 
-        filtered_df = df[~df[f"residual_curve_{target}"].isna()]
+        filtered_df = timeSeriesDf[~timeSeriesDf[f"residual_curve_{target}"].isna()]
         x = filtered_df["index"].tolist()
         minind = x[0]
         maxind = x[-1]
 
-        df[f"residual_curve_{target}"] = objective(df["index"], *popt)
-        df[f"residual_curve_{target}"] = df[f"residual_curve_{target}"].where((df["index"] > minind), None)
-        df[f"residual_curve_{target}"] = df[f"residual_curve_{target}"].where((df["index"] < maxind), None)
+        timeSeriesDf[f"residual_curve_{target}"] = objective(timeSeriesDf["index"], *popt)
+        timeSeriesDf[f"residual_curve_{target}"] = timeSeriesDf[f"residual_curve_{target}"].where((timeSeriesDf["index"] > minind), None)
+        timeSeriesDf[f"residual_curve_{target}"] = timeSeriesDf[f"residual_curve_{target}"].where((timeSeriesDf["index"] < maxind), None)
 
-        df[f"{target}_{device}_corrected"] = df[f"{target}_{device}"] + df[f"residual_curve_{target}"]
+        timeSeriesDf[f"{target}_{device}_corrected"] = timeSeriesDf[f"{target}_{device}"] + timeSeriesDf[f"residual_curve_{target}"]
 
-    return df, device
+    return timeSeriesDf, device
     #whats going on here
 
-
-def senseDeviceType(target_list, df):
-    parse_df = df[~df[f"{target_list[0]}_fieldsheet"].isna()]
+###Tells correctValuesCurve() what device's values they're correcting###
+def senseDeviceType(target_list, timeSeriesDf):
+    parse_df = timeSeriesDf[~timeSeriesDf[f"{target_list[0]}_fieldsheet"].isna()]
     if not all(parse_df["conductivity_hobo"].isna()):
         device = "hobo"
     elif not all(parse_df["electricalConductivity_eureka"].isna()):
@@ -1135,6 +1085,8 @@ def senseDeviceType(target_list, df):
         print("see whether you can trace the error?")
     return device
 
+###This needs a lot of work to do what we want it to###
+###Creates CSV for each site of all of the data that's been taken for that site, including lab tests###
 def downloadTimeSeries(outputPath, testsDict, optionsDict, cursor):
     print("SYSTEM: ", platform.system())
 
@@ -1167,15 +1119,17 @@ def downloadTimeSeries(outputPath, testsDict, optionsDict, cursor):
 
         # generate the dataframe
         if optionsDict["includeSynoptic"] == True:
-            df = processDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputPath, pdf, stationToPriority)
+            timeSeriesDf = processDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputPath, pdf, stationToPriority)
         else:
             if siteID != "":
-                df = processDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputPath, pdf, stationToPriority)
+                timeSeriesDf = processDF(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputPath, pdf, stationToPriority)
         progress_list.remove(siteID)
         print(f"{line[3] if line[3] != '' else str(nbsNum)} complete")
 
     return "successfully downloaded time series report to " + outputPath
 
+###Creates CSV's for each site that include pressure, barometric pressure, and discharge###
+###Each CSV is separate due to logging gaps###
 def downloadStandardCurve(outputPath, testsDict, optionsDict, cursor):
 
     for test in testsDict.keys():
@@ -1246,25 +1200,35 @@ def downloadStandardCurve(outputPath, testsDict, optionsDict, cursor):
 
         nbsNum = nbsNum.split(".")[1]
 
+        # Checks for site name file/makes it, checks for Discharge file/makes it
+        dischargePath = os.path.join(outputPath, siteID)
         if siteID != "":
             old_output_path = copy.copy(outputPath)
             if not os.path.isdir(os.path.join(outputPath, siteID)):
                 os.mkdir(os.path.join(outputPath, siteID))
-            outputPath = old_output_path
-            processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputPath, calculated_pdf, stationToPriority)
-            # processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputPath)
+                os.mkdir(os.path.join(dischargePath, "SegmentedPressureDischarge"))
+        standardCurveFolder = "SegmentedPressureDischarge"
+        if os.path.exists(f"{dischargePath}/{standardCurveFolder}") == True:
+                print("Discharge folder present")
+        else:
+                os.mkdir(os.path.join(dischargePath, "SegmentedPressureDischarge"))
+        outputPath = old_output_path
+        processDFStandardCurve(cursor, siteID, nbsNum, citSciNum, testsDict, optionsDict, outputPath, calculated_pdf, stationToPriority)
 
         progress_list.remove(siteID)
         print(f"{line[3] if line[3] != '' else str(nbsNum)} complete")
 
     return "successfully downloaded standard curve report to " + outputPath
 
+###Hasn't ever worked for me, not sure if we even need it###
+###I think the goal is to tell us for each site where we went more than an hour without getting data###
 def downloadLoggerGapsReport(outputPath, cursor, testsDict, optionsDict):
     siteListTable = "SELECT * FROM master_site"
     cursor.execute(siteListTable)
     result = cursor.fetchall()
 
     for line in result:
+        print(f"Now starting {line[3] if line[3] != '' else str(line[2])}")
 
         siteID = line[3]
         nbsNum = line[2]
@@ -1343,11 +1307,22 @@ def downloadLoggerGapsReport(outputPath, cursor, testsDict, optionsDict):
             extra = [None] * (maxLenList - len(dataDict[key]))
             dataDict[key] = dataDict[key] + extra
 
-        missingDf = pd.DataFrame.from_dict(dataDict)
-        if platform.system() == "Windows":
-            filePath = outputPath + "\\loggerGapsReport_" + siteID + ".csv"
+        #Checks for site name file/makes it, checks for LoggerGaps file/makes it
+        gapPath = os.path.join(outputPath, siteID)
+        if siteID != "":
+            old_output_path = copy.copy(outputPath)
+            if not os.path.isdir(os.path.join(outputPath, siteID)):
+                os.mkdir(os.path.join(outputPath, siteID))
+                os.mkdir(os.path.join(gapPath, "LoggerGaps"))
+        if os.path.exists(f"{gapPath}/LoggerGaps") == True:
+            print("Logger gaps folder present")
         else:
-            filePath = outputPath = "/loggerGapsReport_" + siteID + ".csv"
-        missingDf.to_csv(filePath, index=False)
+            os.mkdir(os.path.join(gapPath, "LoggerGaps"))
+
+        outputPath = old_output_path
+        missingDf = pd.DataFrame.from_dict(dataDict)
+        loggerGaps = "LoggerGaps"
+        missingDf.to_csv(f"{outputPath}/{siteID}/{loggerGaps}/loggerGapsReport_" + siteID + ".csv")
+        print("Downloaded")
 
     return "successfully downloaded logger gaps report to " + outputPath
