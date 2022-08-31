@@ -1,6 +1,6 @@
 import traceback
 
-from DownloadData.DateToIndex import *
+from DataTiger2.DownloadData.DateToIndex import *
 
 def getDatetime(date, time):
     if "PM" in time:
@@ -34,7 +34,7 @@ def splitDatetimeP(datetime):
 
     if int(month) > 12:
         # probably year, month, day
-        year1 =  month
+        year1 = month
         month1 = day
         day1 = year
 
@@ -79,13 +79,7 @@ def getP(cursor, siteid):
     sitetuple = (siteid,)
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
-    dateToData = {}
-
-    dateToData["batch_id"] = []
-    dateToData["datetime"] = []
-    dateToData["pressure_hobo"] = []
-    dateToData["temperature_hobo"] = []
-    dateToData["index"] = []
+    dateToData = {"batch_id": [], "datetime": [], "pressure_hobo": [], "temperature_hobo": [], "index": []}
 
     for item in result:
         batch_id = item[4]
@@ -128,13 +122,7 @@ def getSlopeInterceptDicts(cursor, siteID):
 
     siteToInfoDict = {}
 
-    keyToIndex = {}
-    keyToIndex["slope"] = 0
-    keyToIndex["intercept"] = 1
-    keyToIndex["minPressure"] = 2
-    keyToIndex["maxPressure"] = 3
-    keyToIndex["startIndex"] = 4
-    keyToIndex["endIndex"] = 5
+    keyToIndex = {"slope": 0, "intercept": 1, "minPressure": 2, "maxPressure": 3, "startIndex": 4, "endIndex": 5}
 
     i = 0
     for item in result:
@@ -168,12 +156,7 @@ def getLightHobo(cursor, siteid):
     sitetuple = (siteid,)
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
-    dateToData = {}
-    dateToData["batch_id"] = []
-    dateToData["datetime"] = []
-    dateToData["intensity_hobo"] = []
-    dateToData["temperature_hobo"] = []
-    dateToData["index"] = []
+    dateToData = {"batch_id": [], "datetime": [], "intensity_hobo": [], "temperature_hobo": [], "index": []}
 
     for item in result:
         date = item[0]
@@ -201,12 +184,7 @@ def getConductivityHobo(cursor, siteid):
     sitetuple = (siteid,)
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
-    dateToData = {}
-    dateToData["batch_id"] = []
-    dateToData["datetime"] = []
-    dateToData["conductivity_hobo"] = []
-    dateToData["temperature_hobo"] = []
-    dateToData["index"] = []
+    dateToData = {"batch_id": [], "datetime": [], "conductivity_hobo": [], "temperature_hobo": [], "index": []}
 
     for item in result:
         batch_id = item[0]
@@ -235,13 +213,7 @@ def getOxygenHobo(cursor, siteid):
     sitetuple = (siteid,)
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
-    dateToData = {}
-    dateToData["batch_id"] = []
-    dateToData["datetime"] = []
-    dateToData["dissolvedOxygen_mgl_hobo"] = []
-    dateToData["temperature_hobo"] = []
-    dateToData["index"] = []
-    dateToData["filename"] = []
+    dateToData = {"batch_id": [], "datetime": [], "dissolvedOxygen_mgl_hobo": [], "temperature_hobo": [], "index": [], "filename": []}
 
     for item in result:
         date = item[0]
@@ -270,17 +242,9 @@ def getHanna(cursor, siteid):
     sitetuple = (siteid,)
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
-    dateToData = {}
-    dateToData["batch_id"] = []
-    dateToData["datetime"] = []
-    dateToData["index"] = []
-    dateToData["temperature_hanna"] = []
-    dateToData["pH_hanna"] = []
-    dateToData["orpMV_hanna"] = []
-    dateToData["electricalConductivity_hanna"] = []
-    dateToData["barometricPressure_hanna"] = []
-    dateToData["dissolvedOxygenPercent_hanna"] = []
-    dateToData["dissolvedOxygen_mgL_hanna"] = []
+    dateToData = {"batch_id": [], "datetime": [], "index": [], "temperature_hanna": [], "pH_hanna": [],
+                  "orpMV_hanna": [], "electricalConductivity_hanna": [], "barometricPressure_hanna": [],
+                  "dissolvedOxygenPercent_hanna": [], "dissolvedOxygen_mgL_hanna": []}
 
     for item in result:
         date = item[1]
@@ -328,18 +292,9 @@ def getEureka(cursor, siteid):
     sitetuple = (siteid,)
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
-    dateToData = {}
-    dateToData["batch_id"] = []
-    dateToData["datetime"] = []
-    dateToData["index"] = []
-    dateToData["temperature_eureka"] = []
-    dateToData["pH_eureka"] = []
-    dateToData["orp_eureka"] = []
-    dateToData["electricalConductivity_eureka"] = []
-    dateToData["turbidity_eureka"] = []
-    dateToData["hdo_percent_saturation_eureka"] = []
-    dateToData["hdo_concentration_eureka"] = []
-    dateToData["pH_mv_eureka"] = []
+    dateToData = {"batch_id": [], "datetime": [], "index": [], "temperature_eureka": [], "pH_eureka": [],
+                  "orp_eureka": [], "electricalConductivity_eureka": [], "turbidity_eureka": [],
+                  "hdo_percent_saturation_eureka": [], "hdo_concentration_eureka": [], "pH_mv_eureka": []}
 
     for item in result:
         batch_id = item[0]
@@ -380,11 +335,7 @@ def getQ(cursor, siteid):
     sitetuple = (siteid,)
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
-    dateToData = {}
-    dateToData["batch_id"] = []
-    dateToData["datetime"] = []
-    dateToData["discharge_measured"] = []
-    dateToData["index"] = []
+    dateToData = {"batch_id": [], "datetime": [], "discharge_measured": [], "index": []}
 
     for item in result:
         batch_id = item[0]
@@ -416,19 +367,12 @@ def getElementar(cursor, siteid, nbsNum, citSciNum):
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
 
-    dateToData = {}
-    dateToData["batch_id"] = []
-    dateToData["datetime"] = []
-    dateToData["tic_mgl"] = []
-    dateToData["tc_mgl"] = []
-    dateToData["npoc_mgl"] = []
-    dateToData["tnb_mgl"] = []
-    dateToData["index"] = []
+    dateToData = {"batch_id": [], "datetime": [], "tic_mgl": [], "tc_mgl": [], "npoc_mgl": [], "tnb_mgl": [],
+                  "index": []}
 
     for item in result:
         try:
             batch_id = item[0]
-           ###
             tic_mgl = item[8]
             tc_mgl = item[9]
             npoc_mgl = item[10]
@@ -465,13 +409,8 @@ def getScanPar(cursor, siteid, nbsNum, citSciNum):
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
 
-    dateToData = {}
-    dateToData["datetime"] = []
-    dateToData["index"] = []
-    dateToData["turbidity_scanPar"] = []
-    dateToData["no3_scanPar"] = []
-    dateToData["toc_scanPar"] = []
-    dateToData["doc_scanPar"] = []
+    dateToData = {"datetime": [], "index": [], "turbidity_scanPar": [], "no3_scanPar": [], "toc_scanPar": [],
+                  "doc_scanPar": []}
 
     for item in result:
         try:
@@ -508,9 +447,7 @@ def getScanFp(cursor, siteid, nbsNum, citSciNum):
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
 
-    dateToData = {}
-    dateToData["datetime"] = []
-    dateToData["index"] = []
+    dateToData = {"datetime": [], "index": []}
 
     startWavelength = 200
     endWavelength = 750
@@ -561,16 +498,8 @@ def getICCation(cursor, siteid, nbsNum, citSciNum):
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
 
-    dateToData = {}
-    dateToData["datetime"] = []
-    dateToData["index"] = []
-    dateToData["lithium_ic"] = []
-    dateToData["sodium_ic"] = []
-    dateToData["ammonium_ic"] = []
-    dateToData["potassium_ic"] = []
-    dateToData["magnesium_ic"] = []
-    dateToData["calcium_ic"] = []
-    dateToData["strontium_ic"] = []
+    dateToData = {"datetime": [], "index": [], "lithium_ic": [], "sodium_ic": [], "ammonium_ic": [], "potassium_ic": [],
+                  "magnesium_ic": [], "calcium_ic": [], "strontium_ic": []}
 
     for item in result:
         try:
@@ -611,18 +540,8 @@ def getICAnion(cursor, siteid, nbsNum, citSciNum):
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
 
-    dateToData = {}
-    dateToData["datetime"] = []
-    dateToData["index"] = []
-    dateToData["fluoride_ic"] = []
-    dateToData["acetate_ic"] = []
-    dateToData["formate_ic"] = []
-    dateToData["chloride_ic"] = []
-    dateToData["nitrite_ic"] = []
-    dateToData["bromide_ic"] = []
-    dateToData["nitrate_ic"] = []
-    dateToData["sulfate_ic"] = []
-    dateToData["phosphate_ic"] = []
+    dateToData = {"datetime": [], "index": [], "fluoride_ic": [], "acetate_ic": [], "formate_ic": [], "chloride_ic": [],
+                  "nitrite_ic": [], "bromide_ic": [], "nitrate_ic": [], "sulfate_ic": [], "phosphate_ic": []}
 
     for item in result:
         try:
@@ -666,34 +585,12 @@ def getICP(cursor, siteid, nbsNum, citSciNum):
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
 
-    dateToData = {}
-    dateToData["datetime"] = []
-    dateToData["index"] = []
-    dateToData["aluminum_icp"] = []
-    dateToData["arsenic_icp"] = []
-    dateToData["boron_icp"] = []
-    dateToData["barium_icp"] = []
-    dateToData["calcium_icp"] = []
-    dateToData["cadmium_icp"] = []
-    dateToData["cobalt_icp"] = []
-    dateToData["chromium_icp"] = []
-    dateToData["copper_icp"] = []
-    dateToData["iron_icp"] = []
-    dateToData["potassium_icp"] = []
-    dateToData["magnesium_icp"] = []
-    dateToData["manganese_icp"] = []
-    dateToData["molybdenum_icp"] = []
-    dateToData["sodium_icp"] = []
-    dateToData["nickel_icp"] = []
-    dateToData["phosphorus_icp"] = []
-    dateToData["lead_icp"] = []
-    dateToData["sulfur_icp"] = []
-    dateToData["selenium_icp"] = []
-    dateToData["silicon_icp"] = []
-    dateToData["strontium_icp"] = []
-    dateToData["titanium_icp"] = []
-    dateToData["vanadium_icp"] = []
-    dateToData["zinc_icp"] = []
+    dateToData = {"datetime": [], "index": [], "aluminum_icp": [], "arsenic_icp": [], "boron_icp": [], "barium_icp": [],
+                  "calcium_icp": [], "cadmium_icp": [], "cobalt_icp": [], "chromium_icp": [], "copper_icp": [],
+                  "iron_icp": [], "potassium_icp": [], "magnesium_icp": [], "manganese_icp": [], "molybdenum_icp": [],
+                  "sodium_icp": [], "nickel_icp": [], "phosphorus_icp": [], "lead_icp": [], "sulfur_icp": [],
+                  "selenium_icp": [], "silicon_icp": [], "strontium_icp": [], "titanium_icp": [], "vanadium_icp": [],
+                  "zinc_icp": []}
 
     for item in result:
         try:
@@ -772,22 +669,11 @@ def getFieldSheetInfo(cursor, siteid, nbsNum, citSciNum):
     cursor.execute(sqlquery, sitetuple)
     result = cursor.fetchall()
 
-    dateToData = {}
-    dateToData["datetime"] = []
-    dateToData["index"] = []
-    dateToData["temperature_fieldsheet"] = []
-    dateToData["pH_fieldsheet"] = []
-    dateToData["orpMV_fieldsheet"] = []
-    dateToData["electricalConductivity_fieldsheet"] = []
-    dateToData["barometricPressure_fieldsheet"] = []
-    dateToData["dissolvedOxygenPercent_fieldsheet"] = []
-    dateToData["dissolvedOxygen_mgL_fieldsheet"] = []
-    dateToData["device"] = []
-    dateToData["chlorophyl_ugl"] = []
-    dateToData["chlorophyl_rfu"] = []
-    dateToData["pc_ug"] = []
-    dateToData["calibrated_fieldsheet"] = []
-    dateToData["qGrams_fieldsheet"] = []
+    dateToData = {"datetime": [], "index": [], "temperature_fieldsheet": [], "pH_fieldsheet": [],
+                  "orpMV_fieldsheet": [], "electricalConductivity_fieldsheet": [], "barometricPressure_fieldsheet": [],
+                  "dissolvedOxygenPercent_fieldsheet": [], "dissolvedOxygen_mgL_fieldsheet": [], "device": [],
+                  "chlorophyl_ugl": [], "chlorophyl_rfu": [], "pc_ug": [], "calibrated_fieldsheet": [],
+                  "qGrams_fieldsheet": []}
 
     for item in result:
         try:
