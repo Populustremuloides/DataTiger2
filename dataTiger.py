@@ -148,7 +148,7 @@ class Ui_DataTiger(object):
 
             self.testDict["fieldSheetInfo"] = False
             self.testDict["measuredDischarge"] = False
-            self.testDict["hoboPressure"] = True
+            self.testDict["hoboPressure"] = False
             self.testDict["hoboConductivity"] = False
             self.testDict["hoboLight"] = False
             self.testDict["hoboOxygen"] = False
