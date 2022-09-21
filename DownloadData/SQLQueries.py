@@ -1,6 +1,6 @@
 import traceback
 
-from DataTiger2.DownloadData.DateToIndex import *
+from DownloadData.DateToIndex import *
 
 def getDatetime(date, time):
     if "PM" in time:

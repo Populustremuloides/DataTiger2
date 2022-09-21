@@ -1,7 +1,7 @@
 import pandas as pd
-from DataTiger2.DownloadData.DownloadTimeSeries import *
-from DataTiger2.USGS_downloaders.scrape_usgs_catchments import *
-from DataTiger2.DownloadData.GetTimeSeriesDF import *
+from DownloadData.DownloadTimeSeries import *
+from USGS_downloaders.scrape_usgs_catchments import *
+from DownloadData.GetTimeSeriesDF import *
 import redis
 import pyarrow as pa
 from datetime import timedelta as td
