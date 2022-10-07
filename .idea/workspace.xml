@@ -7,8 +7,9 @@
     <list default="true" id="1974e55b-2c7a-4819-86d7-7225486f5696" name="Default Changelist" comment="Updating get_discharge_to_pressure">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DatabaseName.txt" beforeDir="false" afterPath="$PROJECT_DIR$/DatabaseName.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py" beforeDir="false" afterPath="$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/USGS_downloaders/calculate_dist.py" beforeDir="false" afterPath="$PROJECT_DIR$/USGS_downloaders/calculate_dist.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DownloadData/processDFTimeSeries.py" beforeDir="false" afterPath="$PROJECT_DIR$/DownloadData/processDFTimeSeries.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/USGS_downloaders/scrape_usgs_catchments.py" beforeDir="false" afterPath="$PROJECT_DIR$/USGS_downloaders/scrape_usgs_catchments.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,6 +52,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="tsv" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -366,6 +368,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Aqualog fix and added TSS functionality" />

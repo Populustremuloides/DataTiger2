@@ -119,7 +119,7 @@ def addCalculatedDischarge(timeSeriesDf, siteID, pdf, stationToPriority, cursor)
 
     for i in range(len(correctedPressureData[mask])):
         date = dates[mask][i]
-        slope, intercept = getSlopeIntercept(date, siteID, cursor, keyDict, siteDict)
+        slope, intercept = getSlopeIntercept(date, siteID, keyDict, siteDict)
 
         pressure = correctedPressureData[mask][i]
         discharge = pressure * slope + intercept
