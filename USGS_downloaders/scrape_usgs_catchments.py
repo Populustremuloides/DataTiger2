@@ -5,8 +5,8 @@ import datetime
 import numpy as np
 import re
 import os
-from USGS_downloaders.date_to_index import *
-from USGS_downloaders.calculate_dist import get_closest_usgs_sites
+from DataTiger2.USGS_downloaders.date_to_index import *
+from DataTiger2.USGS_downloaders.calculate_dist import get_closest_usgs_sites
 
 def getLineData(inputRow, siteIndex, dateIndex, flowIndex, qualityIndex):
     site = inputRow[siteIndex]
