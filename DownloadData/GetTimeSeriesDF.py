@@ -1,7 +1,7 @@
 from datetime import datetime
 import pandas as pd
-from DataTiger2.DownloadData.DateToIndex import *
-from DataTiger2.DownloadData.SQLQueries import *
+from DownloadData.DateToIndex import *
+from DownloadData.SQLQueries import *
 from USGS_downloaders.scrape_usgs_catchments import *
 
 #----------------------------------------------------------------------#

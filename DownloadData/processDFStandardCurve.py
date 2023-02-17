@@ -1,6 +1,6 @@
-from DataTiger2.DownloadData.DownloadTimeSeries import *
-from DataTiger2.USGS_downloaders.scrape_usgs_catchments import *
-from DataTiger2.DownloadData.GetTimeSeriesDF import *
+from DownloadData.DownloadTimeSeries import *
+from USGS_downloaders.scrape_usgs_catchments import *
+from DownloadData.GetTimeSeriesDF import *
 import redis
 import pyarrow as pa
 from datetime import timedelta as td
@@ -358,3 +358,11 @@ def get_discharge_to_pressure(siteHoboPressureDf, siteID, siteBaroPressureDf, st
         print(traceback.format_exc())
         print('okay')
         return pd.DataFrame(), pd.DataFrame()
+
+#added this in because the standard curves download wouldn't work with it just in DownloadTimeSeries.py
+def format_df_datetime(df, name_of_datetime):
+    df[name_of_datetime] = df[name_of_datetime].apply(lambda x: " ".join(
+        ["-".join(list(map(lambda y: y.zfill(2), x.split(" ")[0].split("-")))),
+         ":".join(list(map(lambda y: y.zfill(2), x.split(" ")[1].split(":"))))]))
+    df[name_of_datetime] = pd.to_datetime(df.datetime, format='%y-%m-%d %H:%M:%S')
+    return df

@@ -138,7 +138,10 @@ def downloadAllPointSamples(outputPath, ROOT, conn):
             has_hyphen['date'] = pd.to_datetime(has_hyphen.date, format='%Y-%m-%d %H:%M')
         except:
             print(traceback.format_exc())
-            has_hyphen['date'] = pd.to_datetime(has_hyphen.date_sampled, format='%Y-%m-%d')
+            try:
+                has_hyphen['date'] = pd.to_datetime(has_hyphen.date_sampled, format='%Y-%m-%d')
+            except:
+                print("NOT HAPPENING")
 
         # Add site information
         has_hyphen = has_hyphen.merge(site_df, on='site_id', how='left')
