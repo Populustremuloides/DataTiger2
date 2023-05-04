@@ -85,9 +85,10 @@ class DatabaseLocked(Error):
 
 class DuplicateNotAllowed(Error):
     def __init__(self, path):
-        self.message = "ERROR: unable to upload " + path + " because a duplicate batch with matching meta-data already exists on the database," \
-                      "and according to the settings, duplicates are not allowed. If you are trying to submit a file with data that has been corrected, then " \
-                      "make sure to hit the \' allow duplicates\' button above before re-submitting the file.\n\n"
+        self.message = path + " is a duplicate"
+                      #"ERROR: unable to upload " + path + " because a duplicate batch with matching meta-data already exists on the database," \
+                      #"and according to the settings, duplicates are not allowed. If you are trying to submit a file with data that has been corrected, then " \
+                      #"make sure to hit the \' allow duplicates\' button above before re-submitting the file.\n\n"
 
 class BadHobo(Error):
     def __init__(self, path):
