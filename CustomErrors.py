@@ -51,7 +51,8 @@ class EurekaFileIncorrectlyFormated(Error):
 
 class RawHoboFileIngested(Error):
     def __init__(self, path):
-        self.message = "ERROR: This tiger doesn't eat raw hobo files. Convert " + path + " to an .xls format and I'll be happy to take it off your hands.\n\n"
+        self.message = "Raw Hobo \n\n"
+                       #"This tiger doesn't eat raw hobo files. Convert " + path + " to an .xls format and I'll be happy to take it off your hands.\n\n"
 class NoDataToParse(Error):
     def __init__(self, path):
         self.message = "ERROR: " + path + " contained no parsable data. Unable to determine file type.\n\n"
@@ -85,7 +86,7 @@ class DatabaseLocked(Error):
 
 class DuplicateNotAllowed(Error):
     def __init__(self, path):
-        self.message = path + " is a duplicate"
+        self.message = "Duplicate \n\n"
                       #"ERROR: unable to upload " + path + " because a duplicate batch with matching meta-data already exists on the database," \
                       #"and according to the settings, duplicates are not allowed. If you are trying to submit a file with data that has been corrected, then " \
                       #"make sure to hit the \' allow duplicates\' button above before re-submitting the file.\n\n"
@@ -232,9 +233,10 @@ class ErrorInAqualogRows(Error):
 
 class DuplicateDOCBatch(Error):
     def __init__(self, path):
-        self.message = "ERROR: unable to upload " + path + " because an identically named file has already been uploaded" \
-                       " to the database. If you would like to submit the file anyway, please select \'allow duplicates\' " \
-                       " and submit again.\n\n"
+        self.message = "ERROR: Identical Name \n\n"
+                       #"unable to upload " + path + " because an identically named file has already been uploaded" \
+                       #" to the database. If you would like to submit the file anyway, please select \'allow duplicates\' " \
+                       #" and submit again.\n\n"
 
 
 class Warnings(Error):
@@ -254,9 +256,10 @@ class No3NotFormattedCorrectly(Error):
 
 class DuplicateBatch(Error):
     def __init__(self, path):
-        self.message = "ERROR: unable to upload " + path + " because another identically named file already exists on the " \
-                       "database. If you would like to upload the file anyway, please select \'allow duplicates\' above " \
-                       "and resubmit.\n\n"
+        self.message = "ERROR Identical name \n\n"
+                       #"unable to upload " + path + " because another identically named file already exists on the " \
+                       #"database. If you would like to upload the file anyway, please select \'allow duplicates\' above " \
+                       #"and resubmit.\n\n"
 class ScanPARReadsError(Error):
     def __init__(self, message, path):
         self.message = "WARNING: The file " + path + " was succesfully uploaded to the database. However, the following " \

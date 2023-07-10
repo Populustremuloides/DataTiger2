@@ -5,6 +5,7 @@ from Uploaders.UploadHanna import *
 from Uploaders.UploadEureka import *
 from Uploaders.UploadHobo import *
 from Uploaders.UploadICP import *
+from Uploaders.UploadICPNew import *
 from Uploaders.UploadIC import *
 from Uploaders.UploadScanFP import *
 from Uploaders.UploadScanPAR import *
@@ -26,6 +27,7 @@ from Uploaders.UploadNewSrp import *
 from Uploaders.upload_smartrock import *
 
 from Readers.ReadICP import *
+from Readers.ReadICPNew import *
 from Readers.ReadIC import *
 from Readers.ReadScanFP import *
 from Readers.ReadScanPAR import *
@@ -117,6 +119,14 @@ class Uploader:
 
                 self.icpUploader.uploadBatch()
                 self.icpUploader.uploadReads()
+
+            if fileOrigin == "icp_new":
+                self.icpReader = ReadICPNew(filePath)
+                self.icpUploader = UploadICPNew(cursor, self, self.icpReader)
+
+                self.icpUploader.uploadBatch()
+                self.icpUploader.uploadReads()
+
             if fileOrigin == "ic":
                 self.icReader = ReadIC(filePath)
                 self.icUploader = UploadIC(cursor, self, self.icReader)
