@@ -26,7 +26,7 @@ class UploadSampleId:
 
     def uploadBatch(self):
         # have the reader read the batch (# hand it the headers so it can read where they are)
-        # get the haders
+        # get the headers
 
         if self.ableToOpenFile:
             # try: #FIXME: put this back
@@ -81,8 +81,6 @@ class UploadSampleId:
             self.sampleIdReader.srp, self.sampleIdReader.water, self.sampleIdReader.tss, self.sampleIdReader.ignore,
             self.sampleIdReader.datetimeUploaded, self.sampleIdReader.filePath, self.sampleIdReader.sortChem)
 
-        if self.sampleIdReader.sortChem == "2022-0035":
-            print("HEERRREE")
 
         print(self.sampleIdReader.sortChem)
 
@@ -104,7 +102,7 @@ class UploadSampleId:
                     "datetime_uploaded, file_path) " \
                     "VALUES (?,?,?,?,?,?,?,?,?,?,?," \
                     "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?," \
-                    "?,?,?,?,?,?,?, ?,?,?);"
+                    "?,?,?,?,?,?,?,?,?,?);"
 
         insertTuple = (self.sampleIdReader.project, self.sampleIdReader.device, self.sampleIdReader.date,
             self.sampleIdReader.site, self.sampleIdReader.time, self.sampleIdReader.sortChem,

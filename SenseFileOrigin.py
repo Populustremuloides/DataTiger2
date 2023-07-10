@@ -90,6 +90,10 @@ class SenseFileOrigin():
                 if len(columns) > 3:
                     if "OVSM" in str(columns[3]):
                         return "no3"
+
+                if "Horizontal Table Report" in str(columns[0]):
+                    return "icp_new"
+
                 i = 0
                 while i < 15 and i < len(list(df.iloc[:,0])): # read through the first row
                     value = str(df.iloc[i,1]).lower()
@@ -170,17 +174,6 @@ class SenseFileOrigin():
                     return "scan.fp"
                 if filePath.endswith("log.csv"):
                     return "ignore"
-
-                # with open(filePath, "r+", encoding='utf-16-le') as csvFile:
-                #     blankLine = csvFile.readline()
-                #     if "sep" in blankLine:
-                #         line1 = csvFile.readline()
-                #         line1 = line1.split(",")
-                #         if "unit" in line1[0].lower() and "id" in line1[0].lower():
-                #             line2 = csvFile.readline()
-                #             line2 = line2.split(",")
-                #             if "user" in line2[0].lower() and "id" in line2[0].lower():
-                #                 return "YSI"
 
                 # open the file and look at the firs
                 if "ysi" in filePath or "YSI" in filePath:

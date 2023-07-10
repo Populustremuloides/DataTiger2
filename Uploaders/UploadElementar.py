@@ -140,7 +140,7 @@ class UploadElementar():
                 i = i + 1
 
         if self.duplicatesOccurred and self.problemsOccurred:
-            raise ElementarDuplicatesAndProblemsOccurred(
+            raise ElementarDuplicatesAndProblemsOccured(
             self.elementarReader.fileName, self.duplicateRows, self.problemRows)
         elif self.duplicatesOccurred:
             raise ElementarDuplicateRowsOccurred(self.elementarReader.fileName, self.duplicateRows)

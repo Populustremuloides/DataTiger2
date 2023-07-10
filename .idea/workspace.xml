@@ -4,11 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1974e55b-2c7a-4819-86d7-7225486f5696" name="Default Changelist" comment="Updating get_discharge_to_pressure">
+    <list default="true" id="1974e55b-2c7a-4819-86d7-7225486f5696" name="Default Changelist" comment="Minor Fixes">
+      <change afterPath="$PROJECT_DIR$/Readers/ReadICPNew.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Uploaders/UploadICPNew.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/LabbottDatabase.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/LabbottDatabase.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CustomErrors.py" beforeDir="false" afterPath="$PROJECT_DIR$/CustomErrors.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DatabaseName.txt" beforeDir="false" afterPath="$PROJECT_DIR$/DatabaseName.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/USGS_downloaders/scrape_usgs_catchments.py" beforeDir="false" afterPath="$PROJECT_DIR$/USGS_downloaders/scrape_usgs_catchments.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Readers/ReadICP.py" beforeDir="false" afterPath="$PROJECT_DIR$/Readers/ReadICP.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SenseFileOrigin.py" beforeDir="false" afterPath="$PROJECT_DIR$/SenseFileOrigin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Uploader.py" beforeDir="false" afterPath="$PROJECT_DIR$/Uploader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Uploaders/UploadElementar.py" beforeDir="false" afterPath="$PROJECT_DIR$/Uploaders/UploadElementar.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Uploaders/UploadSampleId.py" beforeDir="false" afterPath="$PROJECT_DIR$/Uploaders/UploadSampleId.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,13 +55,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/robby/BYU/Labbott/DataTiger2&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "last_opened_file_path": "C:/Users/robby/BYU/Labbott/DataTiger2/Readers",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\robby\BYU\Labbott\DataTiger2\Readers" />
+      <recent name="C:\Users\robby\BYU\Labbott\DataTiger2\Uploaders" />
       <recent name="$PROJECT_DIR$/Readers" />
       <recent name="$PROJECT_DIR$/Uploaders" />
       <recent name="$PROJECT_DIR$/DownloadData" />
@@ -72,9 +81,9 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\robby\anaconda3\envs\work\python.exe" />
+      <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dataTiger.py" />
@@ -351,7 +360,14 @@
       <option name="project" value="LOCAL" />
       <updated>1658964867331</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Minor Fixes">
+      <created>1683217976057</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1683217976057</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -377,7 +393,8 @@
     <MESSAGE value="Commenting and cleaning up replaced functions" />
     <MESSAGE value="Rating Curves Progress" />
     <MESSAGE value="Updating get_discharge_to_pressure" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updating get_discharge_to_pressure" />
+    <MESSAGE value="Minor Fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Minor Fixes" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -391,11 +408,6 @@
           <url>file://$PROJECT_DIR$/Uploaders/UploadNewSrp.py</url>
           <line>60</line>
           <option name="timeStamp" value="69" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Uploaders/UploadICP.py</url>
-          <line>43</line>
-          <option name="timeStamp" value="76" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/DownloadData/DateToIndex.py</url>
@@ -416,11 +428,6 @@
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
           <line>397</line>
           <option name="timeStamp" value="506" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
-          <line>170</line>
-          <option name="timeStamp" value="535" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadSampleId.py</url>
@@ -534,27 +541,27 @@
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadICP.py</url>
-          <line>250</line>
+          <line>226</line>
           <option name="timeStamp" value="872" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadICP.py</url>
-          <line>249</line>
+          <line>225</line>
           <option name="timeStamp" value="873" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
-          <line>154</line>
+          <line>158</line>
           <option name="timeStamp" value="893" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
-          <line>156</line>
+          <line>160</line>
           <option name="timeStamp" value="894" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
-          <line>158</line>
+          <line>162</line>
           <option name="timeStamp" value="895" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
@@ -569,12 +576,12 @@
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
-          <line>254</line>
+          <line>247</line>
           <option name="timeStamp" value="910" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
-          <line>256</line>
+          <line>249</line>
           <option name="timeStamp" value="911" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
@@ -594,18 +601,8 @@
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
-          <line>191</line>
-          <option name="timeStamp" value="991" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
           <line>52</line>
           <option name="timeStamp" value="993" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
-          <line>92</line>
-          <option name="timeStamp" value="996" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Readers/ReadHanna.py</url>
@@ -619,17 +616,17 @@
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
-          <line>132</line>
+          <line>136</line>
           <option name="timeStamp" value="1057" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
-          <line>127</line>
+          <line>131</line>
           <option name="timeStamp" value="1069" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SenseFileOrigin.py</url>
-          <line>130</line>
+          <line>134</line>
           <option name="timeStamp" value="1070" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
@@ -646,26 +643,6 @@
           <url>file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py</url>
           <line>8</line>
           <option name="timeStamp" value="1259" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
-          <line>56</line>
-          <option name="timeStamp" value="1262" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Uploaders/UploadSampleId.py</url>
-          <line>84</line>
-          <option name="timeStamp" value="1263" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Uploader.py</url>
-          <line>164</line>
-          <option name="timeStamp" value="1264" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DownloadData/DownloadPointSamples.py</url>
-          <line>309</line>
-          <option name="timeStamp" value="1269" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
@@ -691,6 +668,11 @@
           <url>file://$PROJECT_DIR$/DownloadData/DownloadTimeSeries.py</url>
           <line>979</line>
           <option name="timeStamp" value="1294" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Uploaders/UploadICPNew.py</url>
+          <line>86</line>
+          <option name="timeStamp" value="1303" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

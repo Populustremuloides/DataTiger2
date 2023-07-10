@@ -84,7 +84,7 @@ class ReadICP:
         except:
             raise ICPFileNotNamedCorrectly(self.fileName)
 
-        self.projectId = self.projectId.replace(" ","")
+        self.projectId = self.projectId.replace(" ", "")
 
 
         # fix the date
@@ -93,30 +93,6 @@ class ReadICP:
         day = self.runDate[4:6]
         year = "20" + year
         self.runDate = year + "-" + month + "-" + day
-
-        # get the column indices of the columns we want to parse
-        # fullReport = False
-        # dilutionIncluded = False
-        # startIndex = 0
-        # stopIndex = len(columns)
-
-        # i = 0
-        # for column in columns:
-        #     column = column.lower()
-        #     if "total dissolved solids" in column:
-        #         fullReport = True
-        #         startIndex = i + 1
-        #     if "dilution" in column:
-        #         stopIndex = i
-        #         dilutionIncluded = True
-        #     i = i + 1
-        # if fullReport:
-        #     columnsToSearch = range(startIndex,stopIndex)
-        # else:
-        #     if dilutionIncluded:
-        #         columnsToSearch = range(1,stopIndex)
-        #     else:
-        #         raise ICPMustHaveDilutionColumn(self.fileName)
 
         for index in range(len(columns)):
             column = columns[index]
